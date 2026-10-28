@@ -117,7 +117,7 @@ def keyframes_workflow(kids, path):
         for t in range(1, takes + 1):
             x = -1620 + (t - 1) * 900
             gen = g.node("AMDQwenImage21TextToImage", (x, y), (420, 330),
-                         [take_prompt(keyframe_prompt(k), t), SB["keyframe"]["aspect_ratio"], SB["keyframe"]["steps"]],
+                         [take_prompt(keyframe_prompt(k), t), SB["keyframe"]["aspect_ratio"], "Qwen-Image-2.1", SB["keyframe"]["steps"]],
                          outputs=[("IMAGE", "IMAGE")])
             save = g.node("SaveImage", (x + 440, y), (420, 330), [f"{N}/{kid}_t{t}"], inputs=[("images", "IMAGE", False)], color=False)
             g.link(gen, 0, save, 0)

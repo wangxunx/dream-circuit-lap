@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 
 import common
@@ -29,7 +30,10 @@ def fetch(url, path, digest):
         return
     print(f"downloading {os.path.basename(path)}")
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    urllib.request.urlretrieve(url, path + ".part")
+    try:
+        urllib.request.urlretrieve(url, path + ".part")
+    except urllib.error.URLError as e:
+        sys.exit(f"{url}: download failed: {e}")
     if sha256(path + ".part") != digest:
         os.remove(path + ".part")
         sys.exit(f"{url}: sha256 mismatch")

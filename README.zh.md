@@ -25,46 +25,116 @@
 
 ## 运行方式
 
-两个 notebook 内容相同，都负责：安装两个节点、配置 H3 key、启动 ComfyUI、下载课程素材、安装各章工作流、拼接成片。生成图片和视频在浏览器里的 ComfyUI 完成。请在 JupyterLab / JupyterHub 里打开，notebook 里的视频才能播放。
+三种方式任选其一：
 
-### 本地：`notebooks/local.ipynb`
+| 方式 | 适合谁 | 需要什么 |
+|---|---|---|
+| [一：直接用 ComfyUI](#方式一直接用-comfyui) | 熟悉 ComfyUI，只想复现工作流 | 本地 ComfyUI（Windows / Linux） |
+| [二：本地 notebook](#方式二本地-notebook) | 想边看讲解边做，本地已有 ComfyUI | 本地 ComfyUI + JupyterLab |
+| [三：云端 notebook](#方式三云端-notebook) | 不想在本地搭环境 | 平台提供的、预装 ComfyUI 的 JupyterLab |
 
-把本仓库克隆到 ComfyUI 目录里，例如 `ComfyUI/dream-circuit-lap`，然后用 ComfyUI 的 Python 环境启动 JupyterLab：
+三种方式都要一个 H3 key：到 https://h3.oneclickamd.ai 注册获取。key 放在 ComfyUI 的 `user/h3_gateway_api_key.txt`（两个 notebook 会提示你输入并写入）或环境变量 `H3_GATEWAY_API_KEY`。节点没有 key 输入框，key 不会写进工作流或视频元数据。
+
+两个 notebook 内容相同，只是准备环境的部分不同。不想花额度时，notebook 里每一步都可以直接用课程素材（路线 A）；想自己生成时，在 ComfyUI 里生成后回到 notebook 挑选（路线 B）。
+
+### 方式一：直接用 ComfyUI
+
+下面的 `python`、`pip` 都要用运行 ComfyUI 的那个 Python 环境。Windows 便携版在 `dream-circuit-lap` 目录里把 `python` 换成 `..\..\python_embeded\python.exe`，把 `pip` 换成 `..\..\python_embeded\python.exe -m pip`。
+
+**1. 准备 ComfyUI 和两个节点。** 还没装 ComfyUI 的话，按 [官方说明](https://github.com/Comfy-Org/ComfyUI#installing) 安装。然后装两个云端节点：
 
 ```bash
+cd ComfyUI/custom_nodes
+git clone https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1.git
+git clone https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3.git
+```
+
+**2. 写入 H3 key。** 新建文本文件 `ComfyUI/user/h3_gateway_api_key.txt`，内容只有 key 这一行。
+
+**3. 下载课程并安装工作流。** 课程要放在 ComfyUI 目录里：
+
+```bash
+cd ComfyUI
+git clone https://github.com/wangxunx/dream-circuit-lap.git
+cd dream-circuit-lap
+pip install -r requirements.txt
+python scripts/fetch_media.py --fonts                               # 课程素材（media/，约 72 MB）和中文字体
+python scripts/make_workflows.py --install                          # 第 4–6 章的 7 镜头工作流
+python scripts/make_workflows.py --shots lap_8shots.json --install  # 第 7 章的 8 镜头工作流
+```
+
+**4. 启动 ComfyUI。** 课程只用云端节点，用 CPU 模式即可：在 ComfyUI 目录运行 `python main.py --cpu`（Windows 便携版双击 `run_cpu.bat`），浏览器打开 http://127.0.0.1:8188（第一次打开会弹出 Templates 模板窗口，点右上角 × 关掉）。按 `w` 打开左侧的工作流列表，能看到 `dream7_*` 和 `dream8_*`。ComfyUI 是在装节点之前启动的，要先重启；看不到工作流就按 F5 刷新页面。
+
+**5. 按章节复现。** 每个工作流左边的黄色说明节点写着运行前要准备什么；每个镜头的首尾帧、提示词和复制命令也汇总在 [storyboard_dream7.md](docs/storyboard_dream7.md) 和 [storyboard_dream8.md](docs/storyboard_dream8.md)。
+
+| 章节 | 在 ComfyUI 里 | 生成后要做的 | 不想花额度 |
+|---|---|---|---|
+| 2 | 把 `workflows/ch2_single_prompt.json` 拖进画布，在 Load Image 节点点 “choose file to upload” 选 `assets/fictional_track_v1.png`，点 Run | 无 | 看 `media/ch2_single_prompt_*.mp4` |
+| 4 | 打开 `dream7_keyframes_pilot`（先试 K0、K1），再打开 `dream7_keyframes`，点 Run | 选中的图从 `ComfyUI/output/dream7/` 复制到 `ComfyUI/input/`，改名为 `dream7_K0.png` … `dream7_K7.png` | 把 `examples/keyframes/dream7_K*.png` 复制到 `ComfyUI/input/` |
+| 5 | 按 F5 刷新，依次打开 `dream7_shot_01` … `dream7_shot_07`，点 Run | 选中的视频从 `ComfyUI/output/video/dream7/` 复制为 `ComfyUI/output/video/dream7/selected/shot_01.mp4` … | 把 `media/dream7_shot_0X.mp4` 复制为同样的文件名 |
+| 6 | 无 | 运行 `python scripts/stitch_lap.py`，成片在课程目录的 `output/dream_circuit_7shots.mp4` | 同左 |
+| 7 | 打开 `dream8_keyframes`；关键帧放好后刷新，再打开 `dream8_shot_04` … `dream8_shot_06` | K4、K5 放到 `input/dream8_K4.png`、`dream8_K5.png`；视频放到 `output/video/dream8/selected/`；运行 `python scripts/stitch_lap.py --shots lap_8shots.json` | 用 `examples/keyframes/dream8_K*.png` 和 `media/dream8_shot_0X.mp4` |
+
+Load Image 节点被红框圈住、右上角提示 “Media input missing” 或 “errors found”，说明它要读的图片还不在 `ComfyUI/input/`：把图片放进去后按 F5 刷新页面。
+`stitch_lap.py` 还支持 `--en`（英文标题）、`--no-minimap`（去掉小地图）和 `--placeholder`（缺镜头时用占位画面预览）。
+
+### 方式二：本地 notebook
+
+需要本地已经装好 ComfyUI，并用 conda 或 venv 管理它的 Python 环境；两个节点和 H3 key 由 notebook 安装和写入。Windows 便携版的内嵌 Python 不适合装 JupyterLab，建议用方式一或方式三。
+
+**1. 在终端启动 JupyterLab：**
+
+```bash
+conda activate comfyui                 # 换成你运行 ComfyUI 的环境
 cd /path/to/ComfyUI
 git clone https://github.com/wangxunx/dream-circuit-lap.git
 cd dream-circuit-lap
 pip install jupyterlab -r requirements.txt
-jupyter lab notebooks/local.ipynb
+jupyter lab --ServerApp.root_dir=. notebooks/local.ipynb
 ```
 
-ComfyUI 不在上一级目录时，设置环境变量 `COMFYUI_DIR`。
+`--ServerApp.root_dir=.` 不能省：只写文件名时 JupyterLab 以 `notebooks/` 为根目录，notebook 里的视频会 404、无法播放。ComfyUI 不在课程的上一级目录时，启动前设置环境变量 `COMFYUI_DIR`。
 
-### 云端：`notebooks/cloud.ipynb`
+**2. 打开 JupyterLab。** 用浏览器打开终端里打印的 `http://127.0.0.1:8888/lab?token=...`。在远程机器上运行时（例如 Cursor / VS Code 的 Remote SSH），编辑器一般会自动转发这个端口；打不开的话，在 Ports 面板手动添加 8888。
 
-适用于预装 ComfyUI 的 JupyterLab / JupyterHub 实例（默认 `/comfyui_workspace/ComfyUI`，可用 `COMFY_DIR` 修改）。`scripts/start_comfyui_cloud.sh` 以 `--cpu` 在后台启动 ComfyUI，打印访问地址后返回：
+**3. 运行第 0 节。** 从第一格开始，点中一格按 `Shift+Enter`，逐格往下运行。安装节点、配置 key 时，已经装好、配好的会直接跳过；没有 key 时输出区会出现输入框，粘贴 key 后按回车。启动 ComfyUI 那一格要等十几秒。8188 端口已经有 ComfyUI 在运行时，notebook 直接用它；它是在装节点之前启动的话，要先重启。
 
-- AMD Instinct 集群：平台设置了 `ONECLICK_APP_URL`（或 `COMFY_PUBLIC_URL`）时，使用集群自带的反向代理。
-- 其他实例：通过 radeon-tunnel 暴露端口，需要环境变量 `TUNNEL_SERVER` 和 `RADEON_TUNNEL_AUTH`（向讲师索取，notebook 会提示输入）。仓库里不保存这两个值。
+**4. 打开 ComfyUI。** 浏览器打开 http://127.0.0.1:8188，第一次打开会弹出 Templates 模板窗口，点右上角 × 关掉。打不开的话，在 Ports 面板添加 8188：它是 notebook 在后台启动的，编辑器可能不会自动转发。
 
-> **注意：** 拿到公开 URL 的任何人都能用你的 H3 key 提交任务、消耗你的额度。不要分享这个 URL；用完运行 notebook 最后一格停止 ComfyUI 和隧道。
+**5. 运行“准备课程素材”。** 之后在 ComfyUI 里按 `w` 打开左侧的工作流列表，能看到 `ch2_single_prompt`、`dream7_*`、`dream8_*`。没看到就按 F5 刷新。
 
-### H3 key
+**6. 第一遍建议走路线 A。** 一路按 `Shift+Enter` 到底，不花额度，就能看到所有历史视频和两部成片。
 
-到 https://h3.oneclickamd.ai 注册。key 放在环境变量 `H3_GATEWAY_API_KEY`，或 ComfyUI 的 `user/h3_gateway_api_key.txt`（notebook 会帮你写入）。节点没有 key 输入框，key 不会写进工作流或视频元数据。
+**7. 第二遍试路线 B。** 从第 4 章开始，按 notebook 里的说明在 ComfyUI 里点 Run 生成。生成完回到 notebook，在挑选格里填上候选编号并运行，然后按 F5 刷新 ComfyUI，再进入下一步。
 
-## 不用 notebook
+关掉 JupyterLab 后 ComfyUI 仍在后台运行，日志在 ComfyUI 的 `user/comfyui_course.log`；下次打开 notebook 会直接用它。
+
+### 方式三：云端 notebook
+
+适用于预装 ComfyUI 的 JupyterLab / JupyterHub 镜像，ComfyUI 默认在 `/comfyui_workspace/ComfyUI`（不在这里时设置环境变量 `COMFY_DIR`）。ComfyUI 以 `--cpu` 在后台启动，不占用 GPU。
+
+**1. 打开平台提供的 JupyterLab，克隆课程。** 菜单 **File → New → Terminal** 打开终端，运行：
 
 ```bash
-python scripts/fetch_media.py --fonts                         # 课程素材（media/）和中文字体
-python scripts/make_workflows.py --install                    # 第 3–6 章：7 镜头工作流和 docs/storyboard_dream7.md
-python scripts/make_workflows.py --shots lap_8shots.json --install   # 第 7 章：8 镜头
-python scripts/stitch_lap.py                                  # 拼接 7 镜头成片；--en 英文，--no-minimap 去掉小地图，--placeholder 缺镜头时预览
-python scripts/stitch_lap.py --shots lap_8shots.json          # 拼接 8 镜头成片
+git clone https://github.com/wangxunx/dream-circuit-lap.git
 ```
 
-`workflows/ch2_single_prompt.json` 直接拖进 ComfyUI 打开，输入图是 `assets/fictional_track_v1.png`。
+课程要克隆在左侧文件浏览器能看到的目录里（终端默认就在这里），notebook 里的视频才能播放。
+
+**2. 打开 notebook。** 在左侧文件浏览器里依次进入 `dream-circuit-lap/notebooks/`，双击 `cloud.ipynb`。
+
+**3. 运行第 0 节。** 点中一格按 `Shift+Enter`，逐格往下运行。没有 key 时输出区会出现输入框，粘贴 key 后按回车。启动 ComfyUI 那一格按平台自动选择访问方式：
+
+- AMD Instinct 集群：平台设置了 `ONECLICK_APP_URL`（或 `COMFY_PUBLIC_URL`），直接用集群的反向代理。
+- 其他实例：通过 radeon-tunnel 暴露端口，notebook 会提示输入 `TUNNEL_SERVER` 和 `RADEON_TUNNEL_AUTH`（向讲师索取）。仓库里不保存这两个值。
+
+**4. 打开 ComfyUI。** 在浏览器新标签页打开这一格打印的 `ComfyUI URL`，弹出 Templates 模板窗口时点右上角 × 关掉。
+
+> **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务、消耗你的额度。不要把它发到群里或贴在公开的地方。
+
+**5–7. 和方式二相同：** 运行“准备课程素材”后在 ComfyUI 里按 `w` 找到工作流；第一遍走路线 A，第二遍走路线 B。
+
+**8. 用完运行 notebook 最后一格**，停止 ComfyUI 和隧道，公开 URL 随之失效。
 
 ## 目录
 
