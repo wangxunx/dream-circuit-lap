@@ -1,4 +1,4 @@
-"""Course paths, the ComfyUI install the workflows run in, and the CJK font used for every label.
+"""Project paths, the ComfyUI install the workflows run in, and the CJK font used for every label.
 
 Adapted from f1_circuit (https://github.com/wangxunx/f1_circuit, commit 42b74ae) scripts/common.py.
 """
@@ -17,7 +17,7 @@ MEDIA = os.path.join(PROJECT, "media")
 OUTPUT = os.path.join(PROJECT, "output")
 
 # keyframes are read from <ComfyUI>/input and generated clips from <ComfyUI>/output/video;
-# defaults to the directory this course was cloned into
+# defaults to the directory this project was cloned into
 COMFYUI = os.path.abspath(sys.argv[sys.argv.index("--comfyui") + 1] if "--comfyui" in sys.argv
                           else os.environ.get("COMFYUI_DIR", os.path.dirname(PROJECT)))
 

@@ -1,4 +1,4 @@
-"""Download the course media (historical clips) and, if no CJK font is installed, the Noto Sans SC fonts.
+"""Download the bundled media (historical clips) and, if no CJK font is installed, the Noto Sans SC fonts.
 
     python scripts/fetch_media.py            # every file in media/manifest.json, into media/
     python scripts/fetch_media.py --fonts    # also NotoSansSC-Regular/Bold.otf into fonts/, unless a CJK font is found

@@ -9,7 +9,7 @@
 #   - otherwise radeon-tunnel, which needs TUNNEL_SERVER and RADEON_TUNNEL_AUTH from the platform or your environment.
 #   COMFY_HARDWARE=instinct|radeon forces one of the two.
 #
-# The course only uses cloud nodes (Qwen Image 2.1 and MiniMax H3), so ComfyUI runs with --cpu by default.
+# This project only uses cloud nodes (Qwen Image 2.1 and MiniMax H3), so ComfyUI runs with --cpu by default.
 # Anyone with the public URL can queue jobs on your H3 key: do not share it.
 #
 # Adapted from https://github.com/Vivicai1005/notebook (comfyui_ltx_notebook/start_comfyui_with_tunnel.sh).
@@ -80,7 +80,7 @@ esac
 
 if [[ "${MODE}" == radeon && ( -z "${TUNNEL_SERVER:-}" || -z "${RADEON_TUNNEL_AUTH:-}" ) ]]; then
   echo "[error] radeon-tunnel needs TUNNEL_SERVER and RADEON_TUNNEL_AUTH."
-  echo "        Get both from the workshop organiser and set them before running this script, e.g. in a notebook cell:"
+  echo "        Get both from your platform provider and set them before running this script, e.g. in a notebook cell:"
   echo "        os.environ['TUNNEL_SERVER'] = 'http://<server>:<port>'; os.environ['RADEON_TUNNEL_AUTH'] = '<token>'"
   exit 1
 fi

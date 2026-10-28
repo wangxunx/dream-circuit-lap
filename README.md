@@ -4,9 +4,9 @@
 
 You have a top-down map of a race track you designed. How do you turn it into an onboard video that drives one full lap?
 
-This course starts with the most direct approach (a single prompt), then introduces storyboarding, keyframes and shot-by-shot generation, stitches a one-minute film with sector titles and a minimap, and finally uses the storyboard to fix the hardest part, the T7–T8 chicane. Everything is generated in ComfyUI: keyframes with Qwen Image 2.1 and shots with MiniMax H3 first-last-frame video. Both run in the cloud, so no local GPU is needed.
+This project starts with the most direct approach (a single prompt), then introduces storyboarding, keyframes and shot-by-shot generation, stitches a one-minute film with sector titles and a minimap, and finally uses the storyboard to fix the hardest part, the T7–T8 chicane. Everything is generated in ComfyUI: keyframes with Qwen Image 2.1 and shots with MiniMax H3 first-last-frame video. Both run in the cloud, so no local GPU is needed.
 
-The material comes from the real iterations of the [f1_circuit](https://github.com/wangxunx/f1_circuit) project. Every step ships with the results generated at the time, so you can follow the whole course without spending credits.
+The material comes from the real iterations of the [f1_circuit](https://github.com/wangxunx/f1_circuit) project. Every step ships with the results generated at the time, so you can follow every step without spending credits.
 
 The notebooks and lecture outlines are in Chinese.
 
@@ -21,7 +21,7 @@ The notebooks and lecture outlines are in Chinese.
 | 5 | Shots: first-last-frame video, one shot at a time | [ch5_shots](docs/ch5_shots.md) | up to 14 videos (optional) |
 | 6 | Stitch the film and find the problems | [ch6_problems](docs/ch6_problems.md) | none |
 | 7 | Fix the T7–T8 chicane with the storyboard | [ch7_chicane](docs/ch7_chicane.md) | 6 images + 6 videos (optional) |
-| 8 | Wrap-up and homework | [ch8_wrapup](docs/ch8_wrapup.md) | as needed |
+| 8 | Wrap-up and exercise | [ch8_wrapup](docs/ch8_wrapup.md) | as needed |
 
 ## Running
 
@@ -35,7 +35,7 @@ Pick one of three ways:
 
 All three need an H3 key: register at https://h3.oneclickamd.ai. Put it in ComfyUI's `user/h3_gateway_api_key.txt` (both notebooks prompt for it and write the file) or in `H3_GATEWAY_API_KEY`. The nodes have no key input, so the key never ends up in workflows or video metadata.
 
-The two notebooks share the same chapter cells. Every step that costs credits can use the course media instead (route A), or you generate in ComfyUI and pick your takes back in the notebook (route B).
+The two notebooks share the same chapter cells. Every step that costs credits can use the bundled media instead (route A), or you generate in ComfyUI and pick your takes back in the notebook (route B).
 
 ### 1. ComfyUI only
 
@@ -50,14 +50,14 @@ Use the Python environment that runs ComfyUI for `python` and `pip`. With the Wi
    ```
 
 2. Create `ComfyUI/user/h3_gateway_api_key.txt` containing only your key.
-3. Clone the course inside the ComfyUI directory and install the workflows:
+3. Clone this repository inside the ComfyUI directory and install the workflows:
 
    ```bash
    cd ComfyUI
    git clone https://github.com/wangxunx/dream-circuit-lap.git
    cd dream-circuit-lap
    pip install -r requirements.txt
-   python scripts/fetch_media.py --fonts                               # course media (media/, about 72 MB) and a CJK font
+   python scripts/fetch_media.py --fonts                               # bundled media (media/, about 72 MB) and a CJK font
    python scripts/make_workflows.py --install                          # chapters 4-6, 7 shots
    python scripts/make_workflows.py --shots lap_8shots.json --install  # chapter 7, 8 shots
    ```
@@ -67,8 +67,8 @@ Use the Python environment that runs ComfyUI for `python` and `pip`. With the Wi
    - **Ch. 2**: drag `workflows/ch2_single_prompt.json` onto the canvas, upload `assets/fictional_track_v1.png` in the Load Image node, press Run. The historical takes are `media/ch2_single_prompt_*.mp4`.
    - **Ch. 4**: run `dream7_keyframes_pilot` (K0, K1), then `dream7_keyframes`. Copy your picks from `ComfyUI/output/dream7/` to `ComfyUI/input/dream7_K0.png` … `dream7_K7.png`, or copy `examples/keyframes/dream7_K*.png` there.
    - **Ch. 5**: press F5, run `dream7_shot_01` … `dream7_shot_07`. Copy your picks from `ComfyUI/output/video/dream7/` to `ComfyUI/output/video/dream7/selected/shot_01.mp4` …, or copy `media/dream7_shot_0X.mp4` there.
-   - **Ch. 6**: `python scripts/stitch_lap.py` writes `output/dream_circuit_7shots.mp4` in the course directory. Options: `--en`, `--no-minimap`, `--placeholder`.
-   - **Ch. 7**: run `dream8_keyframes`, put K4 and K5 at `input/dream8_K4.png` and `dream8_K5.png`, press F5, run `dream8_shot_04` … `dream8_shot_06` and put the picks in `output/video/dream8/selected/`. The course versions are `examples/keyframes/dream8_K*.png` and `media/dream8_shot_0X.mp4`. Then `python scripts/stitch_lap.py --shots lap_8shots.json`.
+   - **Ch. 6**: `python scripts/stitch_lap.py` writes `output/dream_circuit_7shots.mp4` in this repository. Options: `--en`, `--no-minimap`, `--placeholder`.
+   - **Ch. 7**: run `dream8_keyframes`, put K4 and K5 at `input/dream8_K4.png` and `dream8_K5.png`, press F5, run `dream8_shot_04` … `dream8_shot_06` and put the picks in `output/video/dream8/selected/`. The bundled versions are `examples/keyframes/dream8_K*.png` and `media/dream8_shot_0X.mp4`. Then `python scripts/stitch_lap.py --shots lap_8shots.json`.
 
    A Load Image node outlined in red with a "Media input missing" or "errors found" toast means its image is not in `ComfyUI/input/` yet; add it and press F5.
 
@@ -91,11 +91,11 @@ Needs a local ComfyUI in a conda or venv environment; the notebook installs the 
 2. Open the `http://127.0.0.1:8888/lab?token=...` URL printed in the terminal. On a remote machine (e.g. Cursor or VS Code Remote SSH), forward port 8888 in the Ports panel if it is not forwarded automatically.
 3. Run section 0 cell by cell with `Shift+Enter`. Finished steps are skipped; paste the key into the input box when asked. Starting ComfyUI takes a few seconds. An existing ComfyUI on port 8188 is reused; restart it if it was started before the nodes were installed.
 4. Open http://127.0.0.1:8188 (forward port 8188 if needed) and close the Templates dialog shown on first launch.
-5. Run "准备课程素材" (prepare course media), then press `w` in ComfyUI for the `ch2_single_prompt`, `dream7_*` and `dream8_*` workflows; press F5 if they are missing.
+5. Run "准备素材" (prepare media), then press `w` in ComfyUI for the `ch2_single_prompt`, `dream7_*` and `dream8_*` workflows; press F5 if they are missing.
 6. First pass, route A: keep pressing `Shift+Enter` to the end. No credits are spent and you see all historical clips and both films.
 7. Second pass, route B: from chapter 4, generate in ComfyUI as the notebook describes, fill in your take numbers in the picker cells, run them, press F5 in ComfyUI and continue.
 
-ComfyUI keeps running in the background after JupyterLab is closed (log in ComfyUI's `user/comfyui_course.log`) and is reused next time.
+ComfyUI keeps running in the background after JupyterLab is closed (log in ComfyUI's `user/comfyui_dream_circuit.log`) and is reused next time.
 
 ### 3. Cloud notebook
 
@@ -103,7 +103,7 @@ For JupyterLab/JupyterHub images with ComfyUI at `/comfyui_workspace/ComfyUI` (o
 
 1. In the platform's JupyterLab, open **File → New → Terminal** and run `git clone https://github.com/wangxunx/dream-circuit-lap.git`. Clone it where the file browser can see it (the terminal starts there) so the videos play.
 2. Open `dream-circuit-lap/notebooks/cloud.ipynb` from the file browser.
-3. Run section 0 cell by cell with `Shift+Enter`, pasting the key when asked. The launch cell picks the route automatically: the AMD Instinct cluster proxy when `ONECLICK_APP_URL` or `COMFY_PUBLIC_URL` is set, otherwise radeon-tunnel, which prompts for `TUNNEL_SERVER` and `RADEON_TUNNEL_AUTH` from your workshop organiser. Neither value is stored in this repository.
+3. Run section 0 cell by cell with `Shift+Enter`, pasting the key when asked. The launch cell picks the route automatically: the AMD Instinct cluster proxy when `ONECLICK_APP_URL` or `COMFY_PUBLIC_URL` is set, otherwise radeon-tunnel, which prompts for `TUNNEL_SERVER` and `RADEON_TUNNEL_AUTH` from your platform provider. Neither value is stored in this repository.
 4. Open the printed `ComfyUI URL` in a new tab and close the Templates dialog if it appears.
 
    > Anyone with this URL can queue jobs on your H3 key. Do not share it.

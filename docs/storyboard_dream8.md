@@ -3,7 +3,7 @@
 8 个镜头，一圈约 54 秒；加上片头、片尾和接缝处的交叉淡化，成片约 58 秒。
 本文件由 `scripts/make_workflows.py` 根据 `storyboards/lap_8shots.json` 生成。要改提示词或时长，请改 `lap_8shots.json` 后重新运行脚本，不要直接改本文件。
 
-下文的 `input/`、`output/`、`user/` 都指 ComfyUI 目录下的文件夹；`scripts/`、`workflows/`、`examples/` 指本课程目录下的文件夹。
+下文的 `input/`、`output/`、`user/` 都指 ComfyUI 目录下的文件夹；`scripts/`、`workflows/`、`examples/` 指本项目目录下的文件夹。
 
 ## 整体流程
 
@@ -53,7 +53,7 @@ cp output/dream8/K4_t1_00001_.png input/dream8_K4.png   # 把 t1 换成你选的
 cp output/dream8/K5_t1_00001_.png input/dream8_K5.png   # 把 t1 换成你选的候选
 ```
 
-想跳过这一步、直接试视频的话，可以把课程自带的关键帧复制进去：`cp examples/keyframes/dream8_*.png /path/to/ComfyUI/input/`。
+想跳过这一步、直接试视频的话，可以把项目自带的关键帧复制进去：`cp examples/keyframes/dream8_*.png /path/to/ComfyUI/input/`。
 
 ## 第 2 步：逐段生成视频
 
@@ -68,14 +68,14 @@ cp output/dream8/K5_t1_00001_.png input/dream8_K5.png   # 把 t1 换成你选的
 
 ## 第 4 步：拼接成片
 
-在课程目录下运行（ComfyUI 不在上一级目录时，加 `--comfyui /path/to/ComfyUI` 或设置 `COMFYUI_DIR`）：
+在本项目目录下运行（ComfyUI 不在上一级目录时，加 `--comfyui /path/to/ComfyUI` 或设置 `COMFYUI_DIR`）：
 
 ```bash
 python scripts/stitch_lap.py --shots lap_8shots.json        # 中文版
 python scripts/stitch_lap.py --shots lap_8shots.json --en   # 英文版
 ```
 
-脚本读取 ComfyUI 的 `output/video/dream8/selected/shot_0X.mp4`；某个镜头没有 selected 文件时，会用 `output/video/dream8/` 里该镜头最新的一条。复用的镜头直接读取分镜文件里 `clip` 指定的视频。成片写到课程目录的 `output/dream_circuit_8shots.mp4`，英文版是 `output/dream_circuit_8shots_en.mp4`。
+脚本读取 ComfyUI 的 `output/video/dream8/selected/shot_0X.mp4`；某个镜头没有 selected 文件时，会用 `output/video/dream8/` 里该镜头最新的一条。复用的镜头直接读取分镜文件里 `clip` 指定的视频。成片写到本项目目录的 `output/dream_circuit_8shots.mp4`，英文版是 `output/dream_circuit_8shots_en.mp4`。
 
 还没生成任何视频时，可以加 `--placeholder` 先预览节奏、标题和小地图：缺失的镜头会用关键帧（如果有）或占位画面代替。
 

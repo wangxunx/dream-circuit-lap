@@ -176,7 +176,7 @@ def storyboard_md(path):
         f"{len(shots)} 个镜头，一圈约 {total:.0f} 秒；加上片头、片尾和接缝处的交叉淡化，成片约 {film:.0f} 秒。",
         f"本文件由 `scripts/make_workflows.py` 根据 `storyboards/{SHOTS_FILE}` 生成。要改提示词或时长，请改 `{SHOTS_FILE}` 后重新运行脚本，不要直接改本文件。",
         "",
-        "下文的 `input/`、`output/`、`user/` 都指 ComfyUI 目录下的文件夹；`scripts/`、`workflows/`、`examples/` 指本课程目录下的文件夹。",
+        "下文的 `input/`、`output/`、`user/` 都指 ComfyUI 目录下的文件夹；`scripts/`、`workflows/`、`examples/` 指本项目目录下的文件夹。",
         "",
         "## 整体流程",
         "",
@@ -236,7 +236,7 @@ def storyboard_md(path):
     L += [
         "```",
         "",
-        f"想跳过这一步、直接试视频的话，可以把课程自带的关键帧复制进去：`cp examples/keyframes/{N}_*.png /path/to/ComfyUI/input/`。",
+        f"想跳过这一步、直接试视频的话，可以把项目自带的关键帧复制进去：`cp examples/keyframes/{N}_*.png /path/to/ComfyUI/input/`。",
         "",
         f"## 第 {next(step)} 步：逐段生成视频",
         "",
@@ -252,7 +252,7 @@ def storyboard_md(path):
         "",
         f"## 第 {next(step)} 步：拼接成片",
         "",
-        "在课程目录下运行（ComfyUI 不在上一级目录时，加 `--comfyui /path/to/ComfyUI` 或设置 `COMFYUI_DIR`）：",
+        "在本项目目录下运行（ComfyUI 不在上一级目录时，加 `--comfyui /path/to/ComfyUI` 或设置 `COMFYUI_DIR`）：",
         "",
         "```bash",
         f"python scripts/stitch_lap.py{shots_arg}        # 中文版",
@@ -261,7 +261,7 @@ def storyboard_md(path):
         "",
         f"脚本读取 ComfyUI 的 `output/video/{N}/selected/shot_0X.mp4`；某个镜头没有 selected 文件时，会用 `output/video/{N}/` 里该镜头最新的一条。"
         + ("复用的镜头直接读取分镜文件里 `clip` 指定的视频。" if reused else "")
-        + f"成片写到课程目录的 `output/{SB['output']}.mp4`，英文版是 `output/{SB['output']}_en.mp4`。",
+        + f"成片写到本项目目录的 `output/{SB['output']}.mp4`，英文版是 `output/{SB['output']}_en.mp4`。",
         "",
         "还没生成任何视频时，可以加 `--placeholder` 先预览节奏、标题和小地图：缺失的镜头会用关键帧（如果有）或占位画面代替。",
         "",
