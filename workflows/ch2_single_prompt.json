@@ -1,0 +1,289 @@
+{
+  "id": "aa84a982-626e-4e82-9cee-d9605bd0995b",
+  "revision": 0,
+  "last_node_id": 4,
+  "last_link_id": 2,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [
+        -1660,
+        220
+      ],
+      "size": [
+        340,
+        340
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "image",
+          "name": "image",
+          "type": "COMBO",
+          "widget": {
+            "name": "image"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "choose file to upload",
+          "name": "upload",
+          "type": "IMAGEUPLOAD",
+          "widget": {
+            "name": "upload"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            1
+          ]
+        },
+        {
+          "localized_name": "MASK",
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "fictional_track_v1.png",
+        "image"
+      ],
+      "widgets_values_named": {
+        "image": "Qwen_image_2.1_00005.png",
+        "upload": "image"
+      }
+    },
+    {
+      "id": 2,
+      "type": "AMDMiniMaxH3FirstLastFrameToVideo",
+      "pos": [
+        -1280,
+        220
+      ],
+      "size": [
+        400,
+        260
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "first_frame",
+          "name": "first_frame",
+          "type": "IMAGE",
+          "link": 1
+        },
+        {
+          "localized_name": "last_frame",
+          "name": "last_frame",
+          "shape": 7,
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "localized_name": "prompt",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "resolution",
+          "name": "resolution",
+          "type": "COMBO",
+          "widget": {
+            "name": "resolution"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "duration",
+          "name": "duration",
+          "type": "INT",
+          "widget": {
+            "name": "duration"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "VIDEO",
+          "name": "VIDEO",
+          "type": "VIDEO",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "AMDMiniMaxH3FirstLastFrameToVideo"
+      },
+      "widgets_values": [
+        "输入图片是一条从上方俯视的、首尾相连的虚构赛道，起始点位于图片中主看台附近，起点朝右是一段直道。下面的顺序作为对视频顺序的引导：\n\n从起终点线开始，逆时针行驶，沿赛道依次排列以下7个赛道元素：\n \n1. 起终点直道：一条较长的直道。赛车从这里开始一圈，并可以拉到高速。\n \n2. 重刹弯：直道尽头加一个急弯，迫使车手快速减速。这里应看起来适合一辆车尝试超越另一辆。\n \n3. 爬坡弯组：加两到三个相互衔接、向上爬升的弯。弯与弯要连成一气，车手必须带着速度通过。\n \n4. 高速大半径弯段：加一段宽阔的高速弯，并改变方向。这段应当感觉顺滑，而不是一个急弯。\n \n5. 短直道与减速弯（chicane）：高速段之后，加一段短直道，接入一组紧凑的左-右或右-左组合。（减速弯是快速变向，形状类似 S。）它让这一圈出现一段更慢、更偏技术的时刻。 \n \n6. 下坡弯：赛道下坡进入一个中速弯。这样有海拔变化，整条赛道不会显得太平。\n \n7. 最后赛段：加一小段相互衔接的弯，回到起终点直道。版本 1 里这一段相对流畅：一个中速弯，再接最后一个弯进入主直道。\n\n请生成一段动画，以车手第一人称视角，从起始点开始展示整条赛道，切记行驶方向为逆时针，视频画面的行进方向需要和输入图片中的赛道方向和途径点顺序一致，依次经过1、2、3、4、5、6、7的赛道元素。在第一人称视角中，请注意保持路况、道路两侧环境（砂石、草地、树林等）和俯视图中一致，各种转弯效果也与前面所提的1-7这七个弯道描述情况保持一致，这才具有真实性。配音请使用中文",
+        "768P",
+        "15"
+      ],
+      "widgets_values_named": {
+        "prompt": "输入图片是一条从上方俯视的、首尾相连的虚构赛道。下面的顺序只作引导：从起终点线开始，逆时针行驶，沿赛道依次排列。 \n \n1. 起终点直道：一条较长的直道。赛车从这里开始一圈，并可以拉到高速。\n \n2. 重刹弯：直道尽头加一个急弯，迫使车手快速减速。这里应看起来适合一辆车尝试超越另一辆。\n \n3. 爬坡弯组：加两到三个相互衔接、向上爬升的弯。弯与弯要连成一气，车手必须带着速度通过。\n \n4. 高速大半径弯段：加一段宽阔的高速弯，并改变方向。这段应当感觉顺滑，而不是一个急弯。\n \n5. 短直道与减速弯（chicane）：高速段之后，加一段短直道，接入一组紧凑的左-右或右-左组合。（减速弯是快速变向，形状类似 S。）它让这一圈出现一段更慢、更偏技术的时刻。 \n \n6. 下坡弯：赛道下坡进入一个中速弯。这样有海拔变化，整条赛道不会显得太平。\n \n7. 最后赛段：加一小段相互衔接的弯，回到起终点直道。版本 1 里这一段相对流畅：一个中速弯，再接最后一个弯进入主直道。\n\n请生成一段动画，以车手第一人称视角展示整条赛道，行驶方向为逆时针，依次经过1、2、3、4、5、6、7的赛道元素。在第一人称视角中，请注意保持路况、道路两侧环境（砂石、草地、树林等）和俯视图中一致，各种转弯效果也与前面所提的1-7这七个弯道描述情况保持一致，这才具有真实性。",
+        "resolution": "768P",
+        "duration": 15
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 3,
+      "type": "SaveVideo",
+      "pos": [
+        -840,
+        220
+      ],
+      "size": [
+        540,
+        530
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "VIDEO",
+          "link": 2
+        },
+        {
+          "localized_name": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "format",
+          "name": "format",
+          "type": "COMFY_DYNAMICCOMBO_V3",
+          "widget": {
+            "name": "format"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "codec",
+          "name": "format.codec",
+          "type": "COMFY_DYNAMICCOMBO_V3",
+          "widget": {
+            "name": "format.codec"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "codec",
+          "name": "codec",
+          "shape": 7,
+          "type": "COMFY_DYNAMICCOMBO_V3",
+          "widget": {
+            "name": "codec"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "video",
+          "name": "video",
+          "type": "VIDEO",
+          "links": null
+        }
+      ],
+      "properties": {},
+      "widgets_values": [
+        "video/ch2_single_prompt",
+        "auto",
+        "auto",
+        "auto"
+      ],
+      "widgets_values_named": {
+        "filename_prefix": "video/AMD_MiniMax_H3_i2v",
+        "format": "auto",
+        "format.codec": "auto",
+        "codec": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "MarkdownNote",
+      "pos": [
+        -2130,
+        220
+      ],
+      "size": [
+        440,
+        340
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "## 第 2 章：一个提示词跑完一圈\n\n把 `fictional_track_v1.png` 放进 ComfyUI 的 `input/`（notebook 已经帮你放好），点 **Run**。\n\n- 输入图是赛道俯视图，H3 把它当作视频第一帧。\n- 提示词按逆时针顺序描述 7 个赛道元素，要求第一人称跑完一圈。\n- H3 单次最长 15 秒，5.1 km 的一圈按真实速度要 80 秒以上。\n\n每次运行消耗一次 H3 视频额度。先看 `media/ch2_single_prompt_*.mp4` 里的 9 次历史结果，再决定要不要自己跑。\n\nKey 的配置方法见课程 README：环境变量 `H3_GATEWAY_API_KEY`，或 ComfyUI 用户目录下的 `h3_gateway_api_key.txt`。"
+      ],
+      "widgets_values_named": {
+        "text": "## AMD MiniMax H3 Image to Video\n\nRequires an account key. Register at https://h3.oneclickamd.ai, then configure it either way below. **One-time setup per machine** — it applies to every workflow:\n\n- Environment variable `H3_GATEWAY_API_KEY`\n- Or save the key to `h3_gateway_api_key.txt` in the ComfyUI user directory\n\nIf the key is missing, the node fails immediately and tells you the registration URL and the exact file path, so you never sit through a silent 401.\n\n**Your key is not in this workflow.** The node has no `api_key` widget, so the key is never written into the workflow JSON or embedded into exported video metadata. This workflow is safe to share.\n\nIf you run your own gateway, override the default address with `H3_GATEWAY_BASE_URL`.\n\n**Parameters:** the loaded image becomes the first frame and the video keeps that image's aspect ratio, so there is no `ratio` widget. `resolution` 768P; `duration` 4-15 seconds. A prompt is required — describe how the image should move.\n\nTo pin the final frame as well, open the **First-Last-Frame to Video** template instead."
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "IMAGE"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      0,
+      "VIDEO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75974918918919,
+      "offset": [
+        1824.958876113898,
+        -19.726702614071797
+      ]
+    }
+  },
+  "version": 0.4
+}

@@ -1,0 +1,213 @@
+{
+  "title": "梦幻赛道 · 第一人称一圈（8 个镜头）",
+  "title_en": "Dream Circuit · Onboard Lap (8 shots)",
+  "name": "dream8",
+  "output": "dream_circuit_8shots",
+  "track_path": "track_path_8shots.json",
+  "minimap": "minimap.png",
+  "style": "Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
+  "video_rules": "Single continuous take from the same onboard camera, no cuts, no camera switch, the car always moves forward and never reverses, no on-screen text, no watermark.",
+  "keyframe": {
+    "aspect_ratio": "16:9",
+    "steps": 30,
+    "takes": 3
+  },
+  "video": {
+    "resolution": "768P",
+    "takes": 2
+  },
+  "edit": {
+    "crossfade": 0.3,
+    "intro_seconds": 4.0,
+    "outro_seconds": 3.0
+  },
+  "keyframes": [
+    {
+      "id": "K0",
+      "label": "起点：停在起终点线上",
+      "file": "dream7_K0.png",
+      "scene": "The car is stationary on the starting grid, sitting exactly on the chequered start/finish line painted across a long, wide straight. A start light gantry with five red lights spans the track overhead ahead. On the right side a large covered grandstand packed with spectators and a pit building with a pit wall. A red race car waits on the grid a few metres ahead, slightly to the right. The straight runs far ahead to the vanishing point, slightly downhill."
+    },
+    {
+      "id": "K1",
+      "label": "直道尽头：刹车点前",
+      "file": "dream7_K1.png",
+      "scene": "Travelling at about 320 km/h at the far end of a long straight, strong motion blur on the verges. Three white braking marker boards stand on the right verge. Just ahead the track turns sharply LEFT into a tight hairpin with a red-and-white kerb on the inside left. The red race car is directly ahead, slightly to the right, a few car lengths away."
+    },
+    {
+      "id": "K2",
+      "label": "出 T2：前方开始爬坡",
+      "file": "dream7_K2.png",
+      "scene": "Accelerating out of a corner; the red car is no longer in view. The road ahead starts to climb a steep green hillside and snakes LEFT, then RIGHT, then LEFT up the slope, with red-and-white kerbs on each apex. The horizon is high in the frame because of the climb."
+    },
+    {
+      "id": "K3",
+      "label": "T5 坡顶：前方大半径左弯",
+      "file": "dream7_K3.png",
+      "scene": "At high speed right on the crest of a hill; the road levels out on high ground and opens into a wide, long LEFT-hand sweeping curve. Big sky, panoramic view over a green valley on the right side, distant hills on the horizon."
+    },
+    {
+      "id": "K4",
+      "label": "短直道尽头：T7 右弯刹车点",
+      "scene": "On a short, dead-straight, level straight on high ground, at the braking point about one hundred metres before a tight corner. The road runs straight ahead and then turns sharply to the RIGHT: at the far end the left-hand white edge line and a blue barrier wall sweep across the view from left to right, and a red-and-white kerb marks the inside of the corner on the right-hand side. After that corner the track disappears out of sight to the right; no left-hand bend is visible anywhere ahead. Open sky, hills in the distance."
+    },
+    {
+      "id": "K5",
+      "label": "出 T7：前方 T8 急左弯",
+      "scene": "At low speed on high ground, the car points straight down a very short straight. Only about forty metres ahead the road turns sharply to the LEFT: at the far end the right-hand white edge line and a blue barrier wall sweep across the view from right to left, and a tall red-and-white kerb marks the inside of the corner on the left-hand side. Beyond that corner the ground falls away out of sight. Both road edges between the car and the corner are straight; no right-hand bend is visible anywhere ahead. Open sky, hills in the distance."
+    },
+    {
+      "id": "K6",
+      "label": "出减速弯：前方长下坡",
+      "file": "dream7_K5.png",
+      "scene": "Just after a tight chicane, the track drops away ahead into a long straight that descends diagonally down the hillside. The valley and distant hills lie below, the horizon sits low in the frame. Far down at the bottom of the slope the road bends LEFT."
+    },
+    {
+      "id": "K7",
+      "label": "出 T9：前方中速右弯",
+      "file": "dream7_K6.png",
+      "scene": "On flat ground at the bottom of a hill, just after a left-hand corner, on a short straight. Ahead a medium-speed RIGHT-hand bend with a red-and-white kerb on the right side, then the road continues out of sight. Trees and grass on both sides."
+    },
+    {
+      "id": "K8",
+      "label": "终点：冲过起终点线",
+      "file": "dream7_K7.png",
+      "scene": "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges."
+    }
+  ],
+  "shots": [
+    {
+      "id": 1,
+      "color": "#1f4e79",
+      "title": "起终点直道",
+      "first": "K0",
+      "last": "K1",
+      "duration": 8,
+      "turns": "无弯，全圈最长直道",
+      "elevation": "12 m → 9 m，略下坡",
+      "speed": "0 → 约 320 km/h",
+      "title_en": "Start/Finish Straight",
+      "turns_en": "No corners · the longest straight of the lap",
+      "elevation_en": "12 → 9 m, slightly downhill",
+      "speed_en": "0 → ~320 km/h",
+      "motion": "The start lights go out and the car launches from the grid, accelerating hard down the long, slightly downhill straight. It tucks into the slipstream of the red car ahead and edges slightly left out of the tow as the speed builds to about 320 km/h. The grandstand on the right streaks past and the braking boards rush towards the camera at the end of the straight.",
+      "clip": "output/video/dream7/selected/shot_01.mp4"
+    },
+    {
+      "id": 2,
+      "color": "#c0392b",
+      "title": "重刹弯 T1–T2",
+      "first": "K1",
+      "last": "K2",
+      "duration": 6,
+      "turns": "T1 左 105° 发夹弯 · T2 右侧小弯",
+      "elevation": "9 m → 13 m，T1 处为全圈最低点 8 m",
+      "speed": "约 320 → 85 km/h",
+      "title_en": "Heavy Braking T1–T2",
+      "turns_en": "T1 left 105° hairpin · T2 short right",
+      "elevation_en": "9 → 13 m, lowest point 8 m at T1",
+      "speed_en": "~320 → 85 km/h",
+      "motion": "Very late, very heavy braking from top speed: the nose dips hard and the car dives down the inside, to the LEFT of the red car, and overtakes it under braking. The road turns sharply LEFT through a tight hairpin, then a quick short flick to the RIGHT, and the car accelerates away as the road begins to rise.",
+      "clip": "output/video/dream7/selected/shot_02.mp4"
+    },
+    {
+      "id": 3,
+      "color": "#7d3c98",
+      "title": "爬坡弯组 T3–T5",
+      "first": "K2",
+      "last": "K3",
+      "duration": 8,
+      "turns": "T3 左 · T4 右 · T5 左（坡顶）",
+      "elevation": "13 m → 33 m，从 T1 谷底算起爬升约 24 m",
+      "speed": "带速通过，约 200–250 km/h",
+      "title_en": "Climbing Turns T3–T5",
+      "turns_en": "T3 left · T4 right · T5 left (crest)",
+      "elevation_en": "13 → 33 m, climbing ~24 m",
+      "speed_en": "carrying speed, ~200–250 km/h",
+      "motion": "Climbing the steep hill at speed through linked bends: a LEFT, then a RIGHT, then a LEFT, flowing one into the next without lifting off. Compression at the bottom of the climb, the horizon tilting with each change of direction, and the car goes light over the blind crest at the top as the sky fills the upper frame.",
+      "clip": "output/video/dream7/selected/shot_03.mp4"
+    },
+    {
+      "id": 4,
+      "color": "#d35400",
+      "title": "高速弯 T6 与短直道",
+      "first": "K3",
+      "last": "K4",
+      "duration": 7,
+      "turns": "T6 左 约 100° 长弯，接约 300 m 短直道",
+      "elevation": "33 m → 42 m，全圈最高点",
+      "speed": "近乎全油门，约 260 → 300 km/h",
+      "title_en": "Fast Sweeper T6 + Straight",
+      "turns_en": "T6 left ~100° sweeper, then ~300 m straight",
+      "elevation_en": "33 → 42 m, highest point",
+      "speed_en": "near flat out, ~260 → 300 km/h",
+      "motion": "Flat out through a long, wide, smooth LEFT-hand sweeping curve on the highest part of the circuit. The car holds one constant arc and the scenery sweeps steadily from left to right across the frame, with a panoramic valley view on the right. Calm, fast and smooth, no sharp steering. Over the last few seconds the curve straightens onto a short, dead-straight straight and the car runs flat out towards a sharp RIGHT-hand corner at its end."
+    },
+    {
+      "id": 5,
+      "color": "#148f77",
+      "title": "减速弯 T7（右）",
+      "first": "K4",
+      "last": "K5",
+      "duration": 5,
+      "turns": "T7 右 约 70°，减速弯前半",
+      "elevation": "42 m → 41 m",
+      "speed": "约 300 → 95 km/h",
+      "title_en": "Chicane T7 (right)",
+      "turns_en": "T7 right ~70°, first half of the chicane",
+      "elevation_en": "42 → 41 m",
+      "speed_en": "~300 → 95 km/h",
+      "motion": "Hard braking at the end of the short straight, the nose dipping hard as the speed falls from about 300 to 95 km/h; the road stays straight while braking, with no left turn before the corner. Then the driver turns the steering wheel hard to the RIGHT and the car turns sharply RIGHT through a tight corner of about seventy degrees, clipping the red-and-white kerb on the inside right. The view rotates far to the right and the whole scenery swings steadily to the left across the frame, so that the road the car was on disappears off the left edge. The shot ends just out of this right-hander, with a tight left-hand corner close ahead. Only one turn in this shot, and it is to the RIGHT."
+    },
+    {
+      "id": 6,
+      "color": "#0e6655",
+      "title": "减速弯 T8（左）",
+      "first": "K5",
+      "last": "K6",
+      "duration": 5,
+      "turns": "T8 左 约 90°，减速弯后半",
+      "elevation": "41 m → 40 m",
+      "speed": "约 95 → 120 km/h，全圈最慢的一段",
+      "title_en": "Chicane T8 (left)",
+      "turns_en": "T8 left ~90°, second half of the chicane",
+      "elevation_en": "41 → 40 m",
+      "speed_en": "~95 → 120 km/h, slowest part of the lap",
+      "motion": "At low speed, just out of a right-hand corner, the car turns sharply LEFT through a tight corner of almost ninety degrees, bouncing over the tall red-and-white kerb on the inside left, the view rotating to the left and the scenery swinging to the right across the frame. The exit of this left-hander is right on the crest of the hill: as the car turns, the long downhill straight swings into view from the left, and as the driver unwinds the steering the road ahead becomes one dead-straight line dropping steeply down the hillside, with the valley opening up below. After the left turn there are no more corners and no right-hand bend; the car simply accelerates straight down the hill, the view tilting smoothly downwards as it goes over the crest."
+    },
+    {
+      "id": 7,
+      "color": "#34495e",
+      "title": "下坡弯 T9",
+      "first": "K6",
+      "last": "K7",
+      "duration": 7,
+      "turns": "T9 左，中速",
+      "elevation": "40 m → 17 m，下降约 25 m",
+      "speed": "约 260 → 150 km/h",
+      "title_en": "Downhill Turn T9",
+      "turns_en": "T9 left, medium speed",
+      "elevation_en": "40 → 17 m, dropping ~25 m",
+      "speed_en": "~260 → 150 km/h",
+      "motion": "Accelerating down a long, steep downhill straight, the horizon low and the valley opening up ahead. Braking while still going downhill, the nose dips, and the car turns into a medium-speed LEFT-hand corner at the bottom of the slope, then straightens onto flat ground.",
+      "clip": "output/video/dream7/selected/shot_06.mp4"
+    },
+    {
+      "id": 8,
+      "color": "#b7950b",
+      "title": "最后赛段 T10–T11",
+      "first": "K7",
+      "last": "K8",
+      "duration": 8,
+      "turns": "T10 右，中速 · T11 左，流畅长弯",
+      "elevation": "17 m → 12 m",
+      "speed": "约 160 → 280 km/h",
+      "title_en": "Final Sector T10–T11",
+      "turns_en": "T10 right, medium · T11 left, long flowing bend",
+      "elevation_en": "17 → 12 m",
+      "speed_en": "~160 → 280 km/h",
+      "motion": "A medium-speed RIGHT-hand bend, then a long flowing LEFT-hand curve that opens onto the main straight. The driver unwinds the steering and goes full throttle; the start/finish line, the light gantry and the grandstand on the right come into view, and the car flashes across the line.",
+      "clip": "output/video/dream7/selected/shot_07.mp4"
+    }
+  ]
+}

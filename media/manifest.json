@@ -1,0 +1,130 @@
+{
+  "base_url": "https://github.com/wangxunx/dream-circuit-lap/releases/download/media-v1",
+  "files": {
+    "ch2_single_prompt_01.mp4": {
+      "sha256": "8910fa49ee2b3bb6387d1310945c57d837a39b8d0f2e418d21a6ab30e7f280f3",
+      "bytes": 4082312,
+      "note": "第 2 章：单提示词整圈尝试 1"
+    },
+    "ch2_single_prompt_02.mp4": {
+      "sha256": "1f77fb53482ecb2d3f31f074a99c264d0c58f4f80a0452faeab6314187a5b8b3",
+      "bytes": 4013260,
+      "note": "第 2 章：单提示词整圈尝试 2"
+    },
+    "ch2_single_prompt_03.mp4": {
+      "sha256": "458a003da4103732ef32e30222d2fac0a59ddfcf4aed8a5fd837cb5859bf323d",
+      "bytes": 4066120,
+      "note": "第 2 章：单提示词整圈尝试 3"
+    },
+    "ch2_single_prompt_04.mp4": {
+      "sha256": "da0063cefcf982d5cbab9789d6fd412862a714a566ee012cc4252a25e7cd48e7",
+      "bytes": 4001258,
+      "note": "第 2 章：单提示词整圈尝试 4"
+    },
+    "ch2_single_prompt_05.mp4": {
+      "sha256": "57550d8f4045ff5aaf32c75c2296e2c00ea147d81744fc0e9e782022e3c0b88a",
+      "bytes": 4373655,
+      "note": "第 2 章：单提示词整圈尝试 5（与 6 号提示词完全相同）"
+    },
+    "ch2_single_prompt_06.mp4": {
+      "sha256": "758706989bd6e34ad7813aecc427aaa24b9e253ad3b046e9a347ffd632f32487",
+      "bytes": 3765270,
+      "note": "第 2 章：单提示词整圈尝试 6（与 5 号提示词完全相同）"
+    },
+    "ch2_single_prompt_07.mp4": {
+      "sha256": "98bca52d9cdfdaa8d2f179d1071fc3ba331ad27cc59062cfd3eaa274d6ad7378",
+      "bytes": 2118642,
+      "note": "第 2 章：只拍起终点直道到 T1（分镜的雏形）"
+    },
+    "ch2_single_prompt_08.mp4": {
+      "sha256": "a937a1fa45e9cddcb375bbffbab417589ff494b9ac2ab2c8086460e47bd8c7d9",
+      "bytes": 2391290,
+      "note": "第 2 章：只拍起终点直道到 T1（分镜的雏形）"
+    },
+    "ch2_single_prompt_09.mp4": {
+      "sha256": "b0c5f5f7e030ad8ea2f78dedc2b6016700ea849448c698065350a987ef5b0a09",
+      "bytes": 4875011,
+      "note": "第 2 章：只拍起终点直道到 T1（分镜的雏形）"
+    },
+    "chicane_1_prompt_only.mp4": {
+      "sha256": "d1487561bbc4b1d9a699f4825b6c7f15804d582b856f33fa5833ca6638b61d63",
+      "bytes": 3876575,
+      "note": "第 7 章：只改提示词，T7 右弯仍不明显"
+    },
+    "chicane_2_split.mp4": {
+      "sha256": "0e113e4f1ebd64d2109dcd26d7044a4554165a469d02535954c5a4c816cceae1",
+      "bytes": 2355394,
+      "note": "第 7 章：拆成两个镜头，但旧 K4 远端是左弯，开头先左转"
+    },
+    "chicane_3_new_K4.mp4": {
+      "sha256": "98b9dc660defc9f15f6d88889a7ab73919f9ef3a3d35c0089b087e466832d0fe",
+      "bytes": 1473703,
+      "note": "第 7 章：重画 K4 后，K5 同时看到右弯和左弯，开头跳变"
+    },
+    "chicane_K5_first_try.png": {
+      "sha256": "d22e969efa9e74f5725244c77bd34d6ec2ef96769d1c4a72c60c574a96ac83d2",
+      "bytes": 1756422,
+      "note": "第 7 章：第一次画的 K5，同时看到右弯和左弯"
+    },
+    "dream7_shot_01.mp4": {
+      "sha256": "4a2160722ab51cc662f00b2bdb5935731d0e1387678611a231054223f221debf",
+      "bytes": 3143630,
+      "note": "第 5–6 章：7 镜头版镜头 1，起终点直道"
+    },
+    "dream7_shot_02.mp4": {
+      "sha256": "b0a919e45eb9fb9827462d99b667ad39d0e8af4d35a62967c3bcdbe1baf00dea",
+      "bytes": 2585749,
+      "note": "第 5–6 章：7 镜头版镜头 2，重刹弯 T1–T2"
+    },
+    "dream7_shot_03.mp4": {
+      "sha256": "2063ad6b3e23a034b24afe2ba3e7b3df79834a72aa9a10eadcd5fe74e60abbb8",
+      "bytes": 3963954,
+      "note": "第 5–6 章：7 镜头版镜头 3，爬坡弯组 T3–T5"
+    },
+    "dream7_shot_04.mp4": {
+      "sha256": "8f2c7b4199ed6a31eac0d527fff7d313148c8f3b65075df4982526d7d24dc216",
+      "bytes": 3366486,
+      "note": "第 5–6 章：7 镜头版镜头 4，高速弯 T6"
+    },
+    "dream7_shot_05.mp4": {
+      "sha256": "a4ca21071edda15ec7204e42c6fa443b97e7ac88bd506e1bd7209d5f0bd566d4",
+      "bytes": 3958543,
+      "note": "第 5–6 章：7 镜头版镜头 5，短直道与减速弯 T7–T8"
+    },
+    "dream7_shot_06.mp4": {
+      "sha256": "2c5fc30b3431d57f94e4f7a5cdc9168f79ac7911a813164a9c8acd97e23fb903",
+      "bytes": 3238069,
+      "note": "第 5–6 章：7 镜头版镜头 6，下坡弯 T9"
+    },
+    "dream7_shot_07.mp4": {
+      "sha256": "ae0060e4428bdcfb796bd1f134554f1b6403a3536c5386b9f003d13548b23ea8",
+      "bytes": 3992722,
+      "note": "第 5–6 章：7 镜头版镜头 7，最后赛段 T10–T11"
+    },
+    "dream8_shot_04.mp4": {
+      "sha256": "2704fb1407f4855051d78b9c1b5def51edc6ef67122febf27cf8d593105a9e0c",
+      "bytes": 2973943,
+      "note": "第 7 章：8 镜头版镜头 4，高速弯 T6 与短直道"
+    },
+    "dream8_shot_05.mp4": {
+      "sha256": "a2f453a803acc65bd23bc37b02a8d3a74a3e0954c02edc5af57f18d42ee4784d",
+      "bytes": 2182381,
+      "note": "第 7 章：8 镜头版镜头 5，减速弯 T7（右），最终版"
+    },
+    "dream8_shot_06.mp4": {
+      "sha256": "835503eef764a942c2f9d36cb3099d1a4967a17b39c83c2d76cbf8cc6da0f1cd",
+      "bytes": 2551340,
+      "note": "第 7 章：8 镜头版镜头 6，减速弯 T8（左）"
+    }
+  },
+  "fonts": {
+    "NotoSansSC-Regular.otf": {
+      "url": "https://github.com/notofonts/noto-cjk/raw/Sans2.004/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf",
+      "sha256": "faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9"
+    },
+    "NotoSansSC-Bold.otf": {
+      "url": "https://github.com/notofonts/noto-cjk/raw/Sans2.004/Sans/SubsetOTF/SC/NotoSansSC-Bold.otf",
+      "sha256": "c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0"
+    }
+  }
+}
