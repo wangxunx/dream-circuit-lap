@@ -17,11 +17,13 @@ The notebooks and lecture outlines are in Chinese.
 | 1 | The track map and the task | [ch1_map](docs/ch1_map.md) | none |
 | 2 | One prompt: 15 s, cannot finish the lap, hard to control | [ch2_single_prompt](docs/ch2_single_prompt.md) | 1 video per run (optional) |
 | 3 | Storyboard: split the lap into 7 shots | [ch3_storyboard](docs/ch3_storyboard.md) | none |
-| 4 | Keyframes: one onboard image at each shot boundary | [ch4_keyframes](docs/ch4_keyframes.md) | 8 images, plus 1 per revision (optional) |
+| 4 | Keyframes: one onboard image at each shot boundary, checked against the storyboard | [ch4_keyframes](docs/ch4_keyframes.md) | 8 images, plus 1 per revision (optional) |
 | 5 | Shots: first-last-frame video, one shot at a time | [ch5_shots](docs/ch5_shots.md) | up to 14 videos (optional) |
 | 6 | Stitch the film and find the problems | [ch6_problems](docs/ch6_problems.md) | none |
 | 7 | Fix the T7–T8 chicane with the storyboard | [ch7_chicane](docs/ch7_chicane.md) | 2 images + 6 videos (optional) |
 | 8 | Wrap-up and exercise | [ch8_wrapup](docs/ch8_wrapup.md) | as needed |
+
+Each keyframe costs 1 credit (30 steps); videos are billed by the H3 gateway.
 
 ## Running
 
@@ -62,7 +64,7 @@ Use the Python environment that runs ComfyUI for `python` and `pip`. With the Wi
    python scripts/make_workflows.py --shots lap_8shots.json --install  # chapter 7, 8 shots
    ```
 
-4. Start ComfyUI in CPU mode, since only cloud nodes are used: `python main.py --cpu` in the ComfyUI directory (`run_cpu.bat` for the Windows portable build). Open http://127.0.0.1:8188, close the Templates dialog shown on first launch, and press `w` for the workflow list. Restart ComfyUI if it was running before the nodes were installed; press F5 if the workflows do not show up.
+4. Start ComfyUI in CPU mode, since only cloud nodes are used: `python main.py --cpu` in the ComfyUI directory (`run_cpu.bat` for the Windows portable build). Open http://127.0.0.1:8188, close the Templates dialog shown on first launch, and press `w` for the workflow list with `dream7_*` and `dream8_*`. Restart ComfyUI if it was running before the nodes were installed; press F5 if the workflows do not show up.
 5. Follow the chapters. Each workflow has a note on its left listing what to prepare; [storyboard_dream7.md](docs/storyboard_dream7.md) and [storyboard_dream8.md](docs/storyboard_dream8.md) collect the frames, prompts and copy commands for every shot.
    - **Ch. 2**: drag `workflows/ch2_single_prompt.json` onto the canvas, upload `assets/fictional_track_v1.png` in the Load Image node, press Run. The historical takes are `media/ch2_single_prompt_*.mp4`.
    - **Ch. 4**: run `dream7_keyframes_pilot` (K0, K1), then `dream7_keyframes`. Check each image against the storyboard; if it is wrong, edit the scene description at the start of that node's prompt and run again. Copy the final images from `ComfyUI/output/dream7/` to `ComfyUI/input/dream7_K0.png` … `dream7_K7.png`, or copy `examples/keyframes/dream7_K*.png` there.
@@ -89,7 +91,7 @@ Needs a local ComfyUI in a conda or venv environment; the notebook installs the 
 
    Keep `--ServerApp.root_dir=.`: without it JupyterLab serves only `notebooks/` and the videos 404. Set `COMFYUI_DIR` if ComfyUI is not the parent directory.
 2. Open the `http://127.0.0.1:8888/lab?token=...` URL printed in the terminal. On a remote machine (e.g. Cursor or VS Code Remote SSH), forward port 8888 in the Ports panel if it is not forwarded automatically.
-3. Run section 0 cell by cell with `Shift+Enter`. Finished steps are skipped; paste the key into the input box when asked. Starting ComfyUI takes a few seconds. An existing ComfyUI on port 8188 is reused; restart it if it was started before the nodes were installed.
+3. Run section 0 cell by cell with `Shift+Enter`. Finished steps are skipped; paste the key into the input box when asked. Starting ComfyUI takes 10–20 seconds. An existing ComfyUI on port 8188 is reused; restart it if it was started before the nodes were installed.
 4. Open http://127.0.0.1:8188 (forward port 8188 if needed) and close the Templates dialog shown on first launch.
 5. Run "准备素材" (prepare media), then press `w` in ComfyUI for the `ch2_single_prompt`, `dream7_*` and `dream8_*` workflows; press F5 if they are missing.
 6. First pass, route A: keep pressing `Shift+Enter` to the end. No credits are spent and you see all historical clips and both films.
@@ -108,8 +110,22 @@ For JupyterLab/JupyterHub images with ComfyUI at `/comfyui_workspace/ComfyUI` (o
 
    > Anyone with this URL can queue jobs on your H3 key. Do not share it.
 
-5. Continue as in steps 5–7 of the local notebook.
-6. Run the last cell when you are done to stop ComfyUI and the tunnel.
+5. Continue as in steps 5–7 of the local notebook: run "准备素材", press `w` in ComfyUI for the workflows, then route A first and route B second.
+6. Run the last cell when you are done to stop ComfyUI and the tunnel; the public URL stops working.
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `notebooks/` | Local and cloud notebooks |
+| `docs/` | Chapter outlines; `storyboard_dream7.md` and `storyboard_dream8.md` are generated step-by-step guides |
+| `storyboards/` | Storyboards: `lap_7shots.json` (chapters 3–6) and `lap_8shots.json` (chapter 7), the single source of prompts and durations |
+| `workflows/` | ComfyUI workflows generated by `make_workflows.py` (except `ch2_single_prompt.json`) |
+| `examples/keyframes/` | The keyframes picked at the time, ready to copy into ComfyUI's `input/` |
+| `examples/k0_versions/` | Chapter 4 example: four versions of K0 |
+| `assets/` | Track map, minimap, per-shot minimap paths, and the 7-shot and 8-shot storyboard maps |
+| `media/` | Historical videos, downloaded by `fetch_media.py` from `media/manifest.json` |
+| `scripts/` | Workflow generation, stitching, storyboard maps, media download and cloud launch scripts |
 
 ## License
 

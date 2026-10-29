@@ -132,9 +132,9 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 
 > **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务、消耗你的额度。不要把它发到群里或贴在公开的地方。
 
-**5–7. 和方式二相同：** 运行“准备素材”后在 ComfyUI 里按 `w` 找到工作流；第一遍走路线 A，第二遍走路线 B。
+**5. 和方式二第 5–7 步相同：** 运行“准备素材”后在 ComfyUI 里按 `w` 找到工作流；第一遍走路线 A，第二遍走路线 B。
 
-**8. 用完运行 notebook 最后一格**，停止 ComfyUI 和隧道，公开 URL 随之失效。
+**6. 用完运行 notebook 最后一格**，停止 ComfyUI 和隧道，公开 URL 随之失效。
 
 ## 目录
 
@@ -146,9 +146,9 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 | `workflows/` | ComfyUI 工作流，由 `make_workflows.py` 生成（`ch2_single_prompt.json` 除外） |
 | `examples/keyframes/` | 当时选中的关键帧，可直接复制到 ComfyUI 的 `input/` |
 | `examples/k0_versions/` | 第 4 章的实例：K0 的 4 个版本 |
-| `assets/` | 赛道俯视图、小地图和每个镜头的小地图路径 |
+| `assets/` | 赛道俯视图、小地图、每个镜头的小地图路径，以及 7 镜头和 8 镜头的分镜示意图 |
 | `media/` | 历史生成的视频，由 `fetch_media.py` 按 `media/manifest.json` 下载 |
-| `scripts/` | 工作流生成、拼接、素材下载和云端启动脚本 |
+| `scripts/` | 工作流生成、拼接、分镜示意图、素材下载和云端启动脚本 |
 
 ## 许可证
 

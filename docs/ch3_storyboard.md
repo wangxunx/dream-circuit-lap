@@ -20,6 +20,10 @@
 | 6 | 下坡弯 T9 | K5 → K6 | 7 秒 | 下坡直道后接左弯 |
 | 7 | 最后赛段 T10–T11 | K6 → K7 | 8 秒 | 右、左长弯 |
 
+![7 镜头分镜示意图](../assets/storyboard_map_7shots.png)
+
+每种颜色是一个镜头跑的路段，圆圈是关键帧的位置。后面几章提到的 K0–K7、镜头 1–7、`dream7_shot_01` 到 `dream7_shot_07`，都可以回到这张图对照。拼接时右下角的小地图用的是同一套路径数据。
+
 ## 分镜表
 
 `storyboards/lap_7shots.json` 是唯一的参数来源，`scripts/make_workflows.py` 根据它生成工作流和手册 `docs/storyboard_dream7.md`。

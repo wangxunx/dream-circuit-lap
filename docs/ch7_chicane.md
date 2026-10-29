@@ -33,6 +33,10 @@
 
 `storyboards/lap_8shots.json`：
 
+![8 镜头分镜示意图](../assets/storyboard_map_8shots.png)
+
+和第 3 章的 7 镜头版相比，原来的镜头 5 拆成了镜头 5（T7）和镜头 6（T8），中间多了 K5，所以后面的关键帧和镜头编号都往后顺延一位：7 镜头版的 K5、K6、K7 在这里是 K6、K7、K8，原来的镜头 6、7 在这里是镜头 7、8。
+
 - 只新生成 K4、K5 两张关键帧（`dream8_keyframes`）和镜头 4–6（`dream8_shot_04` 到 `_06`）。
 - K0–K3 和后面 3 张关键帧复用第 4 章的 `dream7_K*.png`；镜头 1–3、7、8 直接复用第 5 章选好的视频（分镜表里的 `clip` 字段）。
 - 小地图路径换成 8 段的 `assets/track_path_8shots.json`。
