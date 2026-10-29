@@ -33,24 +33,27 @@
 - 在 ComfyUI 的 `custom_nodes/` 里安装 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 和 [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3)。
 - 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。
 - 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `dream8_` 开头的条目。
-- 额度估算：关键帧每张 1 个额度（30 步）；视频按网关计费。全部生成一遍约为 6 张图加 6 段视频。
+- 额度估算：关键帧每张 1 个额度（30 步）；视频按网关计费。全部生成一遍约为 2 张图（每改一次场景重新生成 1 张）加 6 段视频。
 
 ## 第 1 步：生成新关键帧
 
-打开 `dream8_keyframes`，点运行。挑选时重点看：
+打开 `dream8_keyframes`，点运行，每张关键帧生成 1 张图。逐张对照下面“关键帧画面”和小地图检查：
 
-- 镜头高度和构图一致（halo 防护杆、座舱顶部在画面底部的位置差不多）。
-- 赛车外观一致。
-- 前方路面的走向和分镜一致：该左转的图里，路就要往左弯。
+- 前方路面的走向和分镜一致：该左转的图里，路就要往左弯；远端只该有一个弯时，不能画出两个。
+- 距离和比例对得上：直道有多长、离弯道多远。
+- 画面里该有的东西都在，比如起终点的灯架、看台、红车。
+- 镜头高度、构图和赛车外观与其他关键帧一致。
 
-### 挑选与复制
+不对就在工作流里改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行，ComfyUI 只会重新生成改过的那张（ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音）。节点没有随机种子，提示词不变时重新生成也是同一张图，所以要改的是描述，不是多生成几次。满意后把新的场景描述写回 `lap_8shots.json` 的 `keyframes[].scene`，否则下次重新运行 `make_workflows.py --install` 时会被覆盖。
 
-关键帧输出在 `output/dream8/`，挑好后复制进 `input/`，文件名必须和镜头工作流里的一致：
+### 复制到 input
+
+关键帧输出在 `output/dream8/`，每重新生成一次编号加 1。把定稿的那一张复制进 `input/`，文件名必须和镜头工作流里的一致：
 
 ```bash
 cd /path/to/ComfyUI
-cp output/dream8/K4_t1_00001_.png input/dream8_K4.png   # 把 t1 换成你选的候选
-cp output/dream8/K5_t1_00001_.png input/dream8_K5.png   # 把 t1 换成你选的候选
+cp output/dream8/K4_00001_.png input/dream8_K4.png   # 00001 换成你定稿的那一版
+cp output/dream8/K5_00001_.png input/dream8_K5.png   # 00001 换成你定稿的那一版
 ```
 
 想跳过这一步、直接试视频的话，可以把项目自带的关键帧复制进去：`cp examples/keyframes/dream8_*.png /path/to/ComfyUI/input/`。

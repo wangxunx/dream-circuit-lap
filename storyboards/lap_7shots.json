@@ -13,8 +13,7 @@
   "video_rules": "Single continuous take from the same onboard camera, no cuts, no camera switch, the car always moves forward and never reverses, no on-screen text, no watermark.",
   "keyframe": {
     "aspect_ratio": "16:9",
-    "steps": 30,
-    "takes": 3
+    "steps": 30
   },
   "video": {
     "resolution": "768P",

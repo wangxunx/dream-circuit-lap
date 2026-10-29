@@ -15,10 +15,10 @@
 | 1 | 认识赛道地图，提出任务 | [ch1_map](docs/ch1_map.md) | 无 |
 | 2 | 一个提示词直接生成：15 秒、跑不完、不可控 | [ch2_single_prompt](docs/ch2_single_prompt.md) | 每次 1 段视频（可选） |
 | 3 | 分镜：把一圈拆成 7 个镜头 | [ch3_storyboard](docs/ch3_storyboard.md) | 无 |
-| 4 | 关键帧：每个镜头交界处一张车手视角图 | [ch4_keyframes](docs/ch4_keyframes.md) | 最多 24 张图（可选） |
+| 4 | 关键帧：每个镜头交界处一张车手视角图，对照分镜检查 | [ch4_keyframes](docs/ch4_keyframes.md) | 8 张图起，每改一次多 1 张（可选） |
 | 5 | 逐段拍镜头：首尾帧生成视频 | [ch5_shots](docs/ch5_shots.md) | 最多 14 段视频（可选） |
 | 6 | 拼接成片，找问题 | [ch6_problems](docs/ch6_problems.md) | 无 |
-| 7 | 用分镜修好 T7–T8 减速弯 | [ch7_chicane](docs/ch7_chicane.md) | 6 张图 + 6 段视频（可选） |
+| 7 | 用分镜修好 T7–T8 减速弯 | [ch7_chicane](docs/ch7_chicane.md) | 2 张图 + 6 段视频（可选） |
 | 8 | 总结和练习 | [ch8_wrapup](docs/ch8_wrapup.md) | 练习按需 |
 
 关键帧每张 1 个额度（30 步）；视频按 H3 网关计费。
@@ -70,7 +70,7 @@ python scripts/make_workflows.py --shots lap_8shots.json --install  # 第 7 章�
 | 章节 | 在 ComfyUI 里 | 生成后要做的 | 不想花额度 |
 |---|---|---|---|
 | 2 | 把 `workflows/ch2_single_prompt.json` 拖进画布，在 Load Image 节点点 “choose file to upload” 选 `assets/fictional_track_v1.png`，点 Run | 无 | 看 `media/ch2_single_prompt_*.mp4` |
-| 4 | 打开 `dream7_keyframes_pilot`（先试 K0、K1），再打开 `dream7_keyframes`，点 Run | 选中的图从 `ComfyUI/output/dream7/` 复制到 `ComfyUI/input/`，改名为 `dream7_K0.png` … `dream7_K7.png` | 把 `examples/keyframes/dream7_K*.png` 复制到 `ComfyUI/input/` |
+| 4 | 打开 `dream7_keyframes_pilot`（先试 K0、K1），再打开 `dream7_keyframes`，点 Run；对照分镜检查，不对就改提示词开头的场景描述再 Run | 定稿的图从 `ComfyUI/output/dream7/` 复制到 `ComfyUI/input/`，改名为 `dream7_K0.png` … `dream7_K7.png` | 把 `examples/keyframes/dream7_K*.png` 复制到 `ComfyUI/input/` |
 | 5 | 按 F5 刷新，依次打开 `dream7_shot_01` … `dream7_shot_07`，点 Run | 选中的视频从 `ComfyUI/output/video/dream7/` 复制为 `ComfyUI/output/video/dream7/selected/shot_01.mp4` … | 把 `media/dream7_shot_0X.mp4` 复制为同样的文件名 |
 | 6 | 无 | 运行 `python scripts/stitch_lap.py`，成片在本项目目录的 `output/dream_circuit_7shots.mp4` | 同左 |
 | 7 | 打开 `dream8_keyframes`；关键帧放好后刷新，再打开 `dream8_shot_04` … `dream8_shot_06` | K4、K5 放到 `input/dream8_K4.png`、`dream8_K5.png`；视频放到 `output/video/dream8/selected/`；运行 `python scripts/stitch_lap.py --shots lap_8shots.json` | 用 `examples/keyframes/dream8_K*.png` 和 `media/dream8_shot_0X.mp4` |
@@ -105,7 +105,7 @@ jupyter lab --ServerApp.root_dir=. notebooks/local.ipynb
 
 **6. 第一遍建议走路线 A。** 一路按 `Shift+Enter` 到底，不花额度，就能看到所有历史视频和两部成片。
 
-**7. 第二遍试路线 B。** 从第 4 章开始，按 notebook 里的说明在 ComfyUI 里点 Run 生成。生成完回到 notebook，在挑选格里填上候选编号并运行，然后按 F5 刷新 ComfyUI，再进入下一步。
+**7. 第二遍试路线 B。** 从第 4 章开始，按 notebook 里的说明在 ComfyUI 里点 Run 生成。生成完回到 notebook 运行挑选格（视频要先填上选中的候选编号），然后按 F5 刷新 ComfyUI，再进入下一步。
 
 关掉 JupyterLab 后 ComfyUI 仍在后台运行，日志在 ComfyUI 的 `user/comfyui_dream_circuit.log`；下次打开 notebook 会直接用它。
 
@@ -145,6 +145,7 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 | `storyboards/` | 分镜表：`lap_7shots.json`（第 3–6 章）、`lap_8shots.json`（第 7 章），提示词和时长的唯一来源 |
 | `workflows/` | ComfyUI 工作流，由 `make_workflows.py` 生成（`ch2_single_prompt.json` 除外） |
 | `examples/keyframes/` | 当时选中的关键帧，可直接复制到 ComfyUI 的 `input/` |
+| `examples/k0_versions/` | 第 4 章的实例：K0 的 4 个版本 |
 | `assets/` | 赛道俯视图、小地图和每个镜头的小地图路径 |
 | `media/` | 历史生成的视频，由 `fetch_media.py` 按 `media/manifest.json` 下载 |
 | `scripts/` | 工作流生成、拼接、素材下载和云端启动脚本 |

@@ -17,10 +17,10 @@ The notebooks and lecture outlines are in Chinese.
 | 1 | The track map and the task | [ch1_map](docs/ch1_map.md) | none |
 | 2 | One prompt: 15 s, cannot finish the lap, hard to control | [ch2_single_prompt](docs/ch2_single_prompt.md) | 1 video per run (optional) |
 | 3 | Storyboard: split the lap into 7 shots | [ch3_storyboard](docs/ch3_storyboard.md) | none |
-| 4 | Keyframes: one onboard image at each shot boundary | [ch4_keyframes](docs/ch4_keyframes.md) | up to 24 images (optional) |
+| 4 | Keyframes: one onboard image at each shot boundary | [ch4_keyframes](docs/ch4_keyframes.md) | 8 images, plus 1 per revision (optional) |
 | 5 | Shots: first-last-frame video, one shot at a time | [ch5_shots](docs/ch5_shots.md) | up to 14 videos (optional) |
 | 6 | Stitch the film and find the problems | [ch6_problems](docs/ch6_problems.md) | none |
-| 7 | Fix the T7–T8 chicane with the storyboard | [ch7_chicane](docs/ch7_chicane.md) | 6 images + 6 videos (optional) |
+| 7 | Fix the T7–T8 chicane with the storyboard | [ch7_chicane](docs/ch7_chicane.md) | 2 images + 6 videos (optional) |
 | 8 | Wrap-up and exercise | [ch8_wrapup](docs/ch8_wrapup.md) | as needed |
 
 ## Running
@@ -65,7 +65,7 @@ Use the Python environment that runs ComfyUI for `python` and `pip`. With the Wi
 4. Start ComfyUI in CPU mode, since only cloud nodes are used: `python main.py --cpu` in the ComfyUI directory (`run_cpu.bat` for the Windows portable build). Open http://127.0.0.1:8188, close the Templates dialog shown on first launch, and press `w` for the workflow list. Restart ComfyUI if it was running before the nodes were installed; press F5 if the workflows do not show up.
 5. Follow the chapters. Each workflow has a note on its left listing what to prepare; [storyboard_dream7.md](docs/storyboard_dream7.md) and [storyboard_dream8.md](docs/storyboard_dream8.md) collect the frames, prompts and copy commands for every shot.
    - **Ch. 2**: drag `workflows/ch2_single_prompt.json` onto the canvas, upload `assets/fictional_track_v1.png` in the Load Image node, press Run. The historical takes are `media/ch2_single_prompt_*.mp4`.
-   - **Ch. 4**: run `dream7_keyframes_pilot` (K0, K1), then `dream7_keyframes`. Copy your picks from `ComfyUI/output/dream7/` to `ComfyUI/input/dream7_K0.png` … `dream7_K7.png`, or copy `examples/keyframes/dream7_K*.png` there.
+   - **Ch. 4**: run `dream7_keyframes_pilot` (K0, K1), then `dream7_keyframes`. Check each image against the storyboard; if it is wrong, edit the scene description at the start of that node's prompt and run again. Copy the final images from `ComfyUI/output/dream7/` to `ComfyUI/input/dream7_K0.png` … `dream7_K7.png`, or copy `examples/keyframes/dream7_K*.png` there.
    - **Ch. 5**: press F5, run `dream7_shot_01` … `dream7_shot_07`. Copy your picks from `ComfyUI/output/video/dream7/` to `ComfyUI/output/video/dream7/selected/shot_01.mp4` …, or copy `media/dream7_shot_0X.mp4` there.
    - **Ch. 6**: `python scripts/stitch_lap.py` writes `output/dream_circuit_7shots.mp4` in this repository. Options: `--en`, `--no-minimap`, `--placeholder`.
    - **Ch. 7**: run `dream8_keyframes`, put K4 and K5 at `input/dream8_K4.png` and `dream8_K5.png`, press F5, run `dream8_shot_04` … `dream8_shot_06` and put the picks in `output/video/dream8/selected/`. The bundled versions are `examples/keyframes/dream8_K*.png` and `media/dream8_shot_0X.mp4`. Then `python scripts/stitch_lap.py --shots lap_8shots.json`.
@@ -93,7 +93,7 @@ Needs a local ComfyUI in a conda or venv environment; the notebook installs the 
 4. Open http://127.0.0.1:8188 (forward port 8188 if needed) and close the Templates dialog shown on first launch.
 5. Run "准备素材" (prepare media), then press `w` in ComfyUI for the `ch2_single_prompt`, `dream7_*` and `dream8_*` workflows; press F5 if they are missing.
 6. First pass, route A: keep pressing `Shift+Enter` to the end. No credits are spent and you see all historical clips and both films.
-7. Second pass, route B: from chapter 4, generate in ComfyUI as the notebook describes, fill in your take numbers in the picker cells, run them, press F5 in ComfyUI and continue.
+7. Second pass, route B: from chapter 4, generate in ComfyUI as the notebook describes, run the picker cells (fill in your take numbers for the videos first), press F5 in ComfyUI and continue.
 
 ComfyUI keeps running in the background after JupyterLab is closed (log in ComfyUI's `user/comfyui_dream_circuit.log`) and is reused next time.
 

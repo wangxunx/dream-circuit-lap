@@ -92,35 +92,34 @@ class Graph:
 
 def keyframes_workflow(kids, path):
     g = Graph()
-    takes = SB["keyframe"]["takes"]
-    g.note((-2160, 0), (460, 520), "\n".join([
+    g.note((-2160, 0), (460, 620), "\n".join([
         "## 赛道关键帧（Qwen Image 2.1 文生图）",
         "",
-        f"每一行是一张关键帧，每行 {takes} 个候选。点一次 **运行**，所有候选会一起生成，"
-        f"共消耗约 {len(kids) * takes} 个额度（30 步 = 1 个额度）。",
+        f"每一行是一张关键帧。点一次 **运行** 生成全部 {len(kids)} 张，共消耗 {len(kids)} 个额度（30 步 = 1 个额度）。",
         "",
-        f"图片保存在 `output/{N}/`，文件名形如 `{kids[0]}_t2_00001_.png`。",
+        f"图片保存在 `output/{N}/`，文件名形如 `{kids[0]}_00001_.png`，每重新生成一次编号加 1。",
         "",
-        "**挑选后复制到 input 目录**（镜头工作流会读取这些文件名）：",
+        "**生成后对照分镜检查**：前方的路往哪边弯、离弯道多远，画面里该有的东西在不在。"
+        "不对就改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行："
+        "ComfyUI 只会重新生成提示词改过的那张。节点没有随机种子，提示词不变时重新生成也是同一张图。",
+        "",
+        "ComfyUI 重启后缓存会清空，点运行会把每张都重新生成；只想重做一张时，先选中其他行的 Save Image 节点，按 Ctrl+M 静音。",
+        "",
+        "**定稿后复制到 input 目录**（镜头工作流会读取这些文件名）：",
         "",
         "```",
-        f"cp output/{N}/{kids[0]}_t2_00001_.png input/{keyframe_file(kids[0])}",
+        f"cp output/{N}/{kids[0]}_00001_.png input/{keyframe_file(kids[0])}",
         "```",
-        "",
-        "同一张关键帧的几个候选，提示词末尾分别多了 `Take 2.`、`Take 3.`。这是有意为之：节点没有随机种子，"
-        "提示词完全相同的话只会得到同一张图。",
     ]))
     for r, kid in enumerate(kids):
         k = KEYFRAMES[kid]
         y = r * 420
-        g.group(f"{kid} · {k['label']}", -1640, y - 40, takes * 900 + 20, 400)
-        for t in range(1, takes + 1):
-            x = -1620 + (t - 1) * 900
-            gen = g.node("AMDQwenImage21TextToImage", (x, y), (420, 330),
-                         [take_prompt(keyframe_prompt(k), t), SB["keyframe"]["aspect_ratio"], "Qwen-Image-2.1", SB["keyframe"]["steps"]],
-                         outputs=[("IMAGE", "IMAGE")])
-            save = g.node("SaveImage", (x + 440, y), (420, 330), [f"{N}/{kid}_t{t}"], inputs=[("images", "IMAGE", False)], color=False)
-            g.link(gen, 0, save, 0)
+        g.group(f"{kid} · {k['label']}", -1640, y - 40, 920, 400)
+        gen = g.node("AMDQwenImage21TextToImage", (-1620, y), (420, 330),
+                     [keyframe_prompt(k), SB["keyframe"]["aspect_ratio"], "Qwen-Image-2.1", SB["keyframe"]["steps"]],
+                     outputs=[("IMAGE", "IMAGE")])
+        save = g.node("SaveImage", (-1180, y), (420, 330), [f"{N}/{kid}"], inputs=[("images", "IMAGE", False)], color=False)
+        g.link(gen, 0, save, 0)
     g.dump(path)
 
 
@@ -201,7 +200,7 @@ def storyboard_md(path):
         "和 [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3)。",
         "- 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。",
         f"- 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `{N}_` 开头的条目。",
-        f"- 额度估算：关键帧每张 1 个额度（{kf['steps']} 步）；视频按网关计费。全部生成一遍约为 {len(GEN_KEYFRAMES) * kf['takes']} 张图加 {len(GEN_SHOTS) * vid['takes']} 段视频。",
+        f"- 额度估算：关键帧每张 1 个额度（{kf['steps']} 步）；视频按网关计费。全部生成一遍约为 {len(GEN_KEYFRAMES)} 张图（每改一次场景重新生成 1 张）加 {len(GEN_SHOTS) * vid['takes']} 段视频。",
         "",
     ]
     if "pilot" in SB:
@@ -209,8 +208,8 @@ def storyboard_md(path):
         L += [
             f"## 第 {next(step)} 步：试拍（强烈建议先做）",
             "",
-            f"1. 打开 `{N}_keyframes_pilot`，点运行，只生成 {a} 和 {b} 的候选。",
-            f"2. 各挑一张，复制为 `input/{keyframe_file(a)}` 和 `input/{keyframe_file(b)}`（命令见下面“挑选与复制”）。",
+            f"1. 打开 `{N}_keyframes_pilot`，点运行，只生成 {a} 和 {b}。",
+            f"2. 对照分镜检查（见下一步），定稿后复制为 `input/{keyframe_file(a)}` 和 `input/{keyframe_file(b)}`（命令见下面“复制到 input”）。",
             f"3. 打开 `{N}_shot_01`，点运行。看三件事：画风是否满意；视频开头和结尾是否贴近两张关键帧；速度感和方向是否对。",
             f"4. 满意了再继续。不满意就先改 `{SHOTS_FILE}` 里的 `style`、`scene` 或 `motion`，重新运行 `make_workflows.py`，再重拍。",
             "",
@@ -218,21 +217,26 @@ def storyboard_md(path):
     L += [
         f"## 第 {next(step)} 步：生成{'新' if reused else '全部'}关键帧",
         "",
-        f"打开 `{N}_keyframes`，点运行。挑选时重点看：",
+        f"打开 `{N}_keyframes`，点运行，每张关键帧生成 1 张图。逐张对照下面“关键帧画面”和小地图检查：",
         "",
-        "- 镜头高度和构图一致（halo 防护杆、座舱顶部在画面底部的位置差不多）。",
-        "- 赛车外观一致。",
-        "- 前方路面的走向和分镜一致：该左转的图里，路就要往左弯。",
+        "- 前方路面的走向和分镜一致：该左转的图里，路就要往左弯；远端只该有一个弯时，不能画出两个。",
+        "- 距离和比例对得上：直道有多长、离弯道多远。",
+        "- 画面里该有的东西都在，比如起终点的灯架、看台、红车。",
+        "- 镜头高度、构图和赛车外观与其他关键帧一致。",
         "",
-        "### 挑选与复制",
+        "不对就在工作流里改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行，ComfyUI 只会重新生成改过的那张（ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音）。"
+        f"节点没有随机种子，提示词不变时重新生成也是同一张图，所以要改的是描述，不是多生成几次。满意后把新的场景描述写回 `{SHOTS_FILE}` 的 `keyframes[].scene`，"
+        "否则下次重新运行 `make_workflows.py --install` 时会被覆盖。",
         "",
-        f"关键帧输出在 `output/{N}/`，挑好后复制进 `input/`，文件名必须和镜头工作流里的一致：",
+        "### 复制到 input",
+        "",
+        f"关键帧输出在 `output/{N}/`，每重新生成一次编号加 1。把定稿的那一张复制进 `input/`，文件名必须和镜头工作流里的一致：",
         "",
         "```bash",
         "cd /path/to/ComfyUI",
     ]
     for kid in GEN_KEYFRAMES:
-        L.append(f"cp output/{N}/{kid}_t1_00001_.png input/{keyframe_file(kid)}   # 把 t1 换成你选的候选")
+        L.append(f"cp output/{N}/{kid}_00001_.png input/{keyframe_file(kid)}   # 00001 换成你定稿的那一版")
     L += [
         "```",
         "",

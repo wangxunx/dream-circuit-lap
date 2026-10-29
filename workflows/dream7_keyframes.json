@@ -1,6 +1,6 @@
 {
-  "last_node_id": 49,
-  "last_link_id": 24,
+  "last_node_id": 17,
+  "last_link_id": 8,
   "nodes": [
     {
       "id": 1,
@@ -11,7 +11,7 @@
       ],
       "size": [
         460,
-        520
+        620
       ],
       "flags": {},
       "order": 0,
@@ -22,7 +22,7 @@
         "Node name for S&R": "MarkdownNote"
       },
       "widgets_values": [
-        "## 赛道关键帧（Qwen Image 2.1 文生图）\n\n每一行是一张关键帧，每行 3 个候选。点一次 **运行**，所有候选会一起生成，共消耗约 24 个额度（30 步 = 1 个额度）。\n\n图片保存在 `output/dream7/`，文件名形如 `K0_t2_00001_.png`。\n\n**挑选后复制到 input 目录**（镜头工作流会读取这些文件名）：\n\n```\ncp output/dream7/K0_t2_00001_.png input/dream7_K0.png\n```\n\n同一张关键帧的几个候选，提示词末尾分别多了 `Take 2.`、`Take 3.`。这是有意为之：节点没有随机种子，提示词完全相同的话只会得到同一张图。"
+        "## 赛道关键帧（Qwen Image 2.1 文生图）\n\n每一行是一张关键帧。点一次 **运行** 生成全部 8 张，共消耗 8 个额度（30 步 = 1 个额度）。\n\n图片保存在 `output/dream7/`，文件名形如 `K0_00001_.png`，每重新生成一次编号加 1。\n\n**生成后对照分镜检查**：前方的路往哪边弯、离弯道多远，画面里该有的东西在不在。不对就改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行：ComfyUI 只会重新生成提示词改过的那张。节点没有随机种子，提示词不变时重新生成也是同一张图。\n\nComfyUI 重启后缓存会清空，点运行会把每张都重新生成；只想重做一张时，先选中其他行的 Save Image 节点，按 Ctrl+M 静音。\n\n**定稿后复制到 input 目录**（镜头工作流会读取这些文件名）：\n\n```\ncp output/dream7/K0_00001_.png input/dream7_K0.png\n```"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -89,15 +89,15 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K0_t1"
+        "dream7/K0"
       ]
     },
     {
       "id": 4,
       "type": "AMDQwenImage21TextToImage",
       "pos": [
-        -720,
-        0
+        -1620,
+        420
       ],
       "size": [
         420,
@@ -120,7 +120,7 @@
         "Node name for S&R": "AMDQwenImage21TextToImage"
       },
       "widgets_values": [
-        "The car is stationary on the starting grid, sitting exactly on the chequered start/finish line painted across a long, wide straight. A start light gantry with five red lights spans the track overhead ahead. On the right side a large covered grandstand packed with spectators and a pit building with a pit wall. A red race car waits on the grid a few metres ahead, slightly to the right. The straight runs far ahead to the vanishing point, slightly downhill. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
+        "Travelling at about 320 km/h at the far end of a long straight, strong motion blur on the verges. Three white braking marker boards stand on the right verge. Just ahead the track turns sharply LEFT into a tight hairpin with a red-and-white kerb on the inside left. The red race car is directly ahead, slightly to the right, a few car lengths away. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
         "16:9",
         "Qwen-Image-2.1",
         30
@@ -132,8 +132,8 @@
       "id": 5,
       "type": "SaveImage",
       "pos": [
-        -280,
-        0
+        -1180,
+        420
       ],
       "size": [
         420,
@@ -154,15 +154,15 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K0_t2"
+        "dream7/K1"
       ]
     },
     {
       "id": 6,
       "type": "AMDQwenImage21TextToImage",
       "pos": [
-        180,
-        0
+        -1620,
+        840
       ],
       "size": [
         420,
@@ -185,7 +185,7 @@
         "Node name for S&R": "AMDQwenImage21TextToImage"
       },
       "widgets_values": [
-        "The car is stationary on the starting grid, sitting exactly on the chequered start/finish line painted across a long, wide straight. A start light gantry with five red lights spans the track overhead ahead. On the right side a large covered grandstand packed with spectators and a pit building with a pit wall. A red race car waits on the grid a few metres ahead, slightly to the right. The straight runs far ahead to the vanishing point, slightly downhill. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
+        "Accelerating out of a corner; the red car is no longer in view. The road ahead starts to climb a steep green hillside and snakes LEFT, then RIGHT, then LEFT up the slope, with red-and-white kerbs on each apex. The horizon is high in the frame because of the climb. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
         "16:9",
         "Qwen-Image-2.1",
         30
@@ -197,8 +197,8 @@
       "id": 7,
       "type": "SaveImage",
       "pos": [
-        620,
-        0
+        -1180,
+        840
       ],
       "size": [
         420,
@@ -219,7 +219,7 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K0_t3"
+        "dream7/K2"
       ]
     },
     {
@@ -227,7 +227,7 @@
       "type": "AMDQwenImage21TextToImage",
       "pos": [
         -1620,
-        420
+        1260
       ],
       "size": [
         420,
@@ -250,7 +250,7 @@
         "Node name for S&R": "AMDQwenImage21TextToImage"
       },
       "widgets_values": [
-        "Travelling at about 320 km/h at the far end of a long straight, strong motion blur on the verges. Three white braking marker boards stand on the right verge. Just ahead the track turns sharply LEFT into a tight hairpin with a red-and-white kerb on the inside left. The red race car is directly ahead, slightly to the right, a few car lengths away. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
+        "At high speed right on the crest of a hill; the road levels out on high ground and opens into a wide, long LEFT-hand sweeping curve. Big sky, panoramic view over a green valley on the right side, distant hills on the horizon. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
         "16:9",
         "Qwen-Image-2.1",
         30
@@ -263,7 +263,7 @@
       "type": "SaveImage",
       "pos": [
         -1180,
-        420
+        1260
       ],
       "size": [
         420,
@@ -284,15 +284,15 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K1_t1"
+        "dream7/K3"
       ]
     },
     {
       "id": 10,
       "type": "AMDQwenImage21TextToImage",
       "pos": [
-        -720,
-        420
+        -1620,
+        1680
       ],
       "size": [
         420,
@@ -315,7 +315,7 @@
         "Node name for S&R": "AMDQwenImage21TextToImage"
       },
       "widgets_values": [
-        "Travelling at about 320 km/h at the far end of a long straight, strong motion blur on the verges. Three white braking marker boards stand on the right verge. Just ahead the track turns sharply LEFT into a tight hairpin with a red-and-white kerb on the inside left. The red race car is directly ahead, slightly to the right, a few car lengths away. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
+        "Exiting a long fast left-hand curve onto a short straight on high ground. Ahead a tight chicane: the track kinks sharply RIGHT then immediately LEFT, marked by tall red-and-white kerbs. Open sky, hills in the distance. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
         "16:9",
         "Qwen-Image-2.1",
         30
@@ -327,8 +327,8 @@
       "id": 11,
       "type": "SaveImage",
       "pos": [
-        -280,
-        420
+        -1180,
+        1680
       ],
       "size": [
         420,
@@ -349,15 +349,15 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K1_t2"
+        "dream7/K4"
       ]
     },
     {
       "id": 12,
       "type": "AMDQwenImage21TextToImage",
       "pos": [
-        180,
-        420
+        -1620,
+        2100
       ],
       "size": [
         420,
@@ -380,7 +380,7 @@
         "Node name for S&R": "AMDQwenImage21TextToImage"
       },
       "widgets_values": [
-        "Travelling at about 320 km/h at the far end of a long straight, strong motion blur on the verges. Three white braking marker boards stand on the right verge. Just ahead the track turns sharply LEFT into a tight hairpin with a red-and-white kerb on the inside left. The red race car is directly ahead, slightly to the right, a few car lengths away. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
+        "Just after a tight chicane, the track drops away ahead into a long straight that descends diagonally down the hillside. The valley and distant hills lie below, the horizon sits low in the frame. Far down at the bottom of the slope the road bends LEFT. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
         "16:9",
         "Qwen-Image-2.1",
         30
@@ -392,8 +392,8 @@
       "id": 13,
       "type": "SaveImage",
       "pos": [
-        620,
-        420
+        -1180,
+        2100
       ],
       "size": [
         420,
@@ -414,7 +414,7 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K1_t3"
+        "dream7/K5"
       ]
     },
     {
@@ -422,7 +422,7 @@
       "type": "AMDQwenImage21TextToImage",
       "pos": [
         -1620,
-        840
+        2520
       ],
       "size": [
         420,
@@ -445,7 +445,7 @@
         "Node name for S&R": "AMDQwenImage21TextToImage"
       },
       "widgets_values": [
-        "Accelerating out of a corner; the red car is no longer in view. The road ahead starts to climb a steep green hillside and snakes LEFT, then RIGHT, then LEFT up the slope, with red-and-white kerbs on each apex. The horizon is high in the frame because of the climb. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
+        "On flat ground at the bottom of a hill, just after a left-hand corner, on a short straight. Ahead a medium-speed RIGHT-hand bend with a red-and-white kerb on the right side, then the road continues out of sight. Trees and grass on both sides. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
         "16:9",
         "Qwen-Image-2.1",
         30
@@ -458,7 +458,7 @@
       "type": "SaveImage",
       "pos": [
         -1180,
-        840
+        2520
       ],
       "size": [
         420,
@@ -479,15 +479,15 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K2_t1"
+        "dream7/K6"
       ]
     },
     {
       "id": 16,
       "type": "AMDQwenImage21TextToImage",
       "pos": [
-        -720,
-        840
+        -1620,
+        2940
       ],
       "size": [
         420,
@@ -510,7 +510,7 @@
         "Node name for S&R": "AMDQwenImage21TextToImage"
       },
       "widgets_values": [
-        "Accelerating out of a corner; the red car is no longer in view. The road ahead starts to climb a steep green hillside and snakes LEFT, then RIGHT, then LEFT up the slope, with red-and-white kerbs on each apex. The horizon is high in the frame because of the climb. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
+        "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
         "16:9",
         "Qwen-Image-2.1",
         30
@@ -522,8 +522,8 @@
       "id": 17,
       "type": "SaveImage",
       "pos": [
-        -280,
-        840
+        -1180,
+        2940
       ],
       "size": [
         420,
@@ -544,1047 +544,7 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "dream7/K2_t2"
-      ]
-    },
-    {
-      "id": 18,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        180,
-        840
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            9
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Accelerating out of a corner; the red car is no longer in view. The road ahead starts to climb a steep green hillside and snakes LEFT, then RIGHT, then LEFT up the slope, with red-and-white kerbs on each apex. The horizon is high in the frame because of the climb. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 19,
-      "type": "SaveImage",
-      "pos": [
-        620,
-        840
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 18,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 9
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K2_t3"
-      ]
-    },
-    {
-      "id": 20,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -1620,
-        1260
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 19,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            10
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "At high speed right on the crest of a hill; the road levels out on high ground and opens into a wide, long LEFT-hand sweeping curve. Big sky, panoramic view over a green valley on the right side, distant hills on the horizon. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 21,
-      "type": "SaveImage",
-      "pos": [
-        -1180,
-        1260
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 20,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 10
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K3_t1"
-      ]
-    },
-    {
-      "id": 22,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -720,
-        1260
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 21,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            11
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "At high speed right on the crest of a hill; the road levels out on high ground and opens into a wide, long LEFT-hand sweeping curve. Big sky, panoramic view over a green valley on the right side, distant hills on the horizon. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 23,
-      "type": "SaveImage",
-      "pos": [
-        -280,
-        1260
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 22,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 11
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K3_t2"
-      ]
-    },
-    {
-      "id": 24,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        180,
-        1260
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 23,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            12
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "At high speed right on the crest of a hill; the road levels out on high ground and opens into a wide, long LEFT-hand sweeping curve. Big sky, panoramic view over a green valley on the right side, distant hills on the horizon. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 25,
-      "type": "SaveImage",
-      "pos": [
-        620,
-        1260
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 24,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 12
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K3_t3"
-      ]
-    },
-    {
-      "id": 26,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -1620,
-        1680
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 25,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            13
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Exiting a long fast left-hand curve onto a short straight on high ground. Ahead a tight chicane: the track kinks sharply RIGHT then immediately LEFT, marked by tall red-and-white kerbs. Open sky, hills in the distance. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 27,
-      "type": "SaveImage",
-      "pos": [
-        -1180,
-        1680
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 26,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 13
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K4_t1"
-      ]
-    },
-    {
-      "id": 28,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -720,
-        1680
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 27,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            14
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Exiting a long fast left-hand curve onto a short straight on high ground. Ahead a tight chicane: the track kinks sharply RIGHT then immediately LEFT, marked by tall red-and-white kerbs. Open sky, hills in the distance. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 29,
-      "type": "SaveImage",
-      "pos": [
-        -280,
-        1680
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 28,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 14
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K4_t2"
-      ]
-    },
-    {
-      "id": 30,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        180,
-        1680
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 29,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            15
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Exiting a long fast left-hand curve onto a short straight on high ground. Ahead a tight chicane: the track kinks sharply RIGHT then immediately LEFT, marked by tall red-and-white kerbs. Open sky, hills in the distance. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 31,
-      "type": "SaveImage",
-      "pos": [
-        620,
-        1680
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 30,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 15
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K4_t3"
-      ]
-    },
-    {
-      "id": 32,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -1620,
-        2100
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 31,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            16
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Just after a tight chicane, the track drops away ahead into a long straight that descends diagonally down the hillside. The valley and distant hills lie below, the horizon sits low in the frame. Far down at the bottom of the slope the road bends LEFT. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 33,
-      "type": "SaveImage",
-      "pos": [
-        -1180,
-        2100
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 32,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 16
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K5_t1"
-      ]
-    },
-    {
-      "id": 34,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -720,
-        2100
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 33,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            17
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Just after a tight chicane, the track drops away ahead into a long straight that descends diagonally down the hillside. The valley and distant hills lie below, the horizon sits low in the frame. Far down at the bottom of the slope the road bends LEFT. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 35,
-      "type": "SaveImage",
-      "pos": [
-        -280,
-        2100
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 34,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 17
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K5_t2"
-      ]
-    },
-    {
-      "id": 36,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        180,
-        2100
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 35,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            18
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Just after a tight chicane, the track drops away ahead into a long straight that descends diagonally down the hillside. The valley and distant hills lie below, the horizon sits low in the frame. Far down at the bottom of the slope the road bends LEFT. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 37,
-      "type": "SaveImage",
-      "pos": [
-        620,
-        2100
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 36,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 18
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K5_t3"
-      ]
-    },
-    {
-      "id": 38,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -1620,
-        2520
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 37,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            19
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "On flat ground at the bottom of a hill, just after a left-hand corner, on a short straight. Ahead a medium-speed RIGHT-hand bend with a red-and-white kerb on the right side, then the road continues out of sight. Trees and grass on both sides. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 39,
-      "type": "SaveImage",
-      "pos": [
-        -1180,
-        2520
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 38,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 19
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K6_t1"
-      ]
-    },
-    {
-      "id": 40,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -720,
-        2520
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 39,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            20
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "On flat ground at the bottom of a hill, just after a left-hand corner, on a short straight. Ahead a medium-speed RIGHT-hand bend with a red-and-white kerb on the right side, then the road continues out of sight. Trees and grass on both sides. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 41,
-      "type": "SaveImage",
-      "pos": [
-        -280,
-        2520
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 40,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 20
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K6_t2"
-      ]
-    },
-    {
-      "id": 42,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        180,
-        2520
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 41,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            21
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "On flat ground at the bottom of a hill, just after a left-hand corner, on a short straight. Ahead a medium-speed RIGHT-hand bend with a red-and-white kerb on the right side, then the road continues out of sight. Trees and grass on both sides. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 43,
-      "type": "SaveImage",
-      "pos": [
-        620,
-        2520
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 42,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 21
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K6_t3"
-      ]
-    },
-    {
-      "id": 44,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -1620,
-        2940
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 43,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            22
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 45,
-      "type": "SaveImage",
-      "pos": [
-        -1180,
-        2940
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 44,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 22
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K7_t1"
-      ]
-    },
-    {
-      "id": 46,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        -720,
-        2940
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 45,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            23
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 2.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 47,
-      "type": "SaveImage",
-      "pos": [
-        -280,
-        2940
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 46,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 23
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K7_t2"
-      ]
-    },
-    {
-      "id": 48,
-      "type": "AMDQwenImage21TextToImage",
-      "pos": [
-        180,
-        2940
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 47,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            24
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "AMDQwenImage21TextToImage"
-      },
-      "widgets_values": [
-        "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges. Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car with a white nose. Only the halo safety bar, the top of the cockpit and the front wing tips are visible at the bottom of the frame; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark. Take 3.",
-        "16:9",
-        "Qwen-Image-2.1",
-        30
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 49,
-      "type": "SaveImage",
-      "pos": [
-        620,
-        2940
-      ],
-      "size": [
-        420,
-        330
-      ],
-      "flags": {},
-      "order": 48,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 24
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage"
-      },
-      "widgets_values": [
-        "dream7/K7_t3"
+        "dream7/K7"
       ]
     }
   ],
@@ -1652,134 +612,6 @@
       17,
       0,
       "IMAGE"
-    ],
-    [
-      9,
-      18,
-      0,
-      19,
-      0,
-      "IMAGE"
-    ],
-    [
-      10,
-      20,
-      0,
-      21,
-      0,
-      "IMAGE"
-    ],
-    [
-      11,
-      22,
-      0,
-      23,
-      0,
-      "IMAGE"
-    ],
-    [
-      12,
-      24,
-      0,
-      25,
-      0,
-      "IMAGE"
-    ],
-    [
-      13,
-      26,
-      0,
-      27,
-      0,
-      "IMAGE"
-    ],
-    [
-      14,
-      28,
-      0,
-      29,
-      0,
-      "IMAGE"
-    ],
-    [
-      15,
-      30,
-      0,
-      31,
-      0,
-      "IMAGE"
-    ],
-    [
-      16,
-      32,
-      0,
-      33,
-      0,
-      "IMAGE"
-    ],
-    [
-      17,
-      34,
-      0,
-      35,
-      0,
-      "IMAGE"
-    ],
-    [
-      18,
-      36,
-      0,
-      37,
-      0,
-      "IMAGE"
-    ],
-    [
-      19,
-      38,
-      0,
-      39,
-      0,
-      "IMAGE"
-    ],
-    [
-      20,
-      40,
-      0,
-      41,
-      0,
-      "IMAGE"
-    ],
-    [
-      21,
-      42,
-      0,
-      43,
-      0,
-      "IMAGE"
-    ],
-    [
-      22,
-      44,
-      0,
-      45,
-      0,
-      "IMAGE"
-    ],
-    [
-      23,
-      46,
-      0,
-      47,
-      0,
-      "IMAGE"
-    ],
-    [
-      24,
-      48,
-      0,
-      49,
-      0,
-      "IMAGE"
     ]
   ],
   "groups": [
@@ -1788,7 +620,7 @@
       "bounding": [
         -1640,
         -40,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
@@ -1800,7 +632,7 @@
       "bounding": [
         -1640,
         380,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
@@ -1812,7 +644,7 @@
       "bounding": [
         -1640,
         800,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
@@ -1824,7 +656,7 @@
       "bounding": [
         -1640,
         1220,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
@@ -1836,7 +668,7 @@
       "bounding": [
         -1640,
         1640,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
@@ -1848,7 +680,7 @@
       "bounding": [
         -1640,
         2060,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
@@ -1860,7 +692,7 @@
       "bounding": [
         -1640,
         2480,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
@@ -1872,7 +704,7 @@
       "bounding": [
         -1640,
         2900,
-        2720,
+        920,
         400
       ],
       "color": "#3f789e",
