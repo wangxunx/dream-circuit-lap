@@ -140,7 +140,7 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 
 | 路径 | 内容 |
 |---|---|
-| `notebooks/` | 本地版和云端版 notebook |
+| `notebooks/` | 本地版和云端版 notebook，由 `make_notebooks.py` 生成；`_en` 是英文版 |
 | `docs/` | 各章讲解提纲；`storyboard_dream7.md`、`storyboard_dream8.md` 是自动生成的操作手册 |
 | `storyboards/` | 分镜表：`lap_7shots.json`（第 3–6 章）、`lap_8shots.json`（第 7 章），提示词和时长的唯一来源 |
 | `workflows/` | ComfyUI 工作流，由 `make_workflows.py` 生成（`ch2_single_prompt.json` 除外） |
@@ -148,7 +148,7 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 | `examples/k0_versions/` | 第 4 章的实例：K0 的 4 个版本 |
 | `assets/` | 赛道俯视图、小地图、每个镜头的小地图路径，以及 7 镜头和 8 镜头的分镜示意图 |
 | `media/` | 历史生成的视频，由 `fetch_media.py` 按 `media/manifest.json` 下载 |
-| `scripts/` | 工作流生成、拼接、分镜示意图、素材下载和云端启动脚本 |
+| `scripts/` | 工作流和 notebook 生成、拼接、分镜示意图、素材下载和云端启动脚本 |
 
 ## 许可证
 
