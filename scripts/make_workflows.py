@@ -92,7 +92,7 @@ class Graph:
 
 def keyframes_workflow(kids, path):
     g = Graph()
-    g.note((-2160, 0), (460, 620), "\n".join([
+    g.note((-2160, 0), (460, 620 + 24 * len(kids)), "\n".join([
         "## 赛道关键帧（Qwen Image 2.1 文生图）",
         "",
         f"每一行是一张关键帧。点一次 **运行** 生成全部 {len(kids)} 张，共消耗 {len(kids)} 个额度（30 步 = 1 个额度）。",
@@ -108,8 +108,10 @@ def keyframes_workflow(kids, path):
         "**定稿后复制到 input 目录**（镜头工作流会读取这些文件名）：",
         "",
         "```",
-        f"cp output/{N}/{kids[0]}_00001_.png input/{keyframe_file(kids[0])}",
+        *[f"cp output/{N}/{kid}_00001_.png input/{keyframe_file(kid)}" for kid in kids],
         "```",
+        "",
+        "`00001` 换成你定稿的那一版。",
     ]))
     for r, kid in enumerate(kids):
         k = KEYFRAMES[kid]

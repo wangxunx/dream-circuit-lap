@@ -11,7 +11,7 @@
       ],
       "size": [
         460,
-        620
+        812
       ],
       "flags": {},
       "order": 0,
@@ -22,7 +22,7 @@
         "Node name for S&R": "MarkdownNote"
       },
       "widgets_values": [
-        "## 赛道关键帧（Qwen Image 2.1 文生图）\n\n每一行是一张关键帧。点一次 **运行** 生成全部 8 张，共消耗 8 个额度（30 步 = 1 个额度）。\n\n图片保存在 `output/dream7/`，文件名形如 `K0_00001_.png`，每重新生成一次编号加 1。\n\n**生成后对照分镜检查**：前方的路往哪边弯、离弯道多远，画面里该有的东西在不在。不对就改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行：ComfyUI 只会重新生成提示词改过的那张。节点没有随机种子，提示词不变时重新生成也是同一张图。\n\nComfyUI 重启后缓存会清空，点运行会把每张都重新生成；只想重做一张时，先选中其他行的 Save Image 节点，按 Ctrl+M 静音。\n\n**定稿后复制到 input 目录**（镜头工作流会读取这些文件名）：\n\n```\ncp output/dream7/K0_00001_.png input/dream7_K0.png\n```"
+        "## 赛道关键帧（Qwen Image 2.1 文生图）\n\n每一行是一张关键帧。点一次 **运行** 生成全部 8 张，共消耗 8 个额度（30 步 = 1 个额度）。\n\n图片保存在 `output/dream7/`，文件名形如 `K0_00001_.png`，每重新生成一次编号加 1。\n\n**生成后对照分镜检查**：前方的路往哪边弯、离弯道多远，画面里该有的东西在不在。不对就改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行：ComfyUI 只会重新生成提示词改过的那张。节点没有随机种子，提示词不变时重新生成也是同一张图。\n\nComfyUI 重启后缓存会清空，点运行会把每张都重新生成；只想重做一张时，先选中其他行的 Save Image 节点，按 Ctrl+M 静音。\n\n**定稿后复制到 input 目录**（镜头工作流会读取这些文件名）：\n\n```\ncp output/dream7/K0_00001_.png input/dream7_K0.png\ncp output/dream7/K1_00001_.png input/dream7_K1.png\ncp output/dream7/K2_00001_.png input/dream7_K2.png\ncp output/dream7/K3_00001_.png input/dream7_K3.png\ncp output/dream7/K4_00001_.png input/dream7_K4.png\ncp output/dream7/K5_00001_.png input/dream7_K5.png\ncp output/dream7/K6_00001_.png input/dream7_K6.png\ncp output/dream7/K7_00001_.png input/dream7_K7.png\n```\n\n`00001` 换成你定稿的那一版。"
       ],
       "color": "#432",
       "bgcolor": "#653"
