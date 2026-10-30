@@ -9,7 +9,11 @@
   "video_rules": "Single continuous take from the same onboard camera, no cuts, no camera switch, the car always moves forward and never reverses, no on-screen text, no watermark.",
   "keyframe": {
     "aspect_ratio": "16:9",
-    "steps": 30
+    "steps": 30,
+    "match": {
+      "reference": "K0",
+      "prompt": "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting."
+    }
   },
   "video": {
     "resolution": "768P",

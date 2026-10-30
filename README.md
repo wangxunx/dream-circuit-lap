@@ -4,7 +4,7 @@
 
 You have a top-down map of a race track you designed. How do you turn it into an onboard video that drives one full lap?
 
-This project starts with the most direct approach (a single prompt), then introduces storyboarding, keyframes and shot-by-shot generation, stitches a one-minute film with sector titles and a minimap, and finally uses the storyboard to fix the hardest part, the T7–T8 chicane. Everything is generated in ComfyUI: keyframes with Qwen Image 2.1 and shots with MiniMax H3 first-last-frame video. Both run in the cloud, so no local GPU is needed.
+This project starts with the most direct approach (a single prompt), then introduces storyboarding, keyframes and shot-by-shot generation, stitches a one-minute film with sector titles and a minimap, and finally uses the storyboard to fix the hardest part, the T7–T8 chicane. Everything is generated in ComfyUI: keyframes with Qwen Image 2.1 and shots with MiniMax H3 first-last-frame video. Both run in the cloud. Only the edit that makes the car consistent across keyframes runs the local Qwen Image 2.1 model and needs a GPU; without one, the bundled media let you skip that step.
 
 The material comes from the real iterations of the [f1_circuit](https://github.com/wangxunx/f1_circuit) project. Every step ships with the results generated at the time, so you can follow every step without spending credits.
 
@@ -17,7 +17,7 @@ The notebooks come in English (`notebooks/*_en.ipynb`) and Chinese; the chapter 
 | 1 | The track map and the task | [ch1_map](docs/ch1_map.md) | none |
 | 2 | One prompt: 15 s, cannot finish the lap, hard to control | [ch2_single_prompt](docs/ch2_single_prompt.md) | 1 video per run (optional) |
 | 3 | Storyboard: split the lap into 7 shots | [ch3_storyboard](docs/ch3_storyboard.md) | none |
-| 4 | Keyframes: one onboard image at each shot boundary, checked against the storyboard | [ch4_keyframes](docs/ch4_keyframes.md) | 8 images, plus 1 per revision (optional) |
+| 4 | Keyframes: one onboard image at each shot boundary, checked against the storyboard, then the car made consistent | [ch4_keyframes](docs/ch4_keyframes.md) | 8 images, plus 1 per revision (optional); the car edit runs on a local GPU at no credit cost |
 | 5 | Shots: first-last-frame video, one shot at a time | [ch5_shots](docs/ch5_shots.md) | up to 14 videos (optional) |
 | 6 | Stitch the film and find the problems | [ch6_problems](docs/ch6_problems.md) | none |
 | 7 | Fix the T7–T8 chicane with the storyboard | [ch7_chicane](docs/ch7_chicane.md) | 2 images + 6 videos (optional) |
@@ -64,13 +64,13 @@ Use the Python environment that runs ComfyUI for `python` and `pip`. With the Wi
    python scripts/make_workflows.py --shots lap_8shots.json --install  # chapter 7, 8 shots
    ```
 
-4. Start ComfyUI in CPU mode, since only cloud nodes are used: `python main.py --cpu` in the ComfyUI directory (`run_cpu.bat` for the Windows portable build). Open http://127.0.0.1:8188, close the Templates dialog shown on first launch, and press `w` for the workflow list with `dream7_*` and `dream8_*`. Restart ComfyUI if it was running before the nodes were installed; press F5 if the workflows do not show up.
+4. Start ComfyUI: `python main.py` in the ComfyUI directory (the GPU launcher for the Windows portable build). Without a GPU use CPU mode, `python main.py --cpu` (`run_cpu.bat` for the portable build); the car edit in chapters 4 and 7 cannot run then, so use the bundled media for it. Open http://127.0.0.1:8188, close the Templates dialog shown on first launch, and press `w` for the workflow list with `dream7_*` and `dream8_*`. Restart ComfyUI if it was running before the nodes were installed; press F5 if the workflows do not show up.
 5. Follow the chapters. Each workflow has a note on its left listing what to prepare; [storyboard_dream7.md](docs/storyboard_dream7.md) and [storyboard_dream8.md](docs/storyboard_dream8.md) collect the frames, prompts and copy commands for every shot.
    - **Ch. 2**: drag `workflows/ch2_single_prompt.json` onto the canvas, upload `assets/fictional_track_v1.png` in the Load Image node, press Run. The historical takes are `media/ch2_single_prompt_*.mp4`.
-   - **Ch. 4**: run `dream7_keyframes_pilot` (K0, K1), then `dream7_keyframes`. Check each image against the storyboard; if it is wrong, edit the scene description at the start of that node's prompt and run again. Copy the final images from `ComfyUI/output/dream7/` to `ComfyUI/input/dream7_K0.png` … `dream7_K7.png`, or copy `examples/keyframes/dream7_K*.png` there.
+   - **Ch. 4**: run `dream7_keyframes_pilot` (K0, K1), then `dream7_keyframes`. Check each image against the storyboard; if it is wrong, edit the scene description at the start of that node's prompt and run again. Copy the final images from `ComfyUI/output/dream7/` to `ComfyUI/input/dream7_K0.png` … `dream7_K7.png`. Then run `dream7_keyframes_edit`, which uses K0 as the reference to make the car in K1–K7 and the gantry in K7 match it (local model; ComfyUI offers to download it if missing), check the results and copy the `K*_edit_*.png` files over the keyframes in `input/`. To skip all this, copy `examples/keyframes/dream7_K*.png` to `input/` instead (these predate the edit and match the bundled videos).
    - **Ch. 5**: press F5, run `dream7_shot_01` … `dream7_shot_07`. Copy your picks from `ComfyUI/output/video/dream7/` to `ComfyUI/output/video/dream7/selected/shot_01.mp4` …, or copy `media/dream7_shot_0X.mp4` there.
    - **Ch. 6**: `python scripts/stitch_lap.py` writes `output/dream_circuit_7shots.mp4` in this repository. Options: `--en`, `--no-minimap`, `--placeholder`.
-   - **Ch. 7**: run `dream8_keyframes`, put K4 and K5 at `input/dream8_K4.png` and `dream8_K5.png`, press F5, run `dream8_shot_04` … `dream8_shot_06` and put the picks in `output/video/dream8/selected/`. The bundled versions are `examples/keyframes/dream8_K*.png` and `media/dream8_shot_0X.mp4`. Then `python scripts/stitch_lap.py --shots lap_8shots.json`.
+   - **Ch. 7**: run `dream8_keyframes` and then `dream8_keyframes_edit`, put the edited K4 and K5 at `input/dream8_K4.png` and `dream8_K5.png`, press F5, run `dream8_shot_04` … `dream8_shot_06` and put the picks in `output/video/dream8/selected/`. The bundled versions are `examples/keyframes/dream8_K*.png` and `media/dream8_shot_0X.mp4`. Then `python scripts/stitch_lap.py --shots lap_8shots.json`.
 
    A Load Image node outlined in red with a "Media input missing" or "errors found" toast means its image is not in `ComfyUI/input/` yet; add it and press F5.
 
@@ -101,7 +101,7 @@ ComfyUI keeps running in the background after JupyterLab is closed (log in Comfy
 
 ### 3. Cloud notebook
 
-For JupyterLab/JupyterHub images with ComfyUI at `/comfyui_workspace/ComfyUI` (override with `COMFY_DIR`). ComfyUI runs with `--cpu` in the background and does not use the GPU.
+For JupyterLab/JupyterHub images with ComfyUI at `/comfyui_workspace/ComfyUI` (override with `COMFY_DIR`). ComfyUI runs in the background on the GPU when there is one (the car edit needs it) and with `--cpu` otherwise.
 
 1. In the platform's JupyterLab, open **File → New → Terminal** and run `git clone https://github.com/wangxunx/dream-circuit-lap.git`. Clone it where the file browser can see it (the terminal starts there) so the videos play.
 2. Open `dream-circuit-lap/notebooks/cloud_en.ipynb` from the file browser.
@@ -123,6 +123,7 @@ For JupyterLab/JupyterHub images with ComfyUI at `/comfyui_workspace/ComfyUI` (o
 | `workflows/` | ComfyUI workflows generated by `make_workflows.py` (except `ch2_single_prompt.json`) |
 | `examples/keyframes/` | The keyframes picked at the time, ready to copy into ComfyUI's `input/` |
 | `examples/k0_versions/` | Chapter 4 example: four versions of K0 |
+| `examples/car_edit/` | Chapter 4 example: K2, K6 and K7 before and after the car and gantry edit |
 | `assets/` | Track map, minimap, per-shot minimap paths, and the 7-shot and 8-shot storyboard maps |
 | `media/` | Historical videos, downloaded by `fetch_media.py` from `media/manifest.json` |
 | `scripts/` | Workflow and notebook generation, stitching, storyboard maps, media download and cloud launch scripts |

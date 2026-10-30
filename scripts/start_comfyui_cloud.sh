@@ -9,7 +9,8 @@
 #   - otherwise radeon-tunnel, which needs TUNNEL_SERVER and RADEON_TUNNEL_AUTH from the platform or your environment.
 #   COMFY_HARDWARE=instinct|radeon forces one of the two.
 #
-# This project only uses cloud nodes (Qwen Image 2.1 and MiniMax H3), so ComfyUI runs with --cpu by default.
+# Keyframes and shots use cloud nodes (Qwen Image 2.1 and MiniMax H3); only the car edit runs a local model.
+# ComfyUI uses the GPU when torch sees one and runs with --cpu otherwise; COMFY_ARGS overrides this.
 # Anyone with the public URL can queue jobs on your H3 key: do not share it.
 #
 # Adapted from https://github.com/Vivicai1005/notebook (comfyui_ltx_notebook/start_comfyui_with_tunnel.sh).
@@ -19,7 +20,7 @@ export PATH="/opt/venv/bin:/opt/rocm/bin:${PATH}"
 
 COMFY_PORT="${COMFY_PORT:-8188}"
 COMFY_DIR="${COMFY_DIR:-/comfyui_workspace/ComfyUI}"
-COMFY_ARGS="${COMFY_ARGS:---cpu}"
+COMFY_ARGS="${COMFY_ARGS-$(python3 -c 'import torch; print("" if torch.cuda.is_available() else "--cpu")' 2>/dev/null || echo --cpu)}"
 COMFY_READY_TIMEOUT="${COMFY_READY_TIMEOUT:-120}"
 COMFY_HARDWARE="${COMFY_HARDWARE:-auto}"
 TUNNEL_BIN="${TUNNEL_BIN:-/tmp/radeon-tunnel}"
@@ -88,7 +89,7 @@ fi
 
 stop_all
 
-echo "[start] ComfyUI on port ${COMFY_PORT} (${COMFY_ARGS})"
+echo "[start] ComfyUI on port ${COMFY_PORT} (${COMFY_ARGS:-GPU})"
 cd "${COMFY_DIR}"
 # word splitting of COMFY_ARGS is intended
 # shellcheck disable=SC2086

@@ -42,7 +42,7 @@ def intro(zh_where, en_where):
 | 1 | 认识赛道地图，抛出任务 | 无 |
 | 2 | 一个提示词直接生成：15 秒、跑不完、不可控 | 每次 1 段视频（可选） |
 | 3 | 分镜：把一圈拆成 7 个镜头 | 无 |
-| 4 | 关键帧：每个镜头交界处一张车手视角图，对照分镜检查 | 8 张图起，每改一次多 1 张（可直接用自带素材） |
+| 4 | 关键帧：每个镜头交界处一张车手视角图，对照分镜检查，再统一车身 | 8 张图起，每改一次多 1 张；统一车身用本地模型，需要 GPU（可直接用自带素材） |
 | 5 | 逐段拍镜头：首尾帧生成视频 | 最多 14 段视频（可直接用自带素材） |
 | 6 | 拼接成片，找出问题 | 无 |
 | 7 | 用分镜修好 T7–T8 减速弯 | 2 张关键帧，3 段视频 × 2 候选（可直接用自带素材） |
@@ -68,7 +68,7 @@ We have a top-down map of a race track we designed. The task: generate an onboar
 | 1 | The track map and the task | none |
 | 2 | One prompt: 15 s, cannot finish the lap, hard to control | 1 video per run (optional) |
 | 3 | Storyboard: split the lap into 7 shots | none |
-| 4 | Keyframes: one onboard image at each shot boundary, checked against the storyboard | 8 images, plus 1 per revision (bundled results available) |
+| 4 | Keyframes: one onboard image at each shot boundary, checked against the storyboard, then the car made consistent | 8 images, plus 1 per revision; the car edit runs a local model and needs a GPU (bundled results available) |
 | 5 | Shots: first-last-frame video, one shot at a time | up to 14 videos (bundled results available) |
 | 6 | Stitch the film and find the problems | none |
 | 7 | Fix the T7–T8 chicane with the storyboard | 2 keyframes, 3 videos × 2 takes (bundled results available) |
@@ -107,6 +107,23 @@ else:
     print("saved to", key_file)
 """)
 
+EDIT_MODELS_CODE = """
+DOWNLOAD = False  # NOTE
+for folder, name in (("diffusion_models", "qwen_image_2.1_int8_convrot.safetensors"),
+                     ("text_encoders", "qwen3vl_8b_int8_convrot.safetensors"),
+                     ("vae", "qwen_image_2.1_vae_bf16.safetensors")):
+    dst = COMFY / "models" / folder / name
+    if dst.exists():
+        print("found", dst)
+    elif DOWNLOAD:
+        part = dst.with_name(name + ".part")
+        urllib.request.urlretrieve(f"https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/{folder}/{name}", part)
+        part.rename(dst)
+        print("downloaded", dst)
+    else:
+        print("missing", dst)
+"""
+
 LOCAL = [
     intro("本地版", "local"),
     md("""
@@ -141,12 +158,12 @@ print("python :", PY)
 ### 安装两个云端节点
 
 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 生成关键帧，[ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) 生成视频。
-两者都在云端推理，本机不需要 GPU。已经装过的会跳过。
+两者都在云端推理；只有第 4、7 章统一车身的编辑用本地模型、需要 GPU，没有 GPU 时用自带素材跳过即可。已经装过的会跳过。
 """, """
 ### Install the two cloud nodes
 
 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) generates the keyframes and [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) the videos.
-Both run in the cloud, so no local GPU is needed. Nodes that are already installed are skipped.
+Both run in the cloud; only the car edit in chapters 4 and 7 runs a local model and needs a GPU, and without one the bundled media let you skip it. Nodes that are already installed are skipped.
 """),
     NODES_CODE,
     md("""
@@ -164,14 +181,14 @@ Running the next cell shows an input box below it: paste the key and press Enter
     md("""
 ### 启动 ComfyUI
 
-ComfyUI 在后台启动，第一次大约要等十几秒，日志在 ComfyUI 的 `user/comfyui_dream_circuit.log`。
+ComfyUI 在后台启动，第一次大约要等十几秒，日志在 ComfyUI 的 `user/comfyui_dream_circuit.log`。有 GPU 时使用 GPU（统一车身要用），没有时以 `--cpu` 启动。
 8188 端口已经有 ComfyUI 在运行时直接使用它；如果它是在安装节点之前启动的，请先重启，否则看不到新节点。
 
 Jupyter 跑在远程机器上（例如通过 Cursor / VS Code 的 Remote SSH）时，浏览器打不开 http://127.0.0.1:8188 的话，在 **Ports（端口）** 面板里转发 8188 端口。
 """, """
 ### Start ComfyUI
 
-ComfyUI starts in the background; the first start takes 10–20 seconds. The log is ComfyUI's `user/comfyui_dream_circuit.log`.
+ComfyUI starts in the background; the first start takes 10–20 seconds. The log is ComfyUI's `user/comfyui_dream_circuit.log`. It uses the GPU when there is one (the car edit needs it) and starts with `--cpu` otherwise.
 A ComfyUI already running on port 8188 is reused; if it was started before the nodes were installed, restart it, otherwise the new nodes are missing.
 
 If Jupyter runs on a remote machine (for example through Cursor or VS Code Remote SSH) and http://127.0.0.1:8188 does not open in your browser, forward port 8188 in the **Ports** panel.
@@ -185,7 +202,9 @@ if comfy_up():
     print("ComfyUI is already running")
 else:
     log = open(COMFY / "user" / "comfyui_dream_circuit.log", "w")
-    subprocess.Popen([PY, "main.py", "--port", "8188", "--cpu"], cwd=COMFY, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+    gpu = subprocess.run([PY, "-c", "import torch; assert torch.cuda.is_available()"], capture_output=True).returncode == 0
+    subprocess.Popen([PY, "main.py", "--port", "8188"] + ([] if gpu else ["--cpu"]), cwd=COMFY, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+    print("GPU" if gpu else "no GPU, started with --cpu")
     for _ in range(120):
         time.sleep(1)
         if comfy_up():
@@ -202,19 +221,19 @@ CLOUD = [
 ## 0. 准备环境
 
 云端版适用于预装了 ComfyUI 的 JupyterLab / JupyterHub 实例，ComfyUI 默认在 `/comfyui_workspace/ComfyUI`，可以用环境变量 `COMFY_DIR` 修改。
-本项目只用两个云端节点，所以 ComfyUI 以 `--cpu` 启动，不占用 GPU。
+关键帧和视频用两个云端节点；第 4、7 章统一车身的编辑用本地模型，所以 ComfyUI 会使用实例的 GPU。
 
 如果这个 notebook 不在本项目仓库里（例如单独上传的），下一格会把仓库克隆到 `~/dream-circuit-lap`。
 """, """
 ## 0. Setup
 
 The cloud notebook is for JupyterLab / JupyterHub instances with ComfyUI preinstalled, by default at `/comfyui_workspace/ComfyUI`; override it with `COMFY_DIR`.
-This project only uses the two cloud nodes, so ComfyUI starts with `--cpu` and does not use the GPU.
+Keyframes and videos use the two cloud nodes; the car edit in chapters 4 and 7 runs a local model, so ComfyUI uses the instance's GPU.
 
 If this notebook is not inside the project repository (for example, uploaded on its own), the next cell clones the repository to `~/dream-circuit-lap`.
 """),
     code("""
-import os, sys, shutil, subprocess
+import os, sys, shutil, subprocess, urllib.request
 from getpass import getpass
 from pathlib import Path
 
@@ -507,6 +526,46 @@ for i in range(8):
 show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 """),
     md("""
+### 统一车身和灯架
+
+`style` 里写了赛车的样子，文生图还是每张各画各的车：halo 顶上的部件有大有小、车身有的带红色、机位有高有低；终点 K7 的灯架也和起点 K0 不一样。
+首尾帧是两辆车时，视频会在中途换车，相邻镜头又共用关键帧。原项目是拼完成片才发现、回头编辑，几乎所有镜头都重拍了一遍，所以这一步放在拍镜头之前。
+
+编辑用本地 Qwen Image 2.1 模型（约 17 GB，需要 GPU），不花额度；网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化，暂时不用。
+
+在浏览器里（路线 B）：
+
+1. 把下一格的 `DOWNLOAD` 改成 `True` 并运行，下载缺的模型（已有的会跳过），然后重启 ComfyUI 或刷新页面。
+2. 打开 `dream7_keyframes_edit`，点 Run：以 K0 为参考，把 K1–K7 的车改成 K0 那辆，K7 的灯架改成一排 5 个灯、全部熄灭。第一次运行要编译，7 张约 15 分钟。
+3. 逐张检查：车和 K0 是同一辆、机位一致，路面走向、红车、看台这些场景没被改掉。不行就补一句指令或换 KSampler 的 seed 再运行。
+4. 满意后运行再下一格，编辑结果会覆盖 `input/` 里的关键帧，然后刷新页面。
+
+路线 A 直接运行下面几格：模型不会下载，挑选格什么都不做。自带的关键帧和视频是当时还没有这一步时生成的，下面最后一格是这次编辑的对比。讲解提纲见 `docs/ch4_keyframes.md`。
+""", """
+### Make the car and the gantry consistent
+
+`style` describes the car, but text-to-image still draws a different car in each keyframe: the part on top of the halo changes size, some bodies have red on them, the camera sits higher or lower; the gantry in the finishing K7 also differs from the one in the starting K0.
+When the first and last frame show two different cars, the video swaps cars midway, and neighbouring shots share keyframes. The original project only noticed this after stitching the film and edited the keyframes then, so nearly every shot had to be redone; that is why this step comes before the shots.
+
+The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU) and costs no credits; the gateway's image edit comes back grainy and over-sharpened at 16:9, so it is not used for now.
+
+In the browser (route B):
+
+1. Set `DOWNLOAD` in the next cell to `True` and run it to download the missing models (existing ones are skipped), then restart ComfyUI or reload the page.
+2. Open `dream7_keyframes_edit` and click Run: with K0 as the reference, the car in K1–K7 becomes K0's car, and the gantry in K7 becomes a single row of five lights, all off. The first run compiles kernels; 7 images take about 15 minutes.
+3. Check each one: the same car as K0 at the same camera height, with the road, the red car and the grandstands unchanged. If one is off, add a sentence to its instruction or change the KSampler seed and run again.
+4. When you are happy, run the cell after next: the edits overwrite the keyframes in `input/`. Then reload the page.
+
+For route A just run the cells below: no models are downloaded and the picker does nothing. The bundled keyframes and videos were made before this step existed; the last cell shows this edit before and after. Outline (in Chinese): `docs/ch4_keyframes.md`.
+"""),
+    code(EDIT_MODELS_CODE.replace("NOTE", "路线 B 改成 True"), EDIT_MODELS_CODE.replace("NOTE", "set to True for route B")),
+    code("""
+pick({f"K{i}": f"K{i}_edit_*.png" for i in range(1, 8)}, COMFY / "output" / "dream7", COMFY / "input" / "dream7_{}.png")
+"""),
+    code("""
+show(*[PROJECT / "examples" / "car_edit" / f"{k}_{v}.jpg" for k in ("K2", "K6", "K7") for v in ("before", "after")], width=440)
+"""),
+    md("""
 ## 第 5 章：逐段拍镜头
 
 第 i 个镜头以 K(i-1) 为首帧、K(i) 为尾帧，交给 MiniMax H3 首尾帧节点生成，提示词只描述“怎么动”。
@@ -600,12 +659,12 @@ show(MEDIA / "chicane_K5_first_try.png", PROJECT / "examples" / "keyframes" / "d
     md("""
 8 镜头分镜表 `storyboards/lap_8shots.json` 只重做 K4、K5 两张关键帧和镜头 4–6，其余关键帧复用第 4 章、镜头复用第 5 章的结果。
 原来的镜头 5 拆成了镜头 5（T7）和镜头 6（T8），中间多了 K5，所以后面的编号都往后顺延一位：7 镜头版的 K5、K6、K7 在这里是 K6、K7、K8，原来的镜头 6、7 在这里是镜头 7、8。对照下面的示意图看。
-路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
+路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_keyframes_edit`，以 `dream7_K0.png` 为参考统一 K4、K5 的车，检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。然后打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
 路线 A 直接运行下面几格。最后拼出 8 镜头成片，和第 6 章的版本对比。
 """, """
 The 8-shot storyboard `storyboards/lap_8shots.json` redoes only keyframes K4 and K5 and shots 4–6; the other keyframes come from chapter 4 and the other shots from chapter 5.
 The old shot 5 is split into shot 5 (T7) and shot 6 (T8) with a new K5 between them, so everything after it shifts by one: the 7-shot K5, K6 and K7 are K6, K7 and K8 here, and the old shots 6 and 7 are shots 7 and 8. Compare with the map below.
-Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
+Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Next open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K0.png`, check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
 For route A just run the cells below. At the end you stitch the 8-shot film and compare it with the chapter 6 version.
 """),
     code("""

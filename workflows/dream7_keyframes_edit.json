@@ -1,0 +1,2616 @@
+{
+  "last_node_id": 40,
+  "last_link_id": 77,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "MarkdownNote",
+      "pos": [
+        -2160,
+        0
+      ],
+      "size": [
+        460,
+        1148
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "## 统一车身和灯架（本地 Qwen Image 2.1 图像编辑）\n\n文生图的每张关键帧各画各的车。这里以 `input/dream7_K0.png` 为参考（image 2），把每张关键帧（image 1）里的车改成和它一致；K7 还会把起跑灯架改成和参考图一样、灯全部熄灭。\n同一个镜头的首尾帧如果是两辆车，视频中途就会换车，所以要在拍镜头之前统一。\n\n这一步在本机 GPU 上跑，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。需要下面 3 个模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载：\n\n- `models/diffusion_models/qwen_image_2.1_int8_convrot.safetensors`\n- `models/text_encoders/qwen3vl_8b_int8_convrot.safetensors`\n- `models/vae/qwen_image_2.1_vae_bf16.safetensors`\n\n**运行前** 关键帧已经定稿并复制进 `input/`。点一次 **运行** 编辑全部 7 张，结果保存在 `output/dream7/`，文件名形如 `K1_edit_00001_.png`。\n\n**检查**：车和参考图是同一辆（halo、中柱顶上的黑色部件、深蓝车身、前轮），机位高度一致；路面、弯道、红车、看台这些场景内容没被改掉。哪张不行就在它的提示词里补一句，或者换一个 KSampler 的 seed，再点运行，ComfyUI 只会重做改过的那张。\n\n**满意后覆盖 input 里的关键帧**（镜头工作流读取这些文件名；未编辑的原图仍在 `output/` 里）：\n\n```\ncp output/dream7/K1_edit_00001_.png input/dream7_K1.png\ncp output/dream7/K2_edit_00001_.png input/dream7_K2.png\ncp output/dream7/K3_edit_00001_.png input/dream7_K3.png\ncp output/dream7/K4_edit_00001_.png input/dream7_K4.png\ncp output/dream7/K5_edit_00001_.png input/dream7_K5.png\ncp output/dream7/K6_edit_00001_.png input/dream7_K6.png\ncp output/dream7/K7_edit_00001_.png input/dream7_K7.png\n```\n\n`00001` 换成你选定的那一版。覆盖之后再点运行，编辑的就是已经统一过的图。"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 2,
+      "type": "UNETLoader",
+      "pos": [
+        -1260,
+        -460
+      ],
+      "size": [
+        420,
+        90
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            5,
+            16,
+            27,
+            38,
+            49,
+            60,
+            71
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader",
+        "models": [
+          {
+            "name": "qwen_image_2.1_int8_convrot.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors",
+            "directory": "diffusion_models"
+          }
+        ]
+      },
+      "widgets_values": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "default"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        -1260,
+        -330
+      ],
+      "size": [
+        420,
+        110
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            1,
+            12,
+            23,
+            34,
+            45,
+            56,
+            67
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader",
+        "models": [
+          {
+            "name": "qwen3vl_8b_int8_convrot.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+            "directory": "text_encoders"
+          }
+        ]
+      },
+      "widgets_values": [
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image",
+        "default"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "VAELoader",
+      "pos": [
+        -1260,
+        -180
+      ],
+      "size": [
+        420,
+        60
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            2,
+            10,
+            13,
+            21,
+            24,
+            32,
+            35,
+            43,
+            46,
+            54,
+            57,
+            65,
+            68,
+            76
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader",
+        "models": [
+          {
+            "name": "qwen_image_2.1_vae_bf16.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors",
+            "directory": "vae"
+          }
+        ]
+      },
+      "widgets_values": [
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        -460
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            4,
+            15,
+            26,
+            37,
+            48,
+            59,
+            70
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K0.png",
+        "image"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        0
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            3
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K1.png",
+        "image"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        0
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 1
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 2,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 3,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 4,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            6
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            7
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 8,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        0
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 5
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 6
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 7
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 9,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        0
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 9
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 10
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 10,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        0
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 11
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K1_edit"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        420
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            14
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K2.png",
+        "image"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        420
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 12
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 13,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 14,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 15,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            17
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            18
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            19
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 13,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        420
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 16
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 17
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 18
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 14,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        420
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 20
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            22
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 15,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        420
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 22
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K2_edit"
+      ]
+    },
+    {
+      "id": 16,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        840
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            25
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K3.png",
+        "image"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        840
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 23
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 24,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 25,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 26,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            28
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            29
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            30
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 18,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        840
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 27
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 28
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 29
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            31
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 19,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        840
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 31
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 32
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            33
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 20,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        840
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 33
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K3_edit"
+      ]
+    },
+    {
+      "id": 21,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        1260
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            36
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K4.png",
+        "image"
+      ]
+    },
+    {
+      "id": 22,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        1260
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 34
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 35,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 36,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 37,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            39
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            40
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            41
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 23,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        1260
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 38
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 39
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 40
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 41
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            42
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 24,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        1260
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 42
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 43
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            44
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 25,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        1260
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 44
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K4_edit"
+      ]
+    },
+    {
+      "id": 26,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        1680
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            47
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K5.png",
+        "image"
+      ]
+    },
+    {
+      "id": 27,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        1680
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 45
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 46,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 47,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 48,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            50
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            51
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            52
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 28,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        1680
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 49
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 50
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 51
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            53
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 29,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        1680
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 53
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 54
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            55
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 30,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        1680
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 55
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K5_edit"
+      ]
+    },
+    {
+      "id": 31,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        2100
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            58
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K6.png",
+        "image"
+      ]
+    },
+    {
+      "id": 32,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        2100
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 56
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 57,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 58,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 59,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            61
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            62
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            63
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 33,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        2100
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 60
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 61
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 62
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 63
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            64
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 34,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        2100
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 64
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 65
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            66
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 35,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        2100
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 66
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K6_edit"
+      ]
+    },
+    {
+      "id": 36,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        2520
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            69
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K7.png",
+        "image"
+      ]
+    },
+    {
+      "id": 37,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        2520
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 67
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 68,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 69,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 70,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            72
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            73
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            74
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting. Also replace the start light gantry above the track in image 1 with the gantry from image 2: the same grey steel truss and the same single black light panel with one row of five round lights in the middle, with nothing hanging below it. All five lights are switched off and dark. Keep the gantry at its position and size in image 1.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 38,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        2520
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 71
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 72
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 73
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 74
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            75
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 39,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        2520
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 38,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 75
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 76
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            77
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 40,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        2520
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 39,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 77
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K7_edit"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      3,
+      0,
+      7,
+      0,
+      "CLIP"
+    ],
+    [
+      2,
+      4,
+      0,
+      7,
+      1,
+      "VAE"
+    ],
+    [
+      3,
+      6,
+      0,
+      7,
+      2,
+      "IMAGE"
+    ],
+    [
+      4,
+      5,
+      0,
+      7,
+      3,
+      "IMAGE"
+    ],
+    [
+      5,
+      2,
+      0,
+      8,
+      0,
+      "MODEL"
+    ],
+    [
+      6,
+      7,
+      0,
+      8,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      7,
+      7,
+      1,
+      8,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      8,
+      7,
+      2,
+      8,
+      3,
+      "LATENT"
+    ],
+    [
+      9,
+      8,
+      0,
+      9,
+      0,
+      "LATENT"
+    ],
+    [
+      10,
+      4,
+      0,
+      9,
+      1,
+      "VAE"
+    ],
+    [
+      11,
+      9,
+      0,
+      10,
+      0,
+      "IMAGE"
+    ],
+    [
+      12,
+      3,
+      0,
+      12,
+      0,
+      "CLIP"
+    ],
+    [
+      13,
+      4,
+      0,
+      12,
+      1,
+      "VAE"
+    ],
+    [
+      14,
+      11,
+      0,
+      12,
+      2,
+      "IMAGE"
+    ],
+    [
+      15,
+      5,
+      0,
+      12,
+      3,
+      "IMAGE"
+    ],
+    [
+      16,
+      2,
+      0,
+      13,
+      0,
+      "MODEL"
+    ],
+    [
+      17,
+      12,
+      0,
+      13,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      18,
+      12,
+      1,
+      13,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      19,
+      12,
+      2,
+      13,
+      3,
+      "LATENT"
+    ],
+    [
+      20,
+      13,
+      0,
+      14,
+      0,
+      "LATENT"
+    ],
+    [
+      21,
+      4,
+      0,
+      14,
+      1,
+      "VAE"
+    ],
+    [
+      22,
+      14,
+      0,
+      15,
+      0,
+      "IMAGE"
+    ],
+    [
+      23,
+      3,
+      0,
+      17,
+      0,
+      "CLIP"
+    ],
+    [
+      24,
+      4,
+      0,
+      17,
+      1,
+      "VAE"
+    ],
+    [
+      25,
+      16,
+      0,
+      17,
+      2,
+      "IMAGE"
+    ],
+    [
+      26,
+      5,
+      0,
+      17,
+      3,
+      "IMAGE"
+    ],
+    [
+      27,
+      2,
+      0,
+      18,
+      0,
+      "MODEL"
+    ],
+    [
+      28,
+      17,
+      0,
+      18,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      29,
+      17,
+      1,
+      18,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      30,
+      17,
+      2,
+      18,
+      3,
+      "LATENT"
+    ],
+    [
+      31,
+      18,
+      0,
+      19,
+      0,
+      "LATENT"
+    ],
+    [
+      32,
+      4,
+      0,
+      19,
+      1,
+      "VAE"
+    ],
+    [
+      33,
+      19,
+      0,
+      20,
+      0,
+      "IMAGE"
+    ],
+    [
+      34,
+      3,
+      0,
+      22,
+      0,
+      "CLIP"
+    ],
+    [
+      35,
+      4,
+      0,
+      22,
+      1,
+      "VAE"
+    ],
+    [
+      36,
+      21,
+      0,
+      22,
+      2,
+      "IMAGE"
+    ],
+    [
+      37,
+      5,
+      0,
+      22,
+      3,
+      "IMAGE"
+    ],
+    [
+      38,
+      2,
+      0,
+      23,
+      0,
+      "MODEL"
+    ],
+    [
+      39,
+      22,
+      0,
+      23,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      40,
+      22,
+      1,
+      23,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      41,
+      22,
+      2,
+      23,
+      3,
+      "LATENT"
+    ],
+    [
+      42,
+      23,
+      0,
+      24,
+      0,
+      "LATENT"
+    ],
+    [
+      43,
+      4,
+      0,
+      24,
+      1,
+      "VAE"
+    ],
+    [
+      44,
+      24,
+      0,
+      25,
+      0,
+      "IMAGE"
+    ],
+    [
+      45,
+      3,
+      0,
+      27,
+      0,
+      "CLIP"
+    ],
+    [
+      46,
+      4,
+      0,
+      27,
+      1,
+      "VAE"
+    ],
+    [
+      47,
+      26,
+      0,
+      27,
+      2,
+      "IMAGE"
+    ],
+    [
+      48,
+      5,
+      0,
+      27,
+      3,
+      "IMAGE"
+    ],
+    [
+      49,
+      2,
+      0,
+      28,
+      0,
+      "MODEL"
+    ],
+    [
+      50,
+      27,
+      0,
+      28,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      51,
+      27,
+      1,
+      28,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      52,
+      27,
+      2,
+      28,
+      3,
+      "LATENT"
+    ],
+    [
+      53,
+      28,
+      0,
+      29,
+      0,
+      "LATENT"
+    ],
+    [
+      54,
+      4,
+      0,
+      29,
+      1,
+      "VAE"
+    ],
+    [
+      55,
+      29,
+      0,
+      30,
+      0,
+      "IMAGE"
+    ],
+    [
+      56,
+      3,
+      0,
+      32,
+      0,
+      "CLIP"
+    ],
+    [
+      57,
+      4,
+      0,
+      32,
+      1,
+      "VAE"
+    ],
+    [
+      58,
+      31,
+      0,
+      32,
+      2,
+      "IMAGE"
+    ],
+    [
+      59,
+      5,
+      0,
+      32,
+      3,
+      "IMAGE"
+    ],
+    [
+      60,
+      2,
+      0,
+      33,
+      0,
+      "MODEL"
+    ],
+    [
+      61,
+      32,
+      0,
+      33,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      62,
+      32,
+      1,
+      33,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      63,
+      32,
+      2,
+      33,
+      3,
+      "LATENT"
+    ],
+    [
+      64,
+      33,
+      0,
+      34,
+      0,
+      "LATENT"
+    ],
+    [
+      65,
+      4,
+      0,
+      34,
+      1,
+      "VAE"
+    ],
+    [
+      66,
+      34,
+      0,
+      35,
+      0,
+      "IMAGE"
+    ],
+    [
+      67,
+      3,
+      0,
+      37,
+      0,
+      "CLIP"
+    ],
+    [
+      68,
+      4,
+      0,
+      37,
+      1,
+      "VAE"
+    ],
+    [
+      69,
+      36,
+      0,
+      37,
+      2,
+      "IMAGE"
+    ],
+    [
+      70,
+      5,
+      0,
+      37,
+      3,
+      "IMAGE"
+    ],
+    [
+      71,
+      2,
+      0,
+      38,
+      0,
+      "MODEL"
+    ],
+    [
+      72,
+      37,
+      0,
+      38,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      73,
+      37,
+      1,
+      38,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      74,
+      37,
+      2,
+      38,
+      3,
+      "LATENT"
+    ],
+    [
+      75,
+      38,
+      0,
+      39,
+      0,
+      "LATENT"
+    ],
+    [
+      76,
+      4,
+      0,
+      39,
+      1,
+      "VAE"
+    ],
+    [
+      77,
+      39,
+      0,
+      40,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "title": "参考：K0，以及模型",
+      "bounding": [
+        -1660,
+        -500,
+        860,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K1 · 直道尽头：刹车点前",
+      "bounding": [
+        -1660,
+        -40,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K2 · 出 T2：前方开始爬坡",
+      "bounding": [
+        -1660,
+        380,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K3 · T5 坡顶：前方大半径左弯",
+      "bounding": [
+        -1660,
+        800,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K4 · 出 T6：短直道与减速弯",
+      "bounding": [
+        -1660,
+        1220,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K5 · 出减速弯：前方长下坡",
+      "bounding": [
+        -1660,
+        1640,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K6 · 出 T9：前方中速右弯",
+      "bounding": [
+        -1660,
+        2060,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K7 · 终点：冲过起终点线",
+      "bounding": [
+        -1660,
+        2480,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.6,
+      "offset": [
+        2300,
+        100
+      ]
+    }
+  },
+  "version": 0.4
+}

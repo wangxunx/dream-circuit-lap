@@ -13,7 +13,11 @@
   "video_rules": "Single continuous take from the same onboard camera, no cuts, no camera switch, the car always moves forward and never reverses, no on-screen text, no watermark.",
   "keyframe": {
     "aspect_ratio": "16:9",
-    "steps": 30
+    "steps": 30,
+    "match": {
+      "reference": "K0",
+      "prompt": "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting."
+    }
   },
   "video": {
     "resolution": "768P",
@@ -63,7 +67,8 @@
     {
       "id": "K7",
       "label": "终点：冲过起终点线",
-      "scene": "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges."
+      "scene": "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges.",
+      "match": "Also replace the start light gantry above the track in image 1 with the gantry from image 2: the same grey steel truss and the same single black light panel with one row of five round lights in the middle, with nothing hanging below it. All five lights are switched off and dark. Keep the gantry at its position and size in image 1."
     }
   ],
   "shots": [

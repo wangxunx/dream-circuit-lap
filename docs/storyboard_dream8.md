@@ -33,7 +33,8 @@
 - 在 ComfyUI 的 `custom_nodes/` 里安装 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 和 [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3)。
 - 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。
 - 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `dream8_` 开头的条目。
-- 额度估算：关键帧每张 1 个额度（30 步）；视频按网关计费。全部生成一遍约为 2 张图（每改一次场景重新生成 1 张）加 6 段视频。
+- 额度估算：关键帧每张 1 个额度（30 步），视频按网关计费。全部生成一遍约为 2 张图（每改一次多 1 张）加 6 段视频。
+- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身和灯架”）。
 
 ## 第 1 步：生成新关键帧
 
@@ -58,18 +59,43 @@ cp output/dream8/K5_00001_.png input/dream8_K5.png   # 00001 换成你定稿的�
 
 想跳过这一步、直接试视频的话，可以把项目自带的关键帧复制进去：`cp examples/keyframes/dream8_*.png /path/to/ComfyUI/input/`。
 
-## 第 2 步：逐段生成视频
+## 第 2 步：统一车身和灯架
+
+文生图的每张关键帧各画各的车：halo 顶上的部件、车身颜色、机位高低都可能不同。同一个镜头的首尾帧如果是两辆车，视频中途就会换车，相邻镜头又共用关键帧，所以要在拍镜头之前把所有关键帧统一成同一辆车。
+
+打开 `dream8_keyframes_edit`，点运行：以 `input/dream7_K0.png` 为参考图，把 K4、K5 里的车改成和 K0 一致。结果在 `output/dream8/K4_edit_00001_.png` 这样的文件里。
+
+这一步用本地 Qwen Image 2.1 模型，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。需要以下模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：
+
+```bash
+cd /path/to/ComfyUI
+wget -P models/diffusion_models https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors
+wget -P models/text_encoders https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors
+wget -P models/vae https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors
+```
+
+检查车和参考图是同一辆、机位高度一致，路面、弯道、红车、看台这些场景内容没被改掉。不满意就补一句编辑指令或换一个 KSampler 的 seed 再运行。满意后覆盖 input 里的关键帧：
+
+```bash
+cd /path/to/ComfyUI
+cp output/dream8/K4_edit_00001_.png input/dream8_K4.png
+cp output/dream8/K5_edit_00001_.png input/dream8_K5.png
+```
+
+编辑指令在 `lap_8shots.json` 的 `keyframe.match`。
+
+## 第 3 步：逐段生成视频
 
 依次打开 `dream8_shot_04` 到 `dream8_shot_06`，每个点一次运行，会生成 2 条候选。选好的那条复制为 `output/video/dream8/selected/shot_0X.mp4`（每个工作流左侧的说明里有现成命令）。
 
-## 第 3 步：逐段检查
+## 第 4 步：逐段检查
 
 - 转向方向是否和分镜一致（最常见的错误）。
 - 有没有突然切镜、画面倒放或倒车。
 - 赛车和镜头位置有没有中途变化。
 - 开头和结尾两帧是否贴近关键帧，否则拼接处会跳。
 
-## 第 4 步：拼接成片
+## 第 5 步：拼接成片
 
 在本项目目录下运行（ComfyUI 不在上一级目录时，加 `--comfyui /path/to/ComfyUI` 或设置 `COMFYUI_DIR`）：
 

@@ -30,10 +30,22 @@ KEYFRAMES = {k["id"]: k for k in SB["keyframes"]}
 N = SB["name"]
 GEN_KEYFRAMES = [k["id"] for k in SB["keyframes"] if "file" not in k]
 GEN_SHOTS = [s for s in SB["shots"] if "clip" not in s]
+MATCH = SB["keyframe"]["match"]
+EDIT_KEYFRAMES = [kid for kid in GEN_KEYFRAMES if kid != MATCH["reference"]]
+# The gateway's Qwen Image 2.1 edit comes back grainy and over-sharpened at 16:9, so the car edit runs the local model.
+HF = "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main"
+EDIT_UNET = "qwen_image_2.1_int8_convrot.safetensors"
+EDIT_CLIP = "qwen3vl_8b_int8_convrot.safetensors"
+EDIT_VAE = "qwen_image_2.1_vae_bf16.safetensors"
+EDIT_SEED, EDIT_STEPS = 860643297917446, 25
 
 
 def keyframe_prompt(k):
     return f"{k['scene']} {SB['style']}"
+
+
+def match_prompt(k):
+    return f"{MATCH['prompt']} {k['match']}" if "match" in k else MATCH["prompt"]
 
 
 def video_prompt(shot):
@@ -125,6 +137,72 @@ def keyframes_workflow(kids, path):
     g.dump(path)
 
 
+def edit_workflow(kids, path):
+    ref = keyframe_file(MATCH["reference"])
+    extra = [kid for kid in kids if "match" in KEYFRAMES[kid]]
+    g = Graph()
+    g.note((-2160, 0), (460, 980 + 24 * len(kids)), "\n".join([
+        "## 统一车身和灯架（本地 Qwen Image 2.1 图像编辑）",
+        "",
+        f"文生图的每张关键帧各画各的车。这里以 `input/{ref}` 为参考（image 2），把每张关键帧（image 1）里的车改成和它一致"
+        + (f"；{'、'.join(extra)} 还会把起跑灯架改成和参考图一样、灯全部熄灭" if extra else "") + "。",
+        "同一个镜头的首尾帧如果是两辆车，视频中途就会换车，所以要在拍镜头之前统一。",
+        "",
+        "这一步在本机 GPU 上跑，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。"
+        "需要下面 3 个模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载：",
+        "",
+        f"- `models/diffusion_models/{EDIT_UNET}`",
+        f"- `models/text_encoders/{EDIT_CLIP}`",
+        f"- `models/vae/{EDIT_VAE}`",
+        "",
+        f"**运行前** 关键帧已经定稿并复制进 `input/`。点一次 **运行** 编辑全部 {len(kids)} 张，"
+        f"结果保存在 `output/{N}/`，文件名形如 `{kids[0]}_edit_00001_.png`。",
+        "",
+        "**检查**：车和参考图是同一辆（halo、中柱顶上的黑色部件、深蓝车身、前轮），机位高度一致；"
+        "路面、弯道、红车、看台这些场景内容没被改掉。哪张不行就在它的提示词里补一句，或者换一个 KSampler 的 seed，再点运行，ComfyUI 只会重做改过的那张。",
+        "",
+        "**满意后覆盖 input 里的关键帧**（镜头工作流读取这些文件名；未编辑的原图仍在 `output/` 里）：",
+        "",
+        "```",
+        *[f"cp output/{N}/{kid}_edit_00001_.png input/{keyframe_file(kid)}" for kid in kids],
+        "```",
+        "",
+        "`00001` 换成你选定的那一版。覆盖之后再点运行，编辑的就是已经统一过的图。",
+    ]))
+    unet = g.node("UNETLoader", (-1260, -460), (420, 90), [EDIT_UNET, "default"], outputs=[("MODEL", "MODEL")], color=False)
+    clip = g.node("CLIPLoader", (-1260, -330), (420, 110), [EDIT_CLIP, "qwen_image", "default"], outputs=[("CLIP", "CLIP")], color=False)
+    vae = g.node("VAELoader", (-1260, -180), (420, 60), [EDIT_VAE], outputs=[("VAE", "VAE")], color=False)
+    for n, folder in ((unet, "diffusion_models"), (clip, "text_encoders"), (vae, "vae")):
+        name = n["widgets_values"][0]
+        n["properties"]["models"] = [{"name": name, "url": f"{HF}/{folder}/{name}", "directory": folder}]
+    load_ref = g.node("LoadImage", (-1640, -460), (340, 330), [ref, "image"], outputs=[("IMAGE", "IMAGE"), ("MASK", "MASK")], color=False)
+    g.group(f"参考：{MATCH['reference']}，以及模型", -1660, -500, 860, 400)
+    for r, kid in enumerate(kids):
+        k = KEYFRAMES[kid]
+        y = r * 420
+        g.group(f"{kid} · {k['label']}", -1660, y - 40, 1920, 400)
+        load = g.node("LoadImage", (-1640, y), (340, 330), [keyframe_file(kid), "image"], outputs=[("IMAGE", "IMAGE"), ("MASK", "MASK")], color=False)
+        enc = g.node("TextEncodeQwenImage21", (-1260, y), (420, 330), [match_prompt(k), "", 0],
+                     inputs=[("clip", "CLIP", False), ("vae", "VAE", True), ("images.image_1", "IMAGE", True), ("images.image_2", "IMAGE", True)],
+                     outputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent", "LATENT")])
+        ks = g.node("KSampler", (-800, y), (320, 330), [EDIT_SEED, "fixed", EDIT_STEPS, 1, "euler", "simple", 1],
+                    inputs=[("model", "MODEL", False), ("positive", "CONDITIONING", False), ("negative", "CONDITIONING", False), ("latent_image", "LATENT", False)],
+                    outputs=[("LATENT", "LATENT")])
+        dec = g.node("VAEDecode", (-440, y), (200, 50), [], inputs=[("samples", "LATENT", False), ("vae", "VAE", False)], outputs=[("IMAGE", "IMAGE")], color=False)
+        save = g.node("SaveImage", (-200, y), (420, 330), [f"{N}/{kid}_edit"], inputs=[("images", "IMAGE", False)], color=False)
+        g.link(clip, 0, enc, 0)
+        g.link(vae, 0, enc, 1)
+        g.link(load, 0, enc, 2)
+        g.link(load_ref, 0, enc, 3)
+        g.link(unet, 0, ks, 0)
+        for slot in range(3):
+            g.link(enc, slot, ks, slot + 1)
+        g.link(ks, 0, dec, 0)
+        g.link(vae, 0, dec, 1)
+        g.link(dec, 0, save, 0)
+    g.dump(path)
+
+
 def shot_workflow(shot, path):
     g = Graph()
     takes = SB["video"]["takes"]
@@ -202,7 +280,12 @@ def storyboard_md(path):
         "和 [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3)。",
         "- 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。",
         f"- 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `{N}_` 开头的条目。",
-        f"- 额度估算：关键帧每张 1 个额度（{kf['steps']} 步）；视频按网关计费。全部生成一遍约为 {len(GEN_KEYFRAMES)} 张图（每改一次场景重新生成 1 张）加 {len(GEN_SHOTS) * vid['takes']} 段视频。",
+        f"- 额度估算：关键帧每张 1 个额度（{kf['steps']} 步），视频按网关计费。"
+        f"全部生成一遍约为 {len(GEN_KEYFRAMES)} 张图（每改一次多 1 张）加 {len(GEN_SHOTS) * vid['takes']} 段视频。",
+    ]
+    if EDIT_KEYFRAMES:
+        L.append(f"- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身和灯架”）。")
+    L += [
         "",
     ]
     if "pilot" in SB:
@@ -212,8 +295,9 @@ def storyboard_md(path):
             "",
             f"1. 打开 `{N}_keyframes_pilot`，点运行，只生成 {a} 和 {b}。",
             f"2. 对照分镜检查（见下一步），定稿后复制为 `input/{keyframe_file(a)}` 和 `input/{keyframe_file(b)}`（命令见下面“复制到 input”）。",
-            f"3. 打开 `{N}_shot_01`，点运行。看三件事：画风是否满意；视频开头和结尾是否贴近两张关键帧；速度感和方向是否对。",
-            f"4. 满意了再继续。不满意就先改 `{SHOTS_FILE}` 里的 `style`、`scene` 或 `motion`，重新运行 `make_workflows.py`，再重拍。",
+            f"3. 打开 `{N}_keyframes_edit_pilot`，点运行，把 {b} 的车统一成 {a} 那辆，检查后覆盖 `input/{keyframe_file(b)}`（见下面“统一车身和灯架”）。",
+            f"4. 打开 `{N}_shot_01`，点运行。看三件事：画风是否满意；视频开头和结尾是否贴近两张关键帧；速度感和方向是否对。",
+            f"5. 满意了再继续。不满意就先改 `{SHOTS_FILE}` 里的 `style`、`scene` 或 `motion`，重新运行 `make_workflows.py`，再重拍。",
             "",
         ]
     L += [
@@ -244,6 +328,42 @@ def storyboard_md(path):
         "",
         f"想跳过这一步、直接试视频的话，可以把项目自带的关键帧复制进去：`cp examples/keyframes/{N}_*.png /path/to/ComfyUI/input/`。",
         "",
+    ]
+    if EDIT_KEYFRAMES:
+        ref = MATCH["reference"]
+        extra = [kid for kid in EDIT_KEYFRAMES if "match" in KEYFRAMES[kid]]
+        L += [
+            f"## 第 {next(step)} 步：统一车身和灯架",
+            "",
+            f"文生图的每张关键帧各画各的车：halo 顶上的部件、车身颜色、机位高低都可能不同。同一个镜头的首尾帧如果是两辆车，视频中途就会换车，"
+            "相邻镜头又共用关键帧，所以要在拍镜头之前把所有关键帧统一成同一辆车。",
+            "",
+            f"打开 `{N}_keyframes_edit`，点运行：以 `input/{keyframe_file(ref)}` 为参考图，把 {'、'.join(EDIT_KEYFRAMES)} 里的车改成和 {ref} 一致"
+            + (f"；{'、'.join(extra)} 还会把起跑灯架改成和 {ref} 一样、灯全部熄灭" if extra else "")
+            + f"。结果在 `output/{N}/{EDIT_KEYFRAMES[0]}_edit_00001_.png` 这样的文件里。",
+            "",
+            "这一步用本地 Qwen Image 2.1 模型，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。需要以下模型（约 17 GB），"
+            "缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：",
+            "",
+            "```bash",
+            "cd /path/to/ComfyUI",
+            f"wget -P models/diffusion_models {HF}/diffusion_models/{EDIT_UNET}",
+            f"wget -P models/text_encoders {HF}/text_encoders/{EDIT_CLIP}",
+            f"wget -P models/vae {HF}/vae/{EDIT_VAE}",
+            "```",
+            "",
+            "检查车和参考图是同一辆、机位高度一致，路面、弯道、红车、看台这些场景内容没被改掉。"
+            "不满意就补一句编辑指令或换一个 KSampler 的 seed 再运行。满意后覆盖 input 里的关键帧：",
+            "",
+            "```bash",
+            "cd /path/to/ComfyUI",
+            *[f"cp output/{N}/{kid}_edit_00001_.png input/{keyframe_file(kid)}" for kid in EDIT_KEYFRAMES],
+            "```",
+            "",
+            f"编辑指令在 `{SHOTS_FILE}` 的 `keyframe.match`" + ("，灯架那一句在对应关键帧的 `match`" if extra else "") + "。",
+            "",
+        ]
+    L += [
         f"## 第 {next(step)} 步：逐段生成视频",
         "",
         f"依次打开 `{N}_shot_{GEN_SHOTS[0]['id']:02d}` 到 `{N}_shot_{GEN_SHOTS[-1]['id']:02d}`，每个点一次运行，会生成 {vid['takes']} 条候选。"
@@ -324,9 +444,14 @@ def main():
     if "pilot" in SB:
         outputs.append(f"{N}_keyframes_pilot.json")
         keyframes_workflow(SB["pilot"], os.path.join(WF_DIR, outputs[-1]))
+        outputs.append(f"{N}_keyframes_edit_pilot.json")
+        edit_workflow([kid for kid in SB["pilot"] if kid != MATCH["reference"]], os.path.join(WF_DIR, outputs[-1]))
     if GEN_KEYFRAMES:
         outputs.append(f"{N}_keyframes.json")
         keyframes_workflow(GEN_KEYFRAMES, os.path.join(WF_DIR, outputs[-1]))
+    if EDIT_KEYFRAMES:
+        outputs.append(f"{N}_keyframes_edit.json")
+        edit_workflow(EDIT_KEYFRAMES, os.path.join(WF_DIR, outputs[-1]))
     for s in GEN_SHOTS:
         outputs.append(f"{N}_shot_{s['id']:02d}.json")
         shot_workflow(s, os.path.join(WF_DIR, outputs[-1]))
