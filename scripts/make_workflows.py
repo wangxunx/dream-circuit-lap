@@ -44,10 +44,6 @@ def keyframe_prompt(k):
     return f"{k['scene']} {SB['style']}"
 
 
-def match_prompt(k):
-    return f"{MATCH['prompt']} {k['match']}" if "match" in k else MATCH["prompt"]
-
-
 def video_prompt(shot):
     return f"{shot['motion']} {SB['video_rules']} Visual style: {SB['style']}"
 
@@ -139,13 +135,11 @@ def keyframes_workflow(kids, path):
 
 def edit_workflow(kids, path):
     ref = keyframe_file(MATCH["reference"])
-    extra = [kid for kid in kids if "match" in KEYFRAMES[kid]]
     g = Graph()
     g.note((-2160, 0), (460, 980 + 24 * len(kids)), "\n".join([
-        "## 统一车身和灯架（本地 Qwen Image 2.1 图像编辑）",
+        "## 统一车身（本地 Qwen Image 2.1 图像编辑）",
         "",
-        f"文生图的每张关键帧各画各的车。这里以 `input/{ref}` 为参考（image 2），把每张关键帧（image 1）里的车改成和它一致"
-        + (f"；{'、'.join(extra)} 还会把起跑灯架改成和参考图一样、灯全部熄灭" if extra else "") + "。",
+        f"文生图的每张关键帧各画各的车。这里以 `input/{ref}` 为参考（image 2），把每张关键帧（image 1）里的车改成和它一致。",
         "同一个镜头的首尾帧如果是两辆车，视频中途就会换车，所以要在拍镜头之前统一。",
         "",
         "这一步在本机 GPU 上跑，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。"
@@ -182,7 +176,7 @@ def edit_workflow(kids, path):
         y = r * 420
         g.group(f"{kid} · {k['label']}", -1660, y - 40, 1920, 400)
         load = g.node("LoadImage", (-1640, y), (340, 330), [keyframe_file(kid), "image"], outputs=[("IMAGE", "IMAGE"), ("MASK", "MASK")], color=False)
-        enc = g.node("TextEncodeQwenImage21", (-1260, y), (420, 330), [match_prompt(k), "", 0],
+        enc = g.node("TextEncodeQwenImage21", (-1260, y), (420, 330), [MATCH["prompt"], "", 0],
                      inputs=[("clip", "CLIP", False), ("vae", "VAE", True), ("images.image_1", "IMAGE", True), ("images.image_2", "IMAGE", True)],
                      outputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent", "LATENT")])
         ks = g.node("KSampler", (-800, y), (320, 330), [EDIT_SEED, "fixed", EDIT_STEPS, 1, "euler", "simple", 1],
@@ -284,18 +278,21 @@ def storyboard_md(path):
         f"全部生成一遍约为 {len(GEN_KEYFRAMES)} 张图（每改一次多 1 张）加 {len(GEN_SHOTS) * vid['takes']} 段视频。",
     ]
     if EDIT_KEYFRAMES:
-        L.append(f"- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身和灯架”）。")
+        L.append(f"- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身”）。")
     L += [
         "",
     ]
     if "pilot" in SB:
         a, b = SB["pilot"]
+        ref = MATCH["reference"]
+        edited = [kid for kid in SB["pilot"] if kid != ref]
         L += [
             f"## 第 {next(step)} 步：试拍（强烈建议先做）",
             "",
             f"1. 打开 `{N}_keyframes_pilot`，点运行，只生成 {a} 和 {b}。",
             f"2. 对照分镜检查（见下一步），定稿后复制为 `input/{keyframe_file(a)}` 和 `input/{keyframe_file(b)}`（命令见下面“复制到 input”）。",
-            f"3. 打开 `{N}_keyframes_edit_pilot`，点运行，把 {b} 的车统一成 {a} 那辆，检查后覆盖 `input/{keyframe_file(b)}`（见下面“统一车身和灯架”）。",
+            f"3. 打开 `{N}_keyframes_edit_pilot`，点运行，把 {'、'.join(edited)} 的车统一成 {ref} 那辆，检查后覆盖 "
+            + "、".join(f"`input/{keyframe_file(kid)}`" for kid in edited) + "（见下面“统一车身”）。",
             f"4. 打开 `{N}_shot_01`，点运行。看三件事：画风是否满意；视频开头和结尾是否贴近两张关键帧；速度感和方向是否对。",
             f"5. 满意了再继续。不满意就先改 `{SHOTS_FILE}` 里的 `style`、`scene` 或 `motion`，重新运行 `make_workflows.py`，再重拍。",
             "",
@@ -331,16 +328,14 @@ def storyboard_md(path):
     ]
     if EDIT_KEYFRAMES:
         ref = MATCH["reference"]
-        extra = [kid for kid in EDIT_KEYFRAMES if "match" in KEYFRAMES[kid]]
         L += [
-            f"## 第 {next(step)} 步：统一车身和灯架",
+            f"## 第 {next(step)} 步：统一车身",
             "",
             f"文生图的每张关键帧各画各的车：halo 顶上的部件、车身颜色、机位高低都可能不同。同一个镜头的首尾帧如果是两辆车，视频中途就会换车，"
             "相邻镜头又共用关键帧，所以要在拍镜头之前把所有关键帧统一成同一辆车。",
             "",
             f"打开 `{N}_keyframes_edit`，点运行：以 `input/{keyframe_file(ref)}` 为参考图，把 {'、'.join(EDIT_KEYFRAMES)} 里的车改成和 {ref} 一致"
-            + (f"；{'、'.join(extra)} 还会把起跑灯架改成和 {ref} 一样、灯全部熄灭" if extra else "")
-            + f"。结果在 `output/{N}/{EDIT_KEYFRAMES[0]}_edit_00001_.png` 这样的文件里。",
+            f"。结果在 `output/{N}/{EDIT_KEYFRAMES[0]}_edit_00001_.png` 这样的文件里。",
             "",
             "这一步用本地 Qwen Image 2.1 模型，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。需要以下模型（约 17 GB），"
             "缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：",
@@ -360,7 +355,7 @@ def storyboard_md(path):
             *[f"cp output/{N}/{kid}_edit_00001_.png input/{keyframe_file(kid)}" for kid in EDIT_KEYFRAMES],
             "```",
             "",
-            f"编辑指令在 `{SHOTS_FILE}` 的 `keyframe.match`" + ("，灯架那一句在对应关键帧的 `match`" if extra else "") + "。",
+            f"编辑指令在 `{SHOTS_FILE}` 的 `keyframe.match`。",
             "",
         ]
     L += [

@@ -471,27 +471,27 @@ Each colour is the stretch one shot drives, and the circles mark the keyframes. 
 
 关键帧是镜头之间的“合同”：视频从首帧出发、必须到达尾帧，尾帧里画了什么，模型就往哪里开。所以每张图都要对照分镜检查，最重要的一条是：前方的路往哪边弯，要和地图一致。
 
-节点没有随机种子，提示词不变时重新生成也是同一张图。所以每张关键帧只生成 1 次；不对的时候，找出哪里和分镜不符，把它写进场景描述，再生成。下面是原项目里 K0 的 4 个版本，每一版都只改了一个问题：
+节点没有随机种子，提示词不变时重新生成也是同一张图。所以每张关键帧只生成 1 次；不对的时候，找出哪里和分镜不符，把它写进场景描述，再生成。下面是同一张 K0 的几次生成，每次只改一个问题：
 
 1. 直道远端先左弯、再右弯、再上坡；地图上从起终点线只能看到 T1 一个左弯。场景改为直道笔直、尽头只有一个左弯、四周平坦。
 2. 左弯离得太近，直道看起来只有两三百米；地图上约 1 km。场景改为直道一直延伸到消失点，左弯只在消失点处隐约可见。
 3. 路对了，但起跑灯架远在红车后面，红灯只剩几个小点。场景改为灯架在车前约 20 米、占满画面上部。
 4. 定稿。
 
-7 镜头成片用的是第 1 版，第 6 章会看到它带来的问题。
+终点 K7 的灯架要和 K0 是同一个，所以 K7 的场景描述把 K0 灯架的样子逐项写了进去。
 """, """
 ## Chapter 4: keyframes
 
 Keyframes are the "contract" between shots: the video starts at the first frame and must arrive at the last one, so the model drives toward whatever the last frame shows. Check every image against the storyboard; the most important check is that the road ahead bends the same way as on the map.
 
-The nodes have no random seed: with an unchanged prompt, generating again gives the same image. So generate each keyframe once; when it is wrong, find where it disagrees with the storyboard, write that into the scene description and generate again. Below are the 4 versions of K0 from the original project, each fixing one problem:
+The nodes have no random seed: with an unchanged prompt, generating again gives the same image. So generate each keyframe once; when it is wrong, find where it disagrees with the storyboard, write that into the scene description and generate again. Below are several generations of the same K0, each fixing one problem:
 
 1. The far end of the straight bends left, then right, then climbs; from the start/finish line the map shows only one left-hander, T1. The scene was changed to a dead-straight straight ending in a single left-hander, flat all around.
 2. The left-hander is too close, so the straight looks only two or three hundred metres long; on the map it is about 1 km. The scene was changed so the straight runs to the vanishing point, with the left-hander only faintly visible there.
 3. The road is right, but the start light gantry is far behind the red car and the red lights are just a few dots. The scene was changed to put the gantry about 20 m ahead of the car, filling the top of the frame.
 4. Final.
 
-The 7-shot film used version 1; chapter 6 shows the problems it caused.
+The gantry in the finishing K7 must be the same one as in K0, so K7's scene description spells out K0's gantry piece by piece.
 """),
     code("""
 show(*[PROJECT / "examples" / "k0_versions" / f"K0_v{v}.jpg" for v in range(1, 5)], width=440)
@@ -526,44 +526,45 @@ for i in range(8):
 show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 """),
     md("""
-### 统一车身和灯架
+### 统一车身
 
-`style` 里写了赛车的样子，文生图还是每张各画各的车：halo 顶上的部件有大有小、车身有的带红色、机位有高有低；终点 K7 的灯架也和起点 K0 不一样。
-首尾帧是两辆车时，视频会在中途换车，相邻镜头又共用关键帧。原项目是拼完成片才发现、回头编辑，几乎所有镜头都重拍了一遍，所以这一步放在拍镜头之前。
+`style` 里写了赛车的样子，文生图还是每张各画各的车：halo 顶上的部件有大有小、车身有的带红色或白色、机位有高有低。
+首尾帧是两辆车时，视频会在中途换车，相邻镜头又共用关键帧，所以这一步放在拍镜头之前。
 
 编辑用本地 Qwen Image 2.1 模型（约 17 GB，需要 GPU），不花额度；网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化，暂时不用。
 
 在浏览器里（路线 B）：
 
 1. 把下一格的 `DOWNLOAD` 改成 `True` 并运行，下载缺的模型（已有的会跳过），然后重启 ComfyUI 或刷新页面。
-2. 打开 `dream7_keyframes_edit`，点 Run：以 K0 为参考，把 K1–K7 的车改成 K0 那辆，K7 的灯架改成一排 5 个灯、全部熄灭。第一次运行要编译，7 张约 15 分钟。
-3. 逐张检查：车和 K0 是同一辆、机位一致，路面走向、红车、看台这些场景没被改掉。不行就补一句指令或换 KSampler 的 seed 再运行。
+2. 打开 `dream7_keyframes_edit`，点 Run：以 K1 为参考，把 K0、K2–K7 的车改成 K1 那辆。
+3. 逐张检查：车和 K1 是同一辆、机位一致，路面走向、红车、看台这些场景没被改掉。不行就补一句指令或换 KSampler 的 seed 再运行。
 4. 满意后运行再下一格，编辑结果会覆盖 `input/` 里的关键帧，然后刷新页面。
 
-路线 A 直接运行下面几格：模型不会下载，挑选格什么都不做。自带的关键帧和视频是当时还没有这一步时生成的，下面最后一格是这次编辑的对比。讲解提纲见 `docs/ch4_keyframes.md`。
+路线 A 直接运行下面几格：模型不会下载，挑选格什么都不做。自带的关键帧已经统一过车身，自带的视频就是用它们拍的；下面最后一格是编辑前后的对比。讲解提纲见 `docs/ch4_keyframes.md`。
 """, """
-### Make the car and the gantry consistent
+### Make the car consistent
 
-`style` describes the car, but text-to-image still draws a different car in each keyframe: the part on top of the halo changes size, some bodies have red on them, the camera sits higher or lower; the gantry in the finishing K7 also differs from the one in the starting K0.
-When the first and last frame show two different cars, the video swaps cars midway, and neighbouring shots share keyframes. The original project only noticed this after stitching the film and edited the keyframes then, so nearly every shot had to be redone; that is why this step comes before the shots.
+`style` describes the car, but text-to-image still draws a different car in each keyframe: the part on top of the halo changes size, some bodies have red or white on them, the camera sits higher or lower.
+When the first and last frame show two different cars, the video swaps cars midway, and neighbouring shots share keyframes, so this step comes before the shots.
 
 The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU) and costs no credits; the gateway's image edit comes back grainy and over-sharpened at 16:9, so it is not used for now.
 
 In the browser (route B):
 
 1. Set `DOWNLOAD` in the next cell to `True` and run it to download the missing models (existing ones are skipped), then restart ComfyUI or reload the page.
-2. Open `dream7_keyframes_edit` and click Run: with K0 as the reference, the car in K1–K7 becomes K0's car, and the gantry in K7 becomes a single row of five lights, all off. The first run compiles kernels; 7 images take about 15 minutes.
-3. Check each one: the same car as K0 at the same camera height, with the road, the red car and the grandstands unchanged. If one is off, add a sentence to its instruction or change the KSampler seed and run again.
+2. Open `dream7_keyframes_edit` and click Run: with K1 as the reference, the car in K0 and K2–K7 becomes K1's car.
+3. Check each one: the same car as K1 at the same camera height, with the road, the red car and the grandstands unchanged. If one is off, add a sentence to its instruction or change the KSampler seed and run again.
 4. When you are happy, run the cell after next: the edits overwrite the keyframes in `input/`. Then reload the page.
 
-For route A just run the cells below: no models are downloaded and the picker does nothing. The bundled keyframes and videos were made before this step existed; the last cell shows this edit before and after. Outline (in Chinese): `docs/ch4_keyframes.md`.
+For route A just run the cells below: no models are downloaded and the picker does nothing. The bundled keyframes already have the consistent car and the bundled videos were shot from them; the last cell shows the edit before and after. Outline (in Chinese): `docs/ch4_keyframes.md`.
 """),
     code(EDIT_MODELS_CODE.replace("NOTE", "路线 B 改成 True"), EDIT_MODELS_CODE.replace("NOTE", "set to True for route B")),
     code("""
-pick({f"K{i}": f"K{i}_edit_*.png" for i in range(1, 8)}, COMFY / "output" / "dream7", COMFY / "input" / "dream7_{}.png")
+pick({f"K{i}": f"K{i}_edit_*.png" for i in (0, 2, 3, 4, 5, 6, 7)}, COMFY / "output" / "dream7", COMFY / "input" / "dream7_{}.png")
 """),
     code("""
-show(*[PROJECT / "examples" / "car_edit" / f"{k}_{v}.jpg" for k in ("K2", "K6", "K7") for v in ("before", "after")], width=440)
+show(PROJECT / "examples" / "car_edit" / "K1_reference.jpg", width=440)
+show(*[PROJECT / "examples" / "car_edit" / f"{k}_{v}.jpg" for k in ("K0", "K2", "K6") for v in ("before", "after")], width=440)
 """),
     md("""
 ## 第 5 章：逐段拍镜头
@@ -659,12 +660,12 @@ show(MEDIA / "chicane_K5_first_try.png", PROJECT / "examples" / "keyframes" / "d
     md("""
 8 镜头分镜表 `storyboards/lap_8shots.json` 只重做 K4、K5 两张关键帧和镜头 4–6，其余关键帧复用第 4 章、镜头复用第 5 章的结果。
 原来的镜头 5 拆成了镜头 5（T7）和镜头 6（T8），中间多了 K5，所以后面的编号都往后顺延一位：7 镜头版的 K5、K6、K7 在这里是 K6、K7、K8，原来的镜头 6、7 在这里是镜头 7、8。对照下面的示意图看。
-路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_keyframes_edit`，以 `dream7_K0.png` 为参考统一 K4、K5 的车，检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。然后打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
+路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_keyframes_edit`，以 `dream7_K1.png` 为参考统一 K4、K5 的车，检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。然后打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
 路线 A 直接运行下面几格。最后拼出 8 镜头成片，和第 6 章的版本对比。
 """, """
 The 8-shot storyboard `storyboards/lap_8shots.json` redoes only keyframes K4 and K5 and shots 4–6; the other keyframes come from chapter 4 and the other shots from chapter 5.
 The old shot 5 is split into shot 5 (T7) and shot 6 (T8) with a new K5 between them, so everything after it shifts by one: the 7-shot K5, K6 and K7 are K6, K7 and K8 here, and the old shots 6 and 7 are shots 7 and 8. Compare with the map below.
-Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Next open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K0.png`, check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
+Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Next open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K1.png`, check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
 For route A just run the cells below. At the end you stitch the 8-shot film and compare it with the chapter 6 version.
 """),
     code("""

@@ -67,53 +67,53 @@
       "note": "第 7 章：第一次画的 K5，同时看到右弯和左弯"
     },
     "dream7_shot_01.mp4": {
-      "sha256": "4a2160722ab51cc662f00b2bdb5935731d0e1387678611a231054223f221debf",
-      "bytes": 3143630,
+      "sha256": "3b8f1666f37b62dda83a96608c12021ba219a11fca2c8e4dc446e60e2e48d436",
+      "bytes": 2651578,
       "note": "第 5–6 章：7 镜头版镜头 1，起终点直道"
     },
     "dream7_shot_02.mp4": {
-      "sha256": "b0a919e45eb9fb9827462d99b667ad39d0e8af4d35a62967c3bcdbe1baf00dea",
-      "bytes": 2585749,
+      "sha256": "6646f2b6ae0489e0d105a85581476ab33c8c9c44c1c70f8cc1aa74766ded753a",
+      "bytes": 2691222,
       "note": "第 5–6 章：7 镜头版镜头 2，重刹弯 T1–T2"
     },
     "dream7_shot_03.mp4": {
-      "sha256": "2063ad6b3e23a034b24afe2ba3e7b3df79834a72aa9a10eadcd5fe74e60abbb8",
-      "bytes": 3963954,
+      "sha256": "bd165a2f439ecf51aeec0cb55c9ddda514c4c941fe96bc3d0b9ac6d968c94750",
+      "bytes": 3791691,
       "note": "第 5–6 章：7 镜头版镜头 3，爬坡弯组 T3–T5"
     },
     "dream7_shot_04.mp4": {
-      "sha256": "8f2c7b4199ed6a31eac0d527fff7d313148c8f3b65075df4982526d7d24dc216",
-      "bytes": 3366486,
+      "sha256": "e64fc8dade5bfa9afb68174e7a1608f3adbca199f61e2c2d6f9a59216b6be0c7",
+      "bytes": 3046074,
       "note": "第 5–6 章：7 镜头版镜头 4，高速弯 T6"
     },
     "dream7_shot_05.mp4": {
-      "sha256": "a4ca21071edda15ec7204e42c6fa443b97e7ac88bd506e1bd7209d5f0bd566d4",
-      "bytes": 3958543,
+      "sha256": "e3423cd1bf2aa6626d62d27a12c77b2c9ae2358c4c11d3d838454372515e445c",
+      "bytes": 3137858,
       "note": "第 5–6 章：7 镜头版镜头 5，短直道与减速弯 T7–T8"
     },
     "dream7_shot_06.mp4": {
-      "sha256": "2c5fc30b3431d57f94e4f7a5cdc9168f79ac7911a813164a9c8acd97e23fb903",
-      "bytes": 3238069,
+      "sha256": "971f95f5c7fd559561d6629eea7db6c25d93ea3418cd438749970cfbd5e635e0",
+      "bytes": 3315705,
       "note": "第 5–6 章：7 镜头版镜头 6，下坡弯 T9"
     },
     "dream7_shot_07.mp4": {
-      "sha256": "ae0060e4428bdcfb796bd1f134554f1b6403a3536c5386b9f003d13548b23ea8",
-      "bytes": 3992722,
+      "sha256": "e1492f1e456d0f3acfbdc7617f00ec95f5d2b96cb50ab89f2ccb0f315365e325",
+      "bytes": 4218904,
       "note": "第 5–6 章：7 镜头版镜头 7，最后赛段 T10–T11"
     },
     "dream8_shot_04.mp4": {
-      "sha256": "2704fb1407f4855051d78b9c1b5def51edc6ef67122febf27cf8d593105a9e0c",
-      "bytes": 2973943,
+      "sha256": "260f0a0ab45300c466aa366d40dcd345e4459cd6e8e9943152621d5fbb12ba47",
+      "bytes": 2753265,
       "note": "第 7 章：8 镜头版镜头 4，高速弯 T6 与短直道"
     },
     "dream8_shot_05.mp4": {
-      "sha256": "a2f453a803acc65bd23bc37b02a8d3a74a3e0954c02edc5af57f18d42ee4784d",
-      "bytes": 2182381,
+      "sha256": "e7b38eb2f31865d9846eb4563bda27650105134118e018cb34fb7d29c86ba430",
+      "bytes": 2092021,
       "note": "第 7 章：8 镜头版镜头 5，减速弯 T7（右），最终版"
     },
     "dream8_shot_06.mp4": {
-      "sha256": "835503eef764a942c2f9d36cb3099d1a4967a17b39c83c2d76cbf8cc6da0f1cd",
-      "bytes": 2551340,
+      "sha256": "230e1edc03b39efef0fdd0b4120a5174d915794aaf0edd07ac27840af3a41b28",
+      "bytes": 2062151,
       "note": "第 7 章：8 镜头版镜头 6，减速弯 T8（左）"
     }
   },

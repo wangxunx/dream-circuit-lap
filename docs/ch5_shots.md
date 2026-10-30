@@ -16,7 +16,7 @@
 2. 满意后依次打开 `dream7_shot_02` 到 `dream7_shot_07`，每个镜头 2 个候选，最多 14 段视频。
 3. 选好的复制为 ComfyUI 的 `output/video/dream7/selected/shot_0X.mp4`，工作流左侧的说明里有现成命令。
 
-不想花额度时，notebook 会把项目自带的视频（`media/dream7_shot_0*.mp4`）复制到 `selected/`。这些是当时选中的结果，提示词和项目工作流的第 1 个候选完全一致；不会覆盖你自己已经选好的文件。
+不想花额度时，notebook 会把项目自带的视频（`media/dream7_shot_0*.mp4`）复制到 `selected/`。这些是用自带关键帧拍、选中的结果，提示词和项目工作流里对应的候选完全一致；不会覆盖你自己已经选好的文件。
 
 ## 挑视频看什么
 

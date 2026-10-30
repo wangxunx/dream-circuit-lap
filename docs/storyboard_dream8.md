@@ -34,7 +34,7 @@
 - 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。
 - 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `dream8_` 开头的条目。
 - 额度估算：关键帧每张 1 个额度（30 步），视频按网关计费。全部生成一遍约为 2 张图（每改一次多 1 张）加 6 段视频。
-- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身和灯架”）。
+- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身”）。
 
 ## 第 1 步：生成新关键帧
 
@@ -59,11 +59,11 @@ cp output/dream8/K5_00001_.png input/dream8_K5.png   # 00001 换成你定稿的�
 
 想跳过这一步、直接试视频的话，可以把项目自带的关键帧复制进去：`cp examples/keyframes/dream8_*.png /path/to/ComfyUI/input/`。
 
-## 第 2 步：统一车身和灯架
+## 第 2 步：统一车身
 
 文生图的每张关键帧各画各的车：halo 顶上的部件、车身颜色、机位高低都可能不同。同一个镜头的首尾帧如果是两辆车，视频中途就会换车，相邻镜头又共用关键帧，所以要在拍镜头之前把所有关键帧统一成同一辆车。
 
-打开 `dream8_keyframes_edit`，点运行：以 `input/dream7_K0.png` 为参考图，把 K4、K5 里的车改成和 K0 一致。结果在 `output/dream8/K4_edit_00001_.png` 这样的文件里。
+打开 `dream8_keyframes_edit`，点运行：以 `input/dream7_K1.png` 为参考图，把 K4、K5 里的车改成和 K1 一致。结果在 `output/dream8/K4_edit_00001_.png` 这样的文件里。
 
 这一步用本地 Qwen Image 2.1 模型，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。需要以下模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：
 
@@ -224,7 +224,7 @@ A medium-speed RIGHT-hand bend, then a long flowing LEFT-hand curve that opens o
 ### K0：起点：停在起终点线上
 
 ```text
-The car is stationary on the starting grid, sitting exactly on the chequered start/finish line painted across a long, wide straight. A start light gantry with five red lights spans the track overhead ahead. On the right side a large covered grandstand packed with spectators and a pit building with a pit wall. A red race car waits on the grid a few metres ahead, slightly to the right. The straight runs far ahead to the vanishing point, slightly downhill.
+The car is stationary on the starting grid, sitting exactly on the chequered start/finish line painted across a long, wide, dead-straight main straight. Close ahead, only about twenty metres in front of the car, a large start light gantry spans the full width of the track overhead and fills the upper part of the frame, its row of five big red lights lit and clearly visible. On the right side a large covered grandstand packed with spectators and a pit building with a pit wall. A red race car waits on the grid just ahead, slightly to the right, close to the gantry. The straight is very long, about one kilometre, and runs dead straight and almost level, falling very slightly, far beyond the red car and the gantry all the way to a vanishing point near the horizon: the white edge lines, kerbs and barrier walls stay straight and converge to that point, with no bend anywhere between the camera and the horizon. Only at the vanishing point itself, tiny and far away, a thin strip of blue barrier wall hints that the track will turn LEFT there. The ground around the far end is flat and low with grass run-off on both sides, and the road never climbs.
 ```
 
 ### K1：直道尽头：刹车点前
@@ -272,7 +272,7 @@ On flat ground at the bottom of a hill, just after a left-hand corner, on a shor
 ### K8：终点：冲过起终点线
 
 ```text
-Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges.
+Flashing across the chequered start/finish line at high speed on the long, wide main straight, motion blur on the edges. About twenty metres ahead a large start light gantry spans the full width of the track overhead and fills the upper part of the frame, seen from the same distance and angle as from the starting grid: a grey steel lattice truss on two legs, with one long black rectangular light panel in the middle of the truss holding a single horizontal row of five large round lights side by side, all switched off, and a small grey box on the truss near each leg. Nothing hangs below the truss and there are no other lights on it. The large covered grandstand packed with spectators and the pit wall stream past on the right side.
 ```
 
 ## 统一风格设定（自动附加在每条提示词后面）

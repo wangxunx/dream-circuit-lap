@@ -11,7 +11,7 @@
     "aspect_ratio": "16:9",
     "steps": 30,
     "match": {
-      "reference": "K0",
+      "reference": "K1",
       "prompt": "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting."
     }
   },
@@ -29,7 +29,7 @@
       "id": "K0",
       "label": "起点：停在起终点线上",
       "file": "dream7_K0.png",
-      "scene": "The car is stationary on the starting grid, sitting exactly on the chequered start/finish line painted across a long, wide straight. A start light gantry with five red lights spans the track overhead ahead. On the right side a large covered grandstand packed with spectators and a pit building with a pit wall. A red race car waits on the grid a few metres ahead, slightly to the right. The straight runs far ahead to the vanishing point, slightly downhill."
+      "scene": "The car is stationary on the starting grid, sitting exactly on the chequered start/finish line painted across a long, wide, dead-straight main straight. Close ahead, only about twenty metres in front of the car, a large start light gantry spans the full width of the track overhead and fills the upper part of the frame, its row of five big red lights lit and clearly visible. On the right side a large covered grandstand packed with spectators and a pit building with a pit wall. A red race car waits on the grid just ahead, slightly to the right, close to the gantry. The straight is very long, about one kilometre, and runs dead straight and almost level, falling very slightly, far beyond the red car and the gantry all the way to a vanishing point near the horizon: the white edge lines, kerbs and barrier walls stay straight and converge to that point, with no bend anywhere between the camera and the horizon. Only at the vanishing point itself, tiny and far away, a thin strip of blue barrier wall hints that the track will turn LEFT there. The ground around the far end is flat and low with grass run-off on both sides, and the road never climbs."
     },
     {
       "id": "K1",
@@ -75,7 +75,7 @@
       "id": "K8",
       "label": "终点：冲过起终点线",
       "file": "dream7_K7.png",
-      "scene": "Flashing across the chequered start/finish line at high speed on the long main straight. The start light gantry passes overhead with its lights off. The large covered grandstand packed with spectators and the pit wall stream past on the right side, motion blur on the edges."
+      "scene": "Flashing across the chequered start/finish line at high speed on the long, wide main straight, motion blur on the edges. About twenty metres ahead a large start light gantry spans the full width of the track overhead and fills the upper part of the frame, seen from the same distance and angle as from the starting grid: a grey steel lattice truss on two legs, with one long black rectangular light panel in the middle of the truss holding a single horizontal row of five large round lights side by side, all switched off, and a small grey box on the truss near each leg. Nothing hangs below the truss and there are no other lights on it. The large covered grandstand packed with spectators and the pit wall stream past on the right side."
     }
   ],
   "shots": [

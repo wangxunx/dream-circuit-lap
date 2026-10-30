@@ -70,7 +70,7 @@ python scripts/make_workflows.py --shots lap_8shots.json --install  # 第 7 章�
 | 章节 | 在 ComfyUI 里 | 生成后要做的 | 不想花额度 |
 |---|---|---|---|
 | 2 | 把 `workflows/ch2_single_prompt.json` 拖进画布，在 Load Image 节点点 “choose file to upload” 选 `assets/fictional_track_v1.png`，点 Run | 无 | 看 `media/ch2_single_prompt_*.mp4` |
-| 4 | 打开 `dream7_keyframes_pilot`（先试 K0、K1），再打开 `dream7_keyframes`，点 Run；对照分镜检查，不对就改提示词开头的场景描述再 Run | 定稿的图从 `ComfyUI/output/dream7/` 复制到 `ComfyUI/input/`，改名为 `dream7_K0.png` … `dream7_K7.png`；再打开 `dream7_keyframes_edit` 点 Run，以 K0 为参考统一 K1–K7 的车身和 K7 的灯架（本地模型，缺的话 ComfyUI 会提示下载），检查后用 `K*_edit_*.png` 覆盖 `input/` 里的关键帧 | 把 `examples/keyframes/dream7_K*.png` 复制到 `ComfyUI/input/`（这些是编辑前的版本，和自带视频一致） |
+| 4 | 打开 `dream7_keyframes_pilot`（先试 K0、K1），再打开 `dream7_keyframes`，点 Run；对照分镜检查，不对就改提示词开头的场景描述再 Run | 定稿的图从 `ComfyUI/output/dream7/` 复制到 `ComfyUI/input/`，改名为 `dream7_K0.png` … `dream7_K7.png`；再打开 `dream7_keyframes_edit` 点 Run，以 K1 为参考统一 K0、K2–K7 的车身（本地模型，缺的话 ComfyUI 会提示下载），检查后用 `K*_edit_*.png` 覆盖 `input/` 里的关键帧 | 把 `examples/keyframes/dream7_K*.png` 复制到 `ComfyUI/input/`（已经统一过车身，自带视频就是用它们拍的） |
 | 5 | 按 F5 刷新，依次打开 `dream7_shot_01` … `dream7_shot_07`，点 Run | 选中的视频从 `ComfyUI/output/video/dream7/` 复制为 `ComfyUI/output/video/dream7/selected/shot_01.mp4` … | 把 `media/dream7_shot_0X.mp4` 复制为同样的文件名 |
 | 6 | 无 | 运行 `python scripts/stitch_lap.py`，成片在本项目目录的 `output/dream_circuit_7shots.mp4` | 同左 |
 | 7 | 打开 `dream8_keyframes`，再用 `dream8_keyframes_edit` 统一车身；关键帧放好后刷新，再打开 `dream8_shot_04` … `dream8_shot_06` | 编辑后的 K4、K5 放到 `input/dream8_K4.png`、`dream8_K5.png`；视频放到 `output/video/dream8/selected/`；运行 `python scripts/stitch_lap.py --shots lap_8shots.json` | 用 `examples/keyframes/dream8_K*.png` 和 `media/dream8_shot_0X.mp4` |
@@ -146,7 +146,7 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 | `workflows/` | ComfyUI 工作流，由 `make_workflows.py` 生成（`ch2_single_prompt.json` 除外） |
 | `examples/keyframes/` | 当时选中的关键帧，可直接复制到 ComfyUI 的 `input/` |
 | `examples/k0_versions/` | 第 4 章的实例：K0 的 4 个版本 |
-| `examples/car_edit/` | 第 4 章的实例：统一车身和灯架前后的 K2、K6、K7 |
+| `examples/car_edit/` | 第 4 章的实例：参考图 K1，以及统一车身前后的 K0、K2、K6 |
 | `assets/` | 赛道俯视图、小地图、每个镜头的小地图路径，以及 7 镜头和 8 镜头的分镜示意图 |
 | `media/` | 历史生成的视频，由 `fetch_media.py` 按 `media/manifest.json` 下载 |
 | `scripts/` | 工作流和 notebook 生成、拼接、分镜示意图、素材下载和云端启动脚本 |
