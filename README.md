@@ -8,24 +8,22 @@ You have a top-down map of a race track you designed. How do you turn it into an
 
 This project starts with the most direct approach (a single prompt), then introduces storyboarding, keyframes and shot-by-shot generation, stitches a one-minute film with sector titles and a minimap, and finally uses the storyboard to fix the hardest part, the T7–T8 chicane. Everything is generated in ComfyUI: keyframes with Qwen Image 2.1 and shots with MiniMax H3 first-last-frame video. Both run in the cloud. Only the edit that makes the car consistent across keyframes runs the local Qwen Image 2.1 model and needs a GPU; without one, the bundled media let you skip that step.
 
-Every step ships with the results it actually generated, so you can follow every step without spending credits.
+Every step ships with ready-made keyframes and videos, so you can stitch the film quickly from them or generate everything yourself.
 
 The notebooks come in English (`notebooks/*_en.ipynb`) and Chinese; the chapter outlines and the notes inside the ComfyUI workflows are in Chinese.
 
 ## Chapters
 
-| Chapter | Topic | Outline | Credits |
+| Chapter | Topic | Outline | What gets generated |
 |---|---|---|---|
 | 1 | The track map and the task | [ch1_map](docs/ch1_map.md) | none |
 | 2 | One prompt: 15 s, cannot finish the lap, hard to control | [ch2_single_prompt](docs/ch2_single_prompt.md) | 1 video per run (optional) |
 | 3 | Storyboard: split the lap into 7 shots | [ch3_storyboard](docs/ch3_storyboard.md) | none |
-| 4 | Keyframes: one onboard image at each shot boundary, checked against the storyboard, then the car made consistent | [ch4_keyframes](docs/ch4_keyframes.md) | 8 images, plus 1 per revision (optional); the car edit runs on a local GPU at no credit cost |
+| 4 | Keyframes: one onboard image at each shot boundary, checked against the storyboard, then the car made consistent | [ch4_keyframes](docs/ch4_keyframes.md) | 8 images, plus 1 per revision (optional); the car edit runs on a local GPU |
 | 5 | Shots: first-last-frame video, one shot at a time | [ch5_shots](docs/ch5_shots.md) | up to 14 videos (optional) |
 | 6 | Stitch the film and find the problems | [ch6_problems](docs/ch6_problems.md) | none |
 | 7 | Fix the T7–T8 chicane with the storyboard | [ch7_chicane](docs/ch7_chicane.md) | 2 images + 6 videos (optional) |
 | 8 | Wrap-up and exercise | [ch8_wrapup](docs/ch8_wrapup.md) | as needed |
-
-Each keyframe costs 1 credit (30 steps); videos are billed by the H3 gateway.
 
 ## Running
 
@@ -39,7 +37,7 @@ Pick one of three ways:
 
 All three need an H3 key: register at https://h3.oneclickamd.ai. Put it in ComfyUI's `user/h3_gateway_api_key.txt` (both notebooks prompt for it and write the file) or in `H3_GATEWAY_API_KEY`. The nodes have no key input, so the key never ends up in workflows or video metadata.
 
-The two notebooks share the same chapter cells. Every step that costs credits can use the bundled media instead (route A), or you generate in ComfyUI and pick your takes back in the notebook (route B).
+The two notebooks share the same chapter cells. Every generation step can use the bundled media instead (route A), or you generate in ComfyUI and pick your takes back in the notebook (route B).
 
 ### 1. ComfyUI only
 
@@ -96,7 +94,7 @@ Needs a local ComfyUI in a conda or venv environment; the notebook installs the 
 3. Run section 0 cell by cell with `Shift+Enter`. Finished steps are skipped; paste the key into the input box when asked. Starting ComfyUI takes 10–20 seconds. An existing ComfyUI on port 8188 is reused; restart it if it was started before the nodes were installed.
 4. Open http://127.0.0.1:8188 (forward port 8188 if needed) and close the Templates dialog shown on first launch.
 5. Run "Prepare media", then press `w` in ComfyUI for the `ch2_single_prompt`, `dream7_*` and `dream8_*` workflows; press F5 if they are missing.
-6. First pass, route A: keep pressing `Shift+Enter` to the end. No credits are spent and you see all historical clips and both films.
+6. First pass, route A: keep pressing `Shift+Enter` to the end. The bundled media show all historical clips and both films.
 7. Second pass, route B: from chapter 4, generate in ComfyUI as the notebook describes, run the picker cells (fill in your take numbers for the videos first), press F5 in ComfyUI and continue.
 
 ComfyUI keeps running in the background after JupyterLab is closed (log in ComfyUI's `user/comfyui_dream_circuit.log`) and is reused next time.

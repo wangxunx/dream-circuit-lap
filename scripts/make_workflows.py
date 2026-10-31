@@ -30,7 +30,6 @@ GEN_KEYFRAMES = [k["id"] for k in SB["keyframes"] if "file" not in k]
 GEN_SHOTS = [s for s in SB["shots"] if "clip" not in s]
 MATCH = SB["keyframe"]["match"]
 EDIT_KEYFRAMES = [kid for kid in GEN_KEYFRAMES if kid != MATCH["reference"]]
-# The gateway's Qwen Image 2.1 edit comes back grainy and over-sharpened at 16:9, so the car edit runs the local model.
 HF = "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main"
 EDIT_UNET = "qwen_image_2.1_int8_convrot.safetensors"
 EDIT_CLIP = "qwen3vl_8b_int8_convrot.safetensors"
@@ -101,7 +100,7 @@ def keyframes_workflow(kids, path):
     g.note((-2160, 0), (460, 620 + 24 * len(kids)), "\n".join([
         "## 赛道关键帧（Qwen Image 2.1 文生图）",
         "",
-        f"每一行是一张关键帧。点一次 **运行** 生成全部 {len(kids)} 张，共消耗 {len(kids)} 个额度（30 步 = 1 个额度）。",
+        f"每一行是一张关键帧。点一次 **运行** 生成全部 {len(kids)} 张。",
         "",
         f"图片保存在 `output/{N}/`，文件名形如 `{kids[0]}_00001_.png`，每重新生成一次编号加 1。",
         "",
@@ -140,8 +139,7 @@ def edit_workflow(kids, path):
         f"文生图的每张关键帧各画各的车。这里以 `input/{ref}` 为参考（image 2），把每张关键帧（image 1）里的车改成和它一致。",
         "同一个镜头的首尾帧如果是两辆车，视频中途就会换车，所以要在拍镜头之前统一。",
         "",
-        "这一步在本机 GPU 上跑，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。"
-        "需要下面 3 个模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载：",
+        "这一步在本机 GPU 上跑，需要下面 3 个模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载：",
         "",
         f"- `models/diffusion_models/{EDIT_UNET}`",
         f"- `models/text_encoders/{EDIT_CLIP}`",
@@ -234,7 +232,7 @@ def shot_workflow(shot, path):
 
 
 def storyboard_md(path):
-    kf, vid, ed = SB["keyframe"], SB["video"], SB["edit"]
+    vid, ed = SB["video"], SB["edit"]
     shots, kfs = SB["shots"], SB["keyframes"]
     total = sum(s["duration"] for s in shots)
     film = total + ed["intro_seconds"] + ed["outro_seconds"] - ed["crossfade"] * (len(shots) + 1)
@@ -272,11 +270,10 @@ def storyboard_md(path):
         "和 [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3)。",
         "- 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。",
         f"- 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `{N}_` 开头的条目。",
-        f"- 额度估算：关键帧每张 1 个额度（{kf['steps']} 步），视频按网关计费。"
-        f"全部生成一遍约为 {len(GEN_KEYFRAMES)} 张图（每改一次多 1 张）加 {len(GEN_SHOTS) * vid['takes']} 段视频。",
+        f"- 全部生成一遍约为 {len(GEN_KEYFRAMES)} 张图（每改一次多 1 张）加 {len(GEN_SHOTS) * vid['takes']} 段视频。",
     ]
     if EDIT_KEYFRAMES:
-        L.append(f"- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身”）。")
+        L.append(f"- 统一车身的编辑用本地 Qwen Image 2.1 模型，需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身”）。")
     L += [
         "",
     ]
@@ -335,7 +332,7 @@ def storyboard_md(path):
             f"打开 `{N}_keyframes_edit`，点运行：以 `input/{keyframe_file(ref)}` 为参考图，把 {'、'.join(EDIT_KEYFRAMES)} 里的车改成和 {ref} 一致"
             f"。结果在 `output/{N}/{EDIT_KEYFRAMES[0]}_edit_00001_.png` 这样的文件里。",
             "",
-            "这一步用本地 Qwen Image 2.1 模型，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。需要以下模型（约 17 GB），"
+            "这一步用本地 Qwen Image 2.1 模型，需要以下模型（约 17 GB），"
             "缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：",
             "",
             "```bash",

@@ -37,7 +37,7 @@ def intro(zh_where, en_where):
 
 我们手里有一张自己设计的赛道俯视图。任务：生成一段车手第一视角的视频，把这条赛道完整跑一圈。
 
-| 章节 | 内容 | 消耗额度 |
+| 章节 | 内容 | 要生成的内容 |
 |---|---|---|
 | 1 | 认识赛道地图，抛出任务 | 无 |
 | 2 | 一个提示词直接生成：15 秒、跑不完、不可控 | 每次 1 段视频（可选） |
@@ -49,13 +49,13 @@ def intro(zh_where, en_where):
 | 8 | 总结和练习 | 无 |
 
 这个 notebook 只负责准备环境、启动 ComfyUI、准备素材和拼接成片；生成图片和视频都在浏览器里的 ComfyUI 完成。
-每个需要额度的步骤，本项目都提供了当时实际生成的结果，可以不花额度跟完全程。
+每个生成步骤都附有已经生成好的关键帧和视频，可以直接用它们快速拼出成片，也可以自己重新生成。
 
 ### 怎么用这个 notebook
 
 - 从上往下逐格运行：点中一格，按 `Shift+Enter`。左边显示 `[*]` 表示还在运行，变成数字才算完成，输出显示在这一格下面。
 - 两条路线，可以每章自由选：
-  - **路线 A，不花额度**：所有单元格按顺序运行，自带素材会补上关键帧和视频。
+  - **路线 A，用自带素材**：所有单元格按顺序运行，自带素材会补上关键帧和视频。
   - **路线 B，自己生成**：遇到“在浏览器里”的步骤，先去 ComfyUI 生成，再运行“挑选”单元格（视频要先填上你选中的候选编号）；没生成的部分仍由自带素材补上。
 - 重启 kernel 或第二天继续时，从第 0 节重新运行即可，已经完成的步骤会自动跳过。
 """, f"""
@@ -63,7 +63,7 @@ def intro(zh_where, en_where):
 
 We have a top-down map of a race track we designed. The task: generate an onboard video that drives one full lap of it.
 
-| Chapter | Topic | Credits |
+| Chapter | Topic | What gets generated |
 |---|---|---|
 | 1 | The track map and the task | none |
 | 2 | One prompt: 15 s, cannot finish the lap, hard to control | 1 video per run (optional) |
@@ -75,14 +75,14 @@ We have a top-down map of a race track we designed. The task: generate an onboar
 | 8 | Wrap-up and exercise | none |
 
 This notebook only sets up the environment, starts ComfyUI, prepares the media and stitches the films; images and videos are generated in ComfyUI in the browser.
-Every step that costs credits comes with the results generated at the time, so you can follow along without spending credits.
+Every generation step ships with ready-made keyframes and videos, so you can stitch the film quickly from them or generate everything yourself.
 The chapter outlines in `docs/` and the notes inside the ComfyUI workflows are in Chinese; this notebook covers the same points.
 
 ### How to use this notebook
 
 - Run the cells from top to bottom: click a cell and press `Shift+Enter`. `[*]` on the left means it is still running; a number means it is done, and its output appears below the cell.
 - Two routes, chosen per chapter:
-  - **Route A, no credits**: run every cell in order; the bundled media fill in the keyframes and videos.
+  - **Route A, bundled media**: run every cell in order; the bundled media fill in the keyframes and videos.
   - **Route B, generate yourself**: at each "In the browser" step, generate in ComfyUI first, then run the picker cell (for videos, fill in the takes you chose first); anything you did not generate is still filled in from the bundled media.
 - After a kernel restart, or when you come back the next day, rerun section 0; finished steps are skipped.
 """)
@@ -282,7 +282,7 @@ Running the next cell shows an input box below it: paste the key and press Enter
 
 脚本在后台启动 ComfyUI，打印 `ComfyUI URL` 后返回，可以继续运行后面的单元格。重新运行这一格会重启 ComfyUI。
 
-> **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务、消耗你的额度。不要把它发到群里或贴在公开的地方。
+> **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务。不要把它发到群里或贴在公开的地方。
 """, """
 ### Start ComfyUI
 
@@ -291,7 +291,7 @@ Running the next cell shows an input box below it: paste the key and press Enter
 
 The script starts ComfyUI in the background, prints the `ComfyUI URL` and returns, so you can keep running the cells below. Rerunning this cell restarts ComfyUI.
 
-> **Note:** anyone with this URL can queue jobs on your H3 key and spend your credits. Do not post it in group chats or anywhere public.
+> **Note:** anyone with this URL can queue jobs on your H3 key. Do not post it in group chats or anywhere public.
 """),
     code("""
 if not (os.environ.get("ONECLICK_APP_URL") or os.environ.get("COMFY_PUBLIC_URL")):
@@ -414,7 +414,7 @@ show(PROJECT / "assets" / "fictional_track_v1.png", width=900)
 ## 第 2 章：一个提示词跑一圈
 
 最直接的想法：把俯视图当首帧，用一个提示词描述 7 个赛道元素，让 MiniMax H3 生成。
-在浏览器里打开 `ch2_single_prompt` 工作流就能试（每次 1 段视频额度）。下面是当时的 9 次尝试：
+在浏览器里打开 `ch2_single_prompt` 工作流就能试（每次生成 1 段视频）。下面是当时的 9 次尝试：
 
 - 1–6 号一直在改提示词：强调逆时针、说明起点位置、要求中文配音。但视频都从地图飞进去，“第一视角”一直嵌在地图的图例和海拔剖面中间，15 秒只够跑一小段，弯道也和地图对不上。
 - 5 号和 6 号的提示词完全相同，结果的结构几乎一样，只有细节不同：重跑一次救不了，结果是被输入决定的。
@@ -502,7 +502,7 @@ show(*[PROJECT / "examples" / "k0_versions" / f"K0_v{v}.jpg" for v in range(1, 5
 1. 打开 `dream7_keyframes_pilot`，点 Run，先只生成 K0、K1，看画风和机位是否满意。
 2. 打开 `dream7_keyframes`，点 Run 生成全部 8 张，每张一行。
 3. 逐张对照第 3 章的分镜表和小地图检查：路往哪边弯、离弯道多远、灯架和看台这类元素在不在、机位和赛车是否一致。
-4. 哪张不对，就改那个节点提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点 Run。ComfyUI 只会重新生成改过的那张，每次 1 个额度；ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音。
+4. 哪张不对，就改那个节点提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点 Run。ComfyUI 只会重新生成改过的那张；ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音。
 5. 都满意后运行下一格，每张关键帧最新的那一版会复制到 ComfyUI 的 `input/dream7_K0.png` 到 `dream7_K7.png`。
 
 路线 A 直接运行下面两格即可：挑选格找不到自己生成的图就什么都不做，再下一格用自带的关键帧补上缺的，不会覆盖你选好的文件。讲解提纲见 `docs/ch4_keyframes.md`。
@@ -512,7 +512,7 @@ In the browser:
 1. Open `dream7_keyframes_pilot` and click Run to generate only K0 and K1 first; check the style and camera position.
 2. Open `dream7_keyframes` and click Run to generate all 8, one row each.
 3. Check each one against the chapter 3 storyboard table and map: which way the road bends, how far away the turn is, whether elements such as the light gantry and grandstands are there, and whether the camera and car match.
-4. If one is wrong, edit the scene description at the start of that node's prompt (the part before `Photorealistic onboard`) and click Run again. ComfyUI only regenerates the edited image, 1 credit each; after a ComfyUI restart everything regenerates, so first select the Save Image nodes you do not want redone and press Ctrl+M to mute them.
+4. If one is wrong, edit the scene description at the start of that node's prompt (the part before `Photorealistic onboard`) and click Run again. ComfyUI only regenerates the edited image; after a ComfyUI restart everything regenerates, so first select the Save Image nodes you do not want redone and press Ctrl+M to mute them.
 5. When all are good, run the next cell: the newest version of each keyframe is copied to ComfyUI's `input/dream7_K0.png` to `dream7_K7.png`.
 
 For route A just run the next two cells: the picker does nothing if it finds none of your images, and the cell after it fills in the missing keyframes from the bundled ones without overwriting files you picked. Outline (in Chinese): `docs/ch4_keyframes.md`.
@@ -531,7 +531,7 @@ show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 `style` 里写了赛车的样子，文生图还是每张各画各的车：halo 顶上的部件有大有小、车身有的带红色或白色、机位有高有低。
 首尾帧是两辆车时，视频会在中途换车，相邻镜头又共用关键帧，所以这一步放在拍镜头之前。
 
-编辑用本地 Qwen Image 2.1 模型（约 17 GB，需要 GPU），不花额度；网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化，暂时不用。
+编辑用本地 Qwen Image 2.1 模型（约 17 GB，需要 GPU）。
 
 在浏览器里（路线 B）：
 
@@ -547,7 +547,7 @@ show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 `style` describes the car, but text-to-image still draws a different car in each keyframe: the part on top of the halo changes size, some bodies have red or white on them, the camera sits higher or lower.
 When the first and last frame show two different cars, the video swaps cars midway, and neighbouring shots share keyframes, so this step comes before the shots.
 
-The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU) and costs no credits; the gateway's image edit comes back grainy and over-sharpened at 16:9, so it is not used for now.
+The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU).
 
 In the browser (route B):
 

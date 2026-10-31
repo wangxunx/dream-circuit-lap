@@ -8,22 +8,20 @@
 
 本项目从最直接的办法（一个提示词）开始，一步步引入分镜、关键帧和逐段生成，拼出约 1 分钟、带赛段标题和小地图的成片，再用分镜修好其中最难的减速弯。所有生成都在 ComfyUI 里完成：关键帧用 Qwen Image 2.1，视频用 MiniMax H3 首尾帧，两者都在云端推理。只有统一关键帧车身的编辑用本地 Qwen Image 2.1 模型，需要 GPU；没有 GPU 时可以用自带素材跳过这一步。
 
-每一步都附有实际生成的结果，不花额度也能跟完全程。
+每一步都附有已经生成好的关键帧和视频，可以直接用它们快速拼出成片，也可以自己重新生成。
 
 ## 章节
 
-| 章节 | 内容 | 讲解提纲 | 消耗额度 |
+| 章节 | 内容 | 讲解提纲 | 要生成的内容 |
 |---|---|---|---|
 | 1 | 认识赛道地图，提出任务 | [ch1_map](docs/ch1_map.md) | 无 |
 | 2 | 一个提示词直接生成：15 秒、跑不完、不可控 | [ch2_single_prompt](docs/ch2_single_prompt.md) | 每次 1 段视频（可选） |
 | 3 | 分镜：把一圈拆成 7 个镜头 | [ch3_storyboard](docs/ch3_storyboard.md) | 无 |
-| 4 | 关键帧：每个镜头交界处一张车手视角图，对照分镜检查，再统一车身 | [ch4_keyframes](docs/ch4_keyframes.md) | 8 张图起，每改一次多 1 张（可选）；统一车身在本地 GPU 上跑，不花额度 |
+| 4 | 关键帧：每个镜头交界处一张车手视角图，对照分镜检查，再统一车身 | [ch4_keyframes](docs/ch4_keyframes.md) | 8 张图起，每改一次多 1 张（可选）；统一车身在本地 GPU 上跑 |
 | 5 | 逐段拍镜头：首尾帧生成视频 | [ch5_shots](docs/ch5_shots.md) | 最多 14 段视频（可选） |
 | 6 | 拼接成片，找问题 | [ch6_problems](docs/ch6_problems.md) | 无 |
 | 7 | 用分镜修好 T7–T8 减速弯 | [ch7_chicane](docs/ch7_chicane.md) | 2 张图 + 6 段视频（可选） |
 | 8 | 总结和练习 | [ch8_wrapup](docs/ch8_wrapup.md) | 练习按需 |
-
-关键帧每张 1 个额度（30 步）；视频按 H3 网关计费。
 
 ## 运行方式
 
@@ -37,7 +35,7 @@
 
 三种方式都要一个 H3 key：到 https://h3.oneclickamd.ai 注册获取。key 放在 ComfyUI 的 `user/h3_gateway_api_key.txt`（两个 notebook 会提示你输入并写入）或环境变量 `H3_GATEWAY_API_KEY`。节点没有 key 输入框，key 不会写进工作流或视频元数据。
 
-两个 notebook 内容相同，只是准备环境的部分不同。不想花额度时，notebook 里每一步都可以直接用自带素材（路线 A）；想自己生成时，在 ComfyUI 里生成后回到 notebook 挑选（路线 B）。
+两个 notebook 内容相同，只是准备环境的部分不同。notebook 里每一步都可以直接用自带素材（路线 A），也可以在 ComfyUI 里自己生成后回到 notebook 挑选（路线 B）。
 
 ### 方式一：直接用 ComfyUI
 
@@ -69,7 +67,7 @@ python scripts/make_workflows.py --shots lap_8shots.json --install  # 第 7 章�
 
 **5. 按章节复现。** 每个工作流左边的黄色说明节点写着运行前要准备什么；每个镜头的首尾帧、提示词和复制命令也汇总在 [storyboard_dream7.md](docs/storyboard_dream7.md) 和 [storyboard_dream8.md](docs/storyboard_dream8.md)。
 
-| 章节 | 在 ComfyUI 里 | 生成后要做的 | 不想花额度 |
+| 章节 | 在 ComfyUI 里 | 生成后要做的 | 直接用自带素材 |
 |---|---|---|---|
 | 2 | 把 `workflows/ch2_single_prompt.json` 拖进画布，在 Load Image 节点点 “choose file to upload” 选 `assets/fictional_track_v1.png`，点 Run | 无 | 看 `media/ch2_single_prompt_*.mp4` |
 | 4 | 打开 `dream7_keyframes_pilot`（先试 K0、K1），再打开 `dream7_keyframes`，点 Run；对照分镜检查，不对就改提示词开头的场景描述再 Run | 定稿的图从 `ComfyUI/output/dream7/` 复制到 `ComfyUI/input/`，改名为 `dream7_K0.png` … `dream7_K7.png`；再打开 `dream7_keyframes_edit` 点 Run，以 K1 为参考统一 K0、K2–K7 的车身（本地模型，缺的话 ComfyUI 会提示下载），检查后用 `K*_edit_*.png` 覆盖 `input/` 里的关键帧 | 把 `examples/keyframes/dream7_K*.png` 复制到 `ComfyUI/input/`（已经统一过车身，自带视频就是用它们拍的） |
@@ -105,7 +103,7 @@ jupyter lab --ServerApp.root_dir=. notebooks/local.ipynb
 
 **5. 运行“准备素材”。** 之后在 ComfyUI 里按 `w` 打开左侧的工作流列表，能看到 `ch2_single_prompt`、`dream7_*`、`dream8_*`。没看到就按 F5 刷新。
 
-**6. 第一遍建议走路线 A。** 一路按 `Shift+Enter` 到底，不花额度，就能看到所有历史视频和两部成片。
+**6. 第一遍建议走路线 A。** 一路按 `Shift+Enter` 到底，用自带素材就能看到所有历史视频和两部成片。
 
 **7. 第二遍试路线 B。** 从第 4 章开始，按 notebook 里的说明在 ComfyUI 里点 Run 生成。生成完回到 notebook 运行挑选格（视频要先填上选中的候选编号），然后按 F5 刷新 ComfyUI，再进入下一步。
 
@@ -132,7 +130,7 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 
 **4. 打开 ComfyUI。** 在浏览器新标签页打开这一格打印的 `ComfyUI URL`，弹出 Templates 模板窗口时点右上角 × 关掉。
 
-> **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务、消耗你的额度。不要把它发到群里或贴在公开的地方。
+> **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务。不要把它发到群里或贴在公开的地方。
 
 **5. 和方式二第 5–7 步相同：** 运行“准备素材”后在 ComfyUI 里按 `w` 找到工作流；第一遍走路线 A，第二遍走路线 B。
 

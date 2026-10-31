@@ -64,7 +64,7 @@ print_url() {
   echo "========================================"
   echo "ComfyUI URL: $1"
   echo "========================================"
-  echo "Do not share this URL: anyone who opens it can spend your H3 credits."
+  echo "Do not share this URL: anyone who opens it can queue jobs on your H3 key."
 }
 
 

@@ -33,8 +33,8 @@
 - 在 ComfyUI 的 `custom_nodes/` 里安装 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 和 [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3)。
 - 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。
 - 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `dream8_` 开头的条目。
-- 额度估算：关键帧每张 1 个额度（30 步），视频按网关计费。全部生成一遍约为 2 张图（每改一次多 1 张）加 6 段视频。
-- 统一车身的编辑用本地 Qwen Image 2.1 模型，不花额度，但需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身”）。
+- 全部生成一遍约为 2 张图（每改一次多 1 张）加 6 段视频。
+- 统一车身的编辑用本地 Qwen Image 2.1 模型，需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身”）。
 
 ## 第 1 步：生成新关键帧
 
@@ -65,7 +65,7 @@ cp output/dream8/K5_00001_.png input/dream8_K5.png   # 00001 换成你定稿的�
 
 打开 `dream8_keyframes_edit`，点运行：以 `input/dream7_K1.png` 为参考图，把 K4、K5 里的车改成和 K1 一致。结果在 `output/dream8/K4_edit_00001_.png` 这样的文件里。
 
-这一步用本地 Qwen Image 2.1 模型，不花额度：网关的图像编辑在 16:9 下会把整张图弄出颗粒和过度锐化。需要以下模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：
+这一步用本地 Qwen Image 2.1 模型，需要以下模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：
 
 ```bash
 cd /path/to/ComfyUI
