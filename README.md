@@ -2,6 +2,8 @@
 
 [中文](README.zh.md)
 
+![From a top-down track map to an onboard lap](assets/hero_en.jpg)
+
 You have a top-down map of a race track you designed. How do you turn it into an onboard video that drives one full lap?
 
 This project starts with the most direct approach (a single prompt), then introduces storyboarding, keyframes and shot-by-shot generation, stitches a one-minute film with sector titles and a minimap, and finally uses the storyboard to fix the hardest part, the T7–T8 chicane. Everything is generated in ComfyUI: keyframes with Qwen Image 2.1 and shots with MiniMax H3 first-last-frame video. Both run in the cloud. Only the edit that makes the car consistent across keyframes runs the local Qwen Image 2.1 model and needs a GPU; without one, the bundled media let you skip that step.
@@ -70,7 +72,7 @@ Use the Python environment that runs ComfyUI for `python` and `pip`. With the Wi
    - **Ch. 4**: run `dream7_keyframes_pilot` (K0, K1), then `dream7_keyframes`. Check each image against the storyboard; if it is wrong, edit the scene description at the start of that node's prompt and run again. Copy the final images from `ComfyUI/output/dream7/` to `ComfyUI/input/dream7_K0.png` … `dream7_K7.png`. Then run `dream7_keyframes_edit`, which uses K1 as the reference to make the car in K0 and K2–K7 match it (local model; ComfyUI offers to download it if missing), check the results and copy the `K*_edit_*.png` files over the keyframes in `input/`. To skip all this, copy `examples/keyframes/dream7_K*.png` to `input/` instead (already edited; the bundled videos were shot from them).
    - **Ch. 5**: press F5, run `dream7_shot_01` … `dream7_shot_07`. Copy your picks from `ComfyUI/output/video/dream7/` to `ComfyUI/output/video/dream7/selected/shot_01.mp4` …, or copy `media/dream7_shot_0X.mp4` there.
    - **Ch. 6**: `python scripts/stitch_lap.py` writes `output/dream_circuit_7shots.mp4` in this repository. Options: `--en`, `--no-minimap`, `--placeholder`.
-   - **Ch. 7**: run `dream8_keyframes` and then `dream8_keyframes_edit`, put the edited K4 and K5 at `input/dream8_K4.png` and `dream8_K5.png`, press F5, run `dream8_shot_04` … `dream8_shot_06` and put the picks in `output/video/dream8/selected/`. The bundled versions are `examples/keyframes/dream8_K*.png` and `media/dream8_shot_0X.mp4`. Then `python scripts/stitch_lap.py --shots lap_8shots.json`.
+   - **Ch. 7**: run `dream8_keyframes` to generate K4 and K5 and check them against the storyboard. Copy the final images from `ComfyUI/output/dream8/` to `ComfyUI/input/dream8_K4.png` and `dream8_K5.png`. Then run `dream8_keyframes_edit`, which uses `input/dream7_K1.png` as the reference to make the car in K4 and K5 match it, check the results and copy `K4_edit_*.png` and `K5_edit_*.png` over those two files in `input/`. Press F5, run `dream8_shot_04` … `dream8_shot_06` and copy your picks from `ComfyUI/output/video/dream8/` to `ComfyUI/output/video/dream8/selected/shot_04.mp4` … `shot_06.mp4`; the other shots reuse the chapter 5 videos in `ComfyUI/output/video/dream7/selected/`. Finally run `python scripts/stitch_lap.py --shots lap_8shots.json`; the film is written to `output/dream_circuit_8shots.mp4` in this project. To skip the generation, copy `examples/keyframes/dream8_K4.png` and `dream8_K5.png` to `ComfyUI/input/` and `media/dream8_shot_04.mp4` … `dream8_shot_06.mp4` to `ComfyUI/output/video/dream8/selected/shot_04.mp4` … `shot_06.mp4`, then run the same stitch command.
 
    A Load Image node outlined in red with a "Media input missing" or "errors found" toast means its image is not in `ComfyUI/input/` yet; add it and press F5.
 
@@ -124,7 +126,7 @@ For JupyterLab/JupyterHub images with ComfyUI at `/comfyui_workspace/ComfyUI` (o
 | `examples/keyframes/` | The keyframes picked at the time, ready to copy into ComfyUI's `input/` |
 | `examples/k0_versions/` | Chapter 4 example: four versions of K0 |
 | `examples/car_edit/` | Chapter 4 example: the K1 reference, and K0, K2 and K6 before and after the car edit |
-| `assets/` | Track map, minimap, per-shot minimap paths, and the 7-shot and 8-shot storyboard maps |
+| `assets/` | Track map, minimap, per-shot minimap paths, the 7-shot and 8-shot storyboard maps, and the README header image |
 | `media/` | Historical videos, downloaded by `fetch_media.py` from `media/manifest.json` |
 | `scripts/` | Workflow and notebook generation, stitching, storyboard maps, media download and cloud launch scripts |
 

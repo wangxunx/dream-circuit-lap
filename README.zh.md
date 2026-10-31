@@ -2,6 +2,8 @@
 
 [English](README.md)
 
+![从赛道俯视图到车手视角的一圈](assets/hero.jpg)
+
 手里有一张自己设计的赛道俯视图，怎么生成一段车手第一视角的视频，把它完整跑一圈？
 
 本项目从最直接的办法（一个提示词）开始，一步步引入分镜、关键帧和逐段生成，拼出约 1 分钟、带赛段标题和小地图的成片，再用分镜修好其中最难的减速弯。所有生成都在 ComfyUI 里完成：关键帧用 Qwen Image 2.1，视频用 MiniMax H3 首尾帧，两者都在云端推理。只有统一关键帧车身的编辑用本地 Qwen Image 2.1 模型，需要 GPU；没有 GPU 时可以用自带素材跳过这一步。
@@ -73,7 +75,7 @@ python scripts/make_workflows.py --shots lap_8shots.json --install  # 第 7 章�
 | 4 | 打开 `dream7_keyframes_pilot`（先试 K0、K1），再打开 `dream7_keyframes`，点 Run；对照分镜检查，不对就改提示词开头的场景描述再 Run | 定稿的图从 `ComfyUI/output/dream7/` 复制到 `ComfyUI/input/`，改名为 `dream7_K0.png` … `dream7_K7.png`；再打开 `dream7_keyframes_edit` 点 Run，以 K1 为参考统一 K0、K2–K7 的车身（本地模型，缺的话 ComfyUI 会提示下载），检查后用 `K*_edit_*.png` 覆盖 `input/` 里的关键帧 | 把 `examples/keyframes/dream7_K*.png` 复制到 `ComfyUI/input/`（已经统一过车身，自带视频就是用它们拍的） |
 | 5 | 按 F5 刷新，依次打开 `dream7_shot_01` … `dream7_shot_07`，点 Run | 选中的视频从 `ComfyUI/output/video/dream7/` 复制为 `ComfyUI/output/video/dream7/selected/shot_01.mp4` … | 把 `media/dream7_shot_0X.mp4` 复制为同样的文件名 |
 | 6 | 无 | 运行 `python scripts/stitch_lap.py`，成片在本项目目录的 `output/dream_circuit_7shots.mp4` | 同左 |
-| 7 | 打开 `dream8_keyframes`，再用 `dream8_keyframes_edit` 统一车身；关键帧放好后刷新，再打开 `dream8_shot_04` … `dream8_shot_06` | 编辑后的 K4、K5 放到 `input/dream8_K4.png`、`dream8_K5.png`；视频放到 `output/video/dream8/selected/`；运行 `python scripts/stitch_lap.py --shots lap_8shots.json` | 用 `examples/keyframes/dream8_K*.png` 和 `media/dream8_shot_0X.mp4` |
+| 7 | 打开 `dream8_keyframes`，点 Run 生成 K4、K5；对照分镜检查，不对就改提示词开头的场景描述再 Run | 定稿的图从 `ComfyUI/output/dream8/` 复制到 `ComfyUI/input/`，改名为 `dream8_K4.png`、`dream8_K5.png`；再打开 `dream8_keyframes_edit` 点 Run，以 `input/dream7_K1.png` 为参考统一 K4、K5 的车身，检查后用 `K4_edit_*.png`、`K5_edit_*.png` 覆盖 `input/` 里的这两张。按 F5 刷新，依次打开 `dream8_shot_04` … `dream8_shot_06` 点 Run，选中的视频从 `ComfyUI/output/video/dream8/` 复制为 `ComfyUI/output/video/dream8/selected/shot_04.mp4` … `shot_06.mp4`；其余镜头直接复用第 5 章 `ComfyUI/output/video/dream7/selected/` 里的视频。最后运行 `python scripts/stitch_lap.py --shots lap_8shots.json`，成片在本项目目录的 `output/dream_circuit_8shots.mp4` | 把 `examples/keyframes/dream8_K4.png`、`dream8_K5.png` 复制到 `ComfyUI/input/`，把 `media/dream8_shot_04.mp4` … `dream8_shot_06.mp4` 复制为 `ComfyUI/output/video/dream8/selected/shot_04.mp4` … `shot_06.mp4`，再运行同样的拼接命令 |
 
 Load Image 节点被红框圈住、右上角提示 “Media input missing” 或 “errors found”，说明它要读的图片还不在 `ComfyUI/input/`：把图片放进去后按 F5 刷新页面。
 `stitch_lap.py` 还支持 `--en`（英文标题）、`--no-minimap`（去掉小地图）和 `--placeholder`（缺镜头时用占位画面预览）。
@@ -147,7 +149,7 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 | `examples/keyframes/` | 当时选中的关键帧，可直接复制到 ComfyUI 的 `input/` |
 | `examples/k0_versions/` | 第 4 章的实例：K0 的 4 个版本 |
 | `examples/car_edit/` | 第 4 章的实例：参考图 K1，以及统一车身前后的 K0、K2、K6 |
-| `assets/` | 赛道俯视图、小地图、每个镜头的小地图路径，以及 7 镜头和 8 镜头的分镜示意图 |
+| `assets/` | 赛道俯视图、小地图、每个镜头的小地图路径，7 镜头和 8 镜头的分镜示意图，以及 README 的头图 |
 | `media/` | 历史生成的视频，由 `fetch_media.py` 按 `media/manifest.json` 下载 |
 | `scripts/` | 工作流和 notebook 生成、拼接、分镜示意图、素材下载和云端启动脚本 |
 
