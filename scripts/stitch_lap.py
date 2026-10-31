@@ -12,8 +12,6 @@ else the newest output/video/<name>/shot_0X_*.mp4, where <name> is the storyboar
 Placeholder keyframes come from <ComfyUI>/input, else examples/keyframes.
 The minimap and its per-shot path come from the storyboard's "minimap" and "track_path" files in assets/.
 The film is written to output/<output>.mp4 in this repository, from the storyboard's "output".
-
-Adapted from f1_circuit (https://github.com/wangxunx/f1_circuit, commit 42b74ae) scripts/stitch_lap.py.
 """
 import glob
 import json

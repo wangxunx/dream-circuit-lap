@@ -1,7 +1,4 @@
-"""Project paths, the ComfyUI install the workflows run in, and the CJK font used for every label.
-
-Adapted from f1_circuit (https://github.com/wangxunx/f1_circuit, commit 42b74ae) scripts/common.py.
-"""
+"""Project paths, the ComfyUI install the workflows run in, and the CJK font used for every label."""
 import os
 import sys
 

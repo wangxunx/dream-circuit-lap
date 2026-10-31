@@ -6,7 +6,7 @@ You have a top-down map of a race track you designed. How do you turn it into an
 
 This project starts with the most direct approach (a single prompt), then introduces storyboarding, keyframes and shot-by-shot generation, stitches a one-minute film with sector titles and a minimap, and finally uses the storyboard to fix the hardest part, the T7–T8 chicane. Everything is generated in ComfyUI: keyframes with Qwen Image 2.1 and shots with MiniMax H3 first-last-frame video. Both run in the cloud. Only the edit that makes the car consistent across keyframes runs the local Qwen Image 2.1 model and needs a GPU; without one, the bundled media let you skip that step.
 
-The material comes from the real iterations of the [f1_circuit](https://github.com/wangxunx/f1_circuit) project. Every step ships with the results generated at the time, so you can follow every step without spending credits.
+Every step ships with the results it actually generated, so you can follow every step without spending credits.
 
 The notebooks come in English (`notebooks/*_en.ipynb`) and Chinese; the chapter outlines and the notes inside the ComfyUI workflows are in Chinese.
 

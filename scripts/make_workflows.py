@@ -7,8 +7,6 @@
 
 Keyframes with "file" reuse an existing input image, so only the remaining keyframes get a text-to-image workflow.
 Shots with "clip" reuse a video (path relative to the ComfyUI directory) and get no workflow.
-
-Adapted from f1_circuit (https://github.com/wangxunx/f1_circuit, commit 42b74ae) scripts/make_workflows.py.
 """
 import json
 import os
