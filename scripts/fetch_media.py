@@ -4,10 +4,13 @@
     python scripts/fetch_media.py --fonts    # also NotoSansSC-Regular/Bold.otf into fonts/, unless a CJK font is found
 
 Files that already exist with the right sha256 are skipped, so the script is safe to rerun.
+If DREAM_CIRCUIT_MEDIA_CACHE points to a directory with copies of the media (the Docker image sets it),
+copies with the right sha256 are used instead of downloading, and an older copy is used if the download fails.
 """
 import hashlib
 import json
 import os
+import shutil
 import sys
 import urllib.error
 import urllib.request
@@ -15,6 +18,7 @@ import urllib.request
 import common
 
 MANIFEST = json.load(open(os.path.join(common.MEDIA, "manifest.json"), encoding="utf-8"))
+CACHE = os.environ.get("DREAM_CIRCUIT_MEDIA_CACHE")
 
 
 def sha256(path):
@@ -25,14 +29,21 @@ def sha256(path):
     return h.hexdigest()
 
 
-def fetch(url, path, digest):
+def fetch(url, path, digest, cached=None):
     if os.path.isfile(path) and sha256(path) == digest:
         return
-    print(f"downloading {os.path.basename(path)}")
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    if cached and os.path.isfile(cached) and sha256(cached) == digest:
+        shutil.copyfile(cached, path)
+        return
+    print(f"downloading {os.path.basename(path)}")
     try:
         urllib.request.urlretrieve(url, path + ".part")
     except urllib.error.URLError as e:
+        if cached and os.path.isfile(cached):
+            print(f"{url}: download failed ({e}), using the older copy in {os.path.dirname(cached)}")
+            shutil.copyfile(cached, path)
+            return
         sys.exit(f"{url}: download failed: {e}")
     if sha256(path + ".part") != digest:
         os.remove(path + ".part")
@@ -41,7 +52,7 @@ def fetch(url, path, digest):
 
 
 for name, f in MANIFEST["files"].items():
-    fetch(f"{MANIFEST['base_url']}/{name}", os.path.join(common.MEDIA, name), f["sha256"])
+    fetch(f"{MANIFEST['base_url']}/{name}", os.path.join(common.MEDIA, name), f["sha256"], CACHE and os.path.join(CACHE, name))
 print(f"media ready: {len(MANIFEST['files'])} files in {common.MEDIA}")
 
 if "--fonts" in sys.argv:
