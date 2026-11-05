@@ -337,20 +337,22 @@ import json
 
 MEDIA = PROJECT / "media"
 
-def figure(inner, name):
-    return f'<figure style="display:inline-block;margin:4px">{inner}<figcaption>{name}</figcaption></figure>'
+def figure(inner, p, label, width):
+    caption = f'{label}<br><small><code>{Path(p).name}</code></small>' if label else Path(p).name
+    return f'<figure style="display:inline-block;vertical-align:top;margin:4px">{inner}<figcaption style="max-width:{width}px">{caption}</figcaption></figure>'
 
-def play(*paths, width=480):
-    display(HTML("".join(figure(f'<video src="{os.path.relpath(p)}" width="{width}" controls muted></video>', Path(p).name) for p in paths)))
+def play(*paths, width=480, labels=()):
+    labels = labels or [None] * len(paths)
+    display(HTML("".join(figure(f'<video src="{os.path.relpath(p)}" width="{width}" controls muted></video>', p, label, width) for p, label in zip(paths, labels))))
 
-def show(*paths, width=360):
+def show(*paths, width=360, labels=()):
     tags = []
-    for p in paths:
+    for p, label in zip(paths, labels or [None] * len(paths)):
         im = Image.open(p).convert("RGB")
         im.thumbnail((width * 2, width * 2))
         buf = BytesIO()
         im.save(buf, "JPEG", quality=85)
-        tags.append(figure(f'<img src="data:image/jpeg;base64,{b64encode(buf.getvalue()).decode()}" width="{width}">', Path(p).name))
+        tags.append(figure(f'<img src="data:image/jpeg;base64,{b64encode(buf.getvalue()).decode()}" width="{width}">', p, label, width))
     display(HTML("".join(tags)))
 
 def copy_missing(src, dst):
@@ -609,40 +611,131 @@ play(PROJECT / "output" / "dream_circuit_7shots_en.mp4", width=900)
     md("""
 ## 第 7 章：用分镜修好 T7–T8 减速弯
 
-地图上 T7 是右弯、T8 是左弯，但第 5 个镜头里只能看到一个左弯。下面按当时的顺序重现修复过程：
-
-1. 原始镜头 5：K4 → K5 一个镜头跑完 T7–T8，模型直接跳过了 T7。
-2. 只改提示词（第 5 章那一层）：T7 右弯仍然几乎看不出来。
-3. 拆成两个镜头，T7 一个、T8 一个（第 3 章那一层）：但旧 K4 的远端是左弯，镜头开头先往左转。
-4. 重画 K4，让远端只看到 T7 右弯（第 4 章那一层）：开头对了，但第一次画的 K5 同时看到右弯和左弯，画面在 1 秒内跳变。
-5. 重画 K5，让它只看到 T8 左弯：问题解决。
-
-两条规则：**一个镜头只改变一次方向；交界关键帧只画下一个弯。**
+地图上 T7 是右弯、T8 是左弯，但第 6 章成片的镜头 5 里只有一个左弯，T7 不见了。
+下面按当时的顺序一步步重现修复过程：每一步先说改了什么、改的是哪一层，再看效果。这些都是自带素材，不用生成。
 """, """
 ## Chapter 7: fix the T7–T8 chicane with the storyboard
 
-On the map T7 is a right-hander and T8 a left-hander, but shot 5 shows only one left-hander. Below, the fix is replayed in the original order:
-
-1. Original shot 5: K4 → K5 drives T7–T8 in one shot, and the model skips T7.
-2. Prompt only (the chapter 5 layer): the T7 right-hander is still barely visible.
-3. Split into two shots, one for T7 and one for T8 (the chapter 3 layer): but the old K4 shows a left-hander in the distance, so the shot starts by turning left.
-4. Redraw K4 so the far end shows only the T7 right-hander (the chapter 4 layer): the start is right, but the first K5 shows both the right- and the left-hander, and the picture jumps within a second.
-5. Redraw K5 so it shows only the T8 left-hander: fixed.
-
-Two rules: **one change of direction per shot; a boundary keyframe shows only the next turn.**
-"""),
-    code("""
-play(MEDIA / "dream7_shot_05.mp4", MEDIA / "chicane_1_prompt_only.mp4", MEDIA / "chicane_2_split.mp4", width=360)
-play(MEDIA / "chicane_3_new_K4.mp4", MEDIA / "dream8_shot_05.mp4", MEDIA / "dream8_shot_06.mp4", width=360)
-show(PROJECT / "examples" / "keyframes" / "dream7_K4.png", PROJECT / "examples" / "keyframes" / "dream8_K4.png", width=360)
-show(MEDIA / "chicane_K5_first_try.png", PROJECT / "examples" / "keyframes" / "dream8_K5.png", width=360)
+On the map T7 is a right-hander and T8 a left-hander, but shot 5 of the chapter 6 film shows only one left-hander: T7 is gone.
+Below, the fix is replayed step by step in the original order: each step says what was changed and in which layer, then shows the result. These are all bundled results; nothing needs to be generated.
 """),
     md("""
+### 原来的镜头 5：K4 → K5 一个镜头跑完 T7–T8
+
+K4 是出 T6 的画面，K5 是出减速弯的画面，两张图的朝向只差约 15°。模型从 K4 开到 K5，最省事的路线就是轻轻偏一下，T7 的右转被直接省掉了。
+
+看视频：只有一个左弯。
+""", """
+### Original shot 5: K4 → K5 drives T7–T8 in one shot
+
+K4 is the view leaving T6 and K5 the view leaving the chicane; their headings differ by only about 15°. Driving from K4 to K5, the easiest path for the model is a slight drift, so the T7 right turn is simply skipped.
+
+Watch: only one left-hander.
+"""),
+    code("""
+play(MEDIA / "dream7_shot_05.mp4", width=480, labels=["原来的镜头 5：只有一个左弯"])
+""", """
+play(MEDIA / "dream7_shot_05.mp4", width=480, labels=["Original shot 5: only one left-hander"])
+"""),
+    md("""
+### 第 1 步：只改提示词（提示词层，第 5 章）
+
+镜头和关键帧都不变，只在提示词里强调“先右后左”。
+
+看视频：T7 的右弯仍然几乎看不出来。问题出在分镜层时，改提示词没有用。
+""", """
+### Step 1: change the prompt only (prompt layer, chapter 5)
+
+Shot and keyframes stay the same; the prompt now stresses "right, then left".
+
+Watch: the T7 right-hander is still barely visible. When the problem is in the storyboard, changing the prompt does not help.
+"""),
+    code("""
+play(MEDIA / "chicane_1_prompt_only.mp4", width=480, labels=["只改提示词：T7 右弯仍然看不出来"])
+""", """
+play(MEDIA / "chicane_1_prompt_only.mp4", width=480, labels=["Prompt only: T7 is still barely visible"])
+"""),
+    md("""
+### 第 2 步：拆成两个镜头（分镜层，第 3 章）
+
+T7 一个镜头、T8 一个镜头，中间新增一张交界关键帧 K5，卡在 T7 出口。这样每个镜头只转一次弯。
+
+看视频：T7 这个镜头一开头先往左转。原因在左边这张旧 K4：短直道尽头画的是一个左弯，模型就往左开。
+""", """
+### Step 2: split into two shots (storyboard layer, chapter 3)
+
+One shot for T7 and one for T8, with a new boundary keyframe K5 at the T7 exit, so each shot turns only once.
+
+Watch: the T7 shot starts by turning left. The cause is the old K4 on the left: the end of the short straight shows a left-hander, so the model drives left.
+"""),
+    code("""
+show(PROJECT / "examples" / "keyframes" / "dream7_K4.png", width=360, labels=["旧 K4：直道尽头是左弯"])
+play(MEDIA / "chicane_2_split.mp4", width=480, labels=["拆分后的 T7 镜头：开头先往左转"])
+""", """
+show(PROJECT / "examples" / "keyframes" / "dream7_K4.png", width=360, labels=["Old K4: a left-hander at the end of the straight"])
+play(MEDIA / "chicane_2_split.mp4", width=480, labels=["T7 shot after the split: starts by turning left"])
+"""),
+    md("""
+### 第 3 步：重画 K4（关键帧层，第 4 章）
+
+重画 K4，让短直道尽头只看到 T7 的右弯。
+
+看视频：开头对了，先往右转。但第一次画的 K5 同时看到右弯和左弯，画面在 1 秒内跳变，像倒回去又看了一遍 T7–T8。
+""", """
+### Step 3: redraw K4 (keyframe layer, chapter 4)
+
+K4 is redrawn so the end of the short straight shows only the T7 right-hander.
+
+Watch: the start is right now, turning right first. But the first K5 shows both the right- and the left-hander, and the picture jumps within a second, as if replaying T7–T8.
+"""),
+    code("""
+show(PROJECT / "examples" / "keyframes" / "dream8_K4.png", MEDIA / "chicane_K5_first_try.png", width=360, labels=["新 K4：只看到 T7 右弯", "第一次画的 K5：右弯和左弯都在"])
+play(MEDIA / "chicane_3_new_K4.mp4", width=480, labels=["新 K4 → 第一次的 K5：1 秒内跳变"])
+""", """
+show(PROJECT / "examples" / "keyframes" / "dream8_K4.png", MEDIA / "chicane_K5_first_try.png", width=360, labels=["New K4: only the T7 right-hander", "First K5: both the right- and the left-hander"])
+play(MEDIA / "chicane_3_new_K4.mp4", width=480, labels=["New K4 → first K5: jumps within a second"])
+"""),
+    md("""
+### 第 4 步：重画 K5（关键帧层，第 4 章）
+
+重画 K5：刚出 T7，前方只看到 T8 的左弯。T8 的镜头用同样的规则：K5 只看到左弯，K6 只看到下坡。
+
+看视频：镜头 5 是完整的 T7 右弯，镜头 6 接着是 T8 左弯，问题解决。
+""", """
+### Step 4: redraw K5 (keyframe layer, chapter 4)
+
+K5 is redrawn just after T7, with only the T8 left-hander ahead. The T8 shot follows the same rule: K5 shows only the left-hander, K6 only the downhill.
+
+Watch: shot 5 is a full T7 right-hander and shot 6 follows with the T8 left-hander. Fixed.
+"""),
+    code("""
+show(PROJECT / "examples" / "keyframes" / "dream8_K5.png", width=360, labels=["新 K5：只看到 T8 左弯"])
+play(MEDIA / "dream8_shot_05.mp4", MEDIA / "dream8_shot_06.mp4", width=480, labels=["新镜头 5（T7）：完整的右弯", "新镜头 6（T8）：左弯"])
+""", """
+show(PROJECT / "examples" / "keyframes" / "dream8_K5.png", width=360, labels=["New K5: only the T8 left-hander"])
+play(MEDIA / "dream8_shot_05.mp4", MEDIA / "dream8_shot_06.mp4", width=480, labels=["New shot 5 (T7): a full right-hander", "New shot 6 (T8): the left-hander"])
+"""),
+    md("""
+### 两条规则
+
+1. **一个镜头只改变一次方向。** 两次转向放进一个镜头，模型会抄近路省掉一次。
+2. **交界关键帧只画下一个弯。** 关键帧远端画了什么，模型就往哪里开；画了两个弯，就会在镜头里重复或跳变。
+""", """
+### Two rules
+
+1. **One change of direction per shot.** Put two turns in one shot and the model cuts the corner, skipping one.
+2. **A boundary keyframe shows only the next turn.** The model drives toward whatever the far end of the keyframe shows; show two turns and the shot repeats or jumps.
+"""),
+    md("""
+### 拼出 8 镜头版本
+
 8 镜头分镜表 `storyboards/lap_8shots.json` 只重做 K4、K5 两张关键帧和镜头 4–6，其余关键帧复用第 4 章、镜头复用第 5 章的结果。
 原来的镜头 5 拆成了镜头 5（T7）和镜头 6（T8），中间多了 K5，所以后面的编号都往后顺延一位：7 镜头版的 K5、K6、K7 在这里是 K6、K7、K8，原来的镜头 6、7 在这里是镜头 7、8。对照下面的示意图看。
 路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_keyframes_edit`，以 `dream7_K1.png` 为参考统一 K4、K5 的车，检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。然后打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
 路线 A 直接运行下面几格。最后拼出 8 镜头成片，和第 6 章的版本对比。
 """, """
+### Stitch the 8-shot version
+
 The 8-shot storyboard `storyboards/lap_8shots.json` redoes only keyframes K4 and K5 and shots 4–6; the other keyframes come from chapter 4 and the other shots from chapter 5.
 The old shot 5 is split into shot 5 (T7) and shot 6 (T8) with a new K5 between them, so everything after it shifts by one: the 7-shot K5, K6 and K7 are K6, K7 and K8 here, and the old shots 6 and 7 are shots 7 and 8. Compare with the map below.
 Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Next open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K1.png`, check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
