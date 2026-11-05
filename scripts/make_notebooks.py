@@ -612,12 +612,12 @@ play(PROJECT / "output" / "dream_circuit_7shots_en.mp4", width=900)
 ## 第 7 章：用分镜修好 T7–T8 减速弯
 
 地图上 T7 是右弯、T8 是左弯，但第 6 章成片的镜头 5 里只有一个左弯，T7 不见了。
-下面按当时的顺序一步步重现修复过程：每一步先说改了什么、改的是哪一层，再看效果。这些都是自带素材，不用生成。
+下面开始一步步进行修复：每一步先说改了什么、改的是哪一层，再看效果。用到的视频和图片都已经生成好了，直接看就行。
 """, """
 ## Chapter 7: fix the T7–T8 chicane with the storyboard
 
 On the map T7 is a right-hander and T8 a left-hander, but shot 5 of the chapter 6 film shows only one left-hander: T7 is gone.
-Below, the fix is replayed step by step in the original order: each step says what was changed and in which layer, then shows the result. These are all bundled results; nothing needs to be generated.
+Now let's fix it step by step: each step says what is changed and in which layer, then shows the result. The videos and images are already generated, so you only need to watch.
 """),
     md("""
 ### 原来的镜头 5：K4 → K5 一个镜头跑完 T7–T8
