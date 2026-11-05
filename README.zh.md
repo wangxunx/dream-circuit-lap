@@ -111,8 +111,6 @@ jupyter lab --ServerApp.root_dir=. notebooks/local.ipynb
 
 ### 方式三：云端 notebook
 
-适用于预装 ComfyUI 的 JupyterLab / JupyterHub 镜像，ComfyUI 默认在 `/comfyui_workspace/ComfyUI`（不在这里时设置环境变量 `COMFY_DIR`）。ComfyUI 在后台启动，有 GPU 时使用 GPU（统一车身要用），没有时以 `--cpu` 启动。
-
 **1. 打开平台提供的 JupyterLab，克隆本项目。** 菜单 **File → New → Terminal** 打开终端，运行：
 
 ```bash
@@ -123,10 +121,7 @@ git clone https://github.com/wangxunx/dream-circuit-lap.git
 
 **2. 打开 notebook。** 在左侧文件浏览器里依次进入 `dream-circuit-lap/notebooks/`，双击 `cloud.ipynb`。
 
-**3. 运行第 0 节。** 点中一格按 `Shift+Enter`，逐格往下运行。没有 key 时输出区会出现输入框，粘贴 key 后按回车。启动 ComfyUI 那一格按平台自动选择访问方式：
-
-- AMD Instinct 集群：平台设置了 `ONECLICK_APP_URL`（或 `COMFY_PUBLIC_URL`），直接用集群的反向代理。
-- 其他实例：通过 radeon-tunnel 暴露端口，notebook 会提示输入 `TUNNEL_SERVER` 和 `RADEON_TUNNEL_AUTH`（向平台提供方索取）。仓库里不保存这两个值。
+**3. 运行第 0 节。** 点中一格按 `Shift+Enter`，逐格往下运行。没有 key 时输出区会出现输入框，粘贴 key 后按回车。
 
 **4. 打开 ComfyUI。** 在浏览器新标签页打开这一格打印的 `ComfyUI URL`，弹出 Templates 模板窗口时点右上角 × 关掉。
 

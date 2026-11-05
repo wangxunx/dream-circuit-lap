@@ -6,7 +6,9 @@
 #
 # Exposure:
 #   - COMFY_PUBLIC_URL or ONECLICK_APP_URL set (AMD Instinct cluster): the cluster's reverse proxy already serves the port.
-#   - otherwise radeon-tunnel, which needs TUNNEL_SERVER and RADEON_TUNNEL_AUTH from the platform or your environment.
+#   - otherwise the Radeon cloud's rc-tunnel, installed from the platform on first use; ComfyUI then listens on
+#     127.0.0.1 only, and a restart keeps the tunnel and its URL (stopping a tunnel freezes its URL for 24 hours).
+#     See https://amd-aim.github.io/radeon-cloud-docs/zh-cn/guides/tunnel/
 #   COMFY_HARDWARE=instinct|radeon forces one of the two.
 #
 # Keyframes and shots use cloud nodes (Qwen Image 2.1 and MiniMax H3); only the car edit runs a local model.
@@ -23,38 +25,51 @@ COMFY_DIR="${COMFY_DIR:-/comfyui_workspace/ComfyUI}"
 COMFY_ARGS="${COMFY_ARGS-$(python3 -c 'import torch; print("" if torch.cuda.is_available() else "--cpu")' 2>/dev/null || echo --cpu)}"
 COMFY_READY_TIMEOUT="${COMFY_READY_TIMEOUT:-120}"
 COMFY_HARDWARE="${COMFY_HARDWARE:-auto}"
-TUNNEL_BIN="${TUNNEL_BIN:-/tmp/radeon-tunnel}"
-TUNNEL_URL_TIMEOUT="${TUNNEL_URL_TIMEOUT:-60}"
+RC_TUNNEL="${HOME:-/root}/.local/bin/rc-tunnel"
+RC_TUNNEL_INSTALL=/var/run/secrets/frp-self-service/install
+TUNNEL_READY_TIMEOUT="${TUNNEL_READY_TIMEOUT:-60}"
 
 COMFY_PID_FILE=/tmp/comfyui.pid
-TUNNEL_PID_FILE=/tmp/tunnel.pid
 COMFY_LOG=/tmp/comfyui.log
-TUNNEL_LOG=/tmp/tunnel.log
 
 
-stop_pidfile() {
-  local pid_file="$1" expected="$2" pid cmdline
-  [[ -f "${pid_file}" ]] || return 0
-  pid="$(cat "${pid_file}")"
-  rm -f "${pid_file}"
+stop_comfy() {
+  local pid cmdline
+  [[ -f "${COMFY_PID_FILE}" ]] || return 0
+  pid="$(cat "${COMFY_PID_FILE}")"
+  rm -f "${COMFY_PID_FILE}"
   # only kill the PID if it is still the process we started
   cmdline="$(tr '\0' ' ' < "/proc/${pid}/cmdline" 2>/dev/null || true)"
-  if [[ "${pid}" =~ ^[0-9]+$ && "${cmdline}" == *"${expected}"* ]]; then
-    echo "[stop] ${expected} (PID ${pid})"
+  if [[ "${pid}" =~ ^[0-9]+$ && "${cmdline}" == *"main.py --listen "*" --port ${COMFY_PORT}"* ]]; then
+    echo "[stop] ComfyUI (PID ${pid})"
     kill "${pid}" 2>/dev/null || true
     for _ in $(seq 1 10); do kill -0 "${pid}" 2>/dev/null || return 0; sleep 1; done
     kill -9 "${pid}" 2>/dev/null || true
   fi
 }
 
+stop_tunnel() {
+  if [[ -x "${RC_TUNNEL}" ]] && "${RC_TUNNEL}" status > /dev/null 2>&1; then
+    echo "[stop] rc-tunnel"
+    "${RC_TUNNEL}" stop > /dev/null
+  fi
+}
+
 stop_all() {
-  stop_pidfile "${TUNNEL_PID_FILE}" "expose ${COMFY_PORT}"
-  stop_pidfile "${COMFY_PID_FILE}" "main.py --listen 0.0.0.0 --port ${COMFY_PORT}"
+  stop_tunnel
+  stop_comfy
 }
 
 fail() {
   echo "[error] $1"
   [[ -n "${2:-}" ]] && tail -n 40 "$2"
+  stop_comfy
+  exit 1
+}
+
+fail_tunnel() {
+  echo "[error] $1, rc-tunnel logs:"
+  "${RC_TUNNEL}" logs --lines 40 || true
   stop_all
   exit 1
 }
@@ -79,21 +94,24 @@ case "${COMFY_HARDWARE}" in
   *) echo "[error] COMFY_HARDWARE must be auto, instinct or radeon, got ${COMFY_HARDWARE}"; exit 1 ;;
 esac
 
-if [[ "${MODE}" == radeon && ( -z "${TUNNEL_SERVER:-}" || -z "${RADEON_TUNNEL_AUTH:-}" ) ]]; then
-  echo "[error] radeon-tunnel needs TUNNEL_SERVER and RADEON_TUNNEL_AUTH."
-  echo "        Get both from your platform provider and set them before running this script, e.g. in a notebook cell:"
-  echo "        os.environ['TUNNEL_SERVER'] = 'http://<server>:<port>'; os.environ['RADEON_TUNNEL_AUTH'] = '<token>'"
+if [[ "${MODE}" == radeon && -z "${FRP_BROKER_URL:-}" ]]; then
+  echo "[error] rc-tunnel needs FRP_BROKER_URL, which the Radeon cloud sets on the notebook container."
+  echo "        Run this from a notebook cell or a JupyterLab terminal, not an SSH session."
+  echo "        If it is missing there too, the instance predates rc-tunnel: destroy it and create a new one."
   exit 1
 fi
 [[ -f "${COMFY_DIR}/main.py" ]] || { echo "[error] ComfyUI not found at ${COMFY_DIR} (set COMFY_DIR)"; exit 1; }
 
-stop_all
+# rc-tunnel only serves services bound to 127.0.0.1; the Instinct proxy reaches the pod address
+[[ "${MODE}" == radeon ]] && LISTEN=127.0.0.1 || LISTEN=0.0.0.0
+
+stop_comfy
 
 echo "[start] ComfyUI on port ${COMFY_PORT} (${COMFY_ARGS:-GPU})"
 cd "${COMFY_DIR}"
 # word splitting of COMFY_ARGS is intended
 # shellcheck disable=SC2086
-setsid nohup python3 main.py --listen 0.0.0.0 --port "${COMFY_PORT}" ${COMFY_ARGS} > "${COMFY_LOG}" 2>&1 < /dev/null &
+setsid nohup python3 main.py --listen "${LISTEN}" --port "${COMFY_PORT}" ${COMFY_ARGS} > "${COMFY_LOG}" 2>&1 < /dev/null &
 echo $! > "${COMFY_PID_FILE}"
 
 for ((i = 1; i <= COMFY_READY_TIMEOUT; i++)); do
@@ -111,21 +129,27 @@ if [[ "${MODE}" == instinct ]]; then
   exit 0
 fi
 
-echo "[tunnel] downloading the radeon-tunnel client"
-curl --noproxy '*' -fsSL "${TUNNEL_SERVER}/client" -o "${TUNNEL_BIN}" || fail "could not download ${TUNNEL_SERVER}/client"
-chmod +x "${TUNNEL_BIN}"
-rm -rf "${HOME:-/root}/.radeon"
-export RADEON_TUNNEL_AUTH
-setsid nohup "${TUNNEL_BIN}" expose "${COMFY_PORT}" > "${TUNNEL_LOG}" 2>&1 < /dev/null &
-echo $! > "${TUNNEL_PID_FILE}"
+if [[ ! -x "${RC_TUNNEL}" ]]; then
+  echo "[tunnel] installing rc-tunnel"
+  [[ -x "${RC_TUNNEL_INSTALL}" ]] || fail "${RC_TUNNEL_INSTALL} not found; the instance predates rc-tunnel, destroy it and create a new one"
+  "${RC_TUNNEL_INSTALL}" > /dev/null || fail "rc-tunnel install failed"
+fi
 
-for ((i = 1; i <= TUNNEL_URL_TIMEOUT; i++)); do
+STATUS="$("${RC_TUNNEL}" status 2>/dev/null || true)"
+if grep -Eq "^Local port: +${COMFY_PORT}$" <<< "${STATUS}" && grep -Eq '^FRPC running: +true' <<< "${STATUS}"; then
+  echo "[tunnel] reusing the running rc-tunnel"
+  URL="$(grep -Eo 'https://[^[:space:]]+' <<< "${STATUS}" | head -1)"
+else
+  # a notebook can expose one port at a time
+  stop_tunnel
+  URL="$("${RC_TUNNEL}" expose --port "${COMFY_PORT}" | grep -Eo 'https://[^[:space:]]+' | head -1 || true)"
+  [[ -n "${URL}" ]] || fail_tunnel "rc-tunnel printed no URL"
+fi
+
+# the URL serves frp's 404 page until the tunnel is active
+for ((i = 1; i <= TUNNEL_READY_TIMEOUT; i++)); do
+  "${RC_TUNNEL}" status 2>/dev/null | grep -Eq '^Status: +active' && break
+  (( i == TUNNEL_READY_TIMEOUT )) && fail_tunnel "rc-tunnel was not active after ${TUNNEL_READY_TIMEOUT}s"
   sleep 1
-  kill -0 "$(cat "${TUNNEL_PID_FILE}")" 2>/dev/null || fail "radeon-tunnel exited, last log lines:" "${TUNNEL_LOG}"
-  URL="$(grep -Eo 'https?://[^[:space:]]+' "${TUNNEL_LOG}" | head -1 || true)"
-  if [[ -n "${URL}" ]]; then
-    print_url "${URL}"
-    exit 0
-  fi
 done
-fail "radeon-tunnel printed no URL within ${TUNNEL_URL_TIMEOUT}s, last log lines:" "${TUNNEL_LOG}"
+print_url "${URL}"

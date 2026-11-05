@@ -219,18 +219,8 @@ CLOUD = [
     intro("云端版", "cloud"),
     md("""
 ## 0. 准备环境
-
-云端版适用于预装了 ComfyUI 的 JupyterLab / JupyterHub 实例，ComfyUI 默认在 `/comfyui_workspace/ComfyUI`，可以用环境变量 `COMFY_DIR` 修改。
-关键帧和视频用两个云端节点；第 4、7 章统一车身的编辑用本地模型，所以 ComfyUI 会使用实例的 GPU。
-
-如果这个 notebook 不在本项目仓库里（例如单独上传的），下一格会把仓库克隆到 `~/dream-circuit-lap`。
 """, """
 ## 0. Setup
-
-The cloud notebook is for JupyterLab / JupyterHub instances with ComfyUI preinstalled, by default at `/comfyui_workspace/ComfyUI`; override it with `COMFY_DIR`.
-Keyframes and videos use the two cloud nodes; the car edit in chapters 4 and 7 runs a local model, so ComfyUI uses the instance's GPU.
-
-If this notebook is not inside the project repository (for example, uploaded on its own), the next cell clones the repository to `~/dream-circuit-lap`.
 """),
     code("""
 import os, sys, shutil, subprocess, urllib.request
@@ -277,27 +267,17 @@ Running the next cell shows an input box below it: paste the key and press Enter
     md("""
 ### 启动 ComfyUI
 
-- AMD Instinct 集群：平台设置了 `ONECLICK_APP_URL`（或 `COMFY_PUBLIC_URL`），直接用集群的反向代理。
-- 其他实例：通过 radeon-tunnel 暴露端口，需要 `TUNNEL_SERVER` 和 `RADEON_TUNNEL_AUTH`。平台没有注入时，下一格会提示你输入（向平台提供方索取）。
-
-脚本在后台启动 ComfyUI，打印 `ComfyUI URL` 后返回，可以继续运行后面的单元格。重新运行这一格会重启 ComfyUI。
+脚本在后台启动 ComfyUI，打印 `ComfyUI URL` 后返回，可以继续运行后面的单元格。重新运行这一格会重启 ComfyUI，URL 不变。
 
 > **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务。不要把它发到群里或贴在公开的地方。
 """, """
 ### Start ComfyUI
 
-- AMD Instinct cluster: the platform sets `ONECLICK_APP_URL` (or `COMFY_PUBLIC_URL`) and the cluster's reverse proxy is used.
-- Other instances: the port is exposed through radeon-tunnel, which needs `TUNNEL_SERVER` and `RADEON_TUNNEL_AUTH`. If the platform does not set them, the next cell asks for them (get them from your platform provider).
-
-The script starts ComfyUI in the background, prints the `ComfyUI URL` and returns, so you can keep running the cells below. Rerunning this cell restarts ComfyUI.
+The script starts ComfyUI in the background, prints the `ComfyUI URL` and returns, so you can keep running the cells below. Rerunning this cell restarts ComfyUI and keeps the URL.
 
 > **Note:** anyone with this URL can queue jobs on your H3 key. Do not post it in group chats or anywhere public.
 """),
     code("""
-if not (os.environ.get("ONECLICK_APP_URL") or os.environ.get("COMFY_PUBLIC_URL")):
-    for var in ("TUNNEL_SERVER", "RADEON_TUNNEL_AUTH"):
-        if not os.environ.get(var):
-            os.environ[var] = getpass(f"{var}: ").strip()
 !COMFY_DIR="{COMFY}" bash "{PROJECT}/scripts/start_comfyui_cloud.sh"
 """),
 ]

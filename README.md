@@ -101,11 +101,9 @@ ComfyUI keeps running in the background after JupyterLab is closed (log in Comfy
 
 ### 3. Cloud notebook
 
-For JupyterLab/JupyterHub images with ComfyUI at `/comfyui_workspace/ComfyUI` (override with `COMFY_DIR`). ComfyUI runs in the background on the GPU when there is one (the car edit needs it) and with `--cpu` otherwise.
-
 1. In the platform's JupyterLab, open **File → New → Terminal** and run `git clone https://github.com/wangxunx/dream-circuit-lap.git`. Clone it where the file browser can see it (the terminal starts there) so the videos play.
 2. Open `dream-circuit-lap/notebooks/cloud_en.ipynb` from the file browser.
-3. Run section 0 cell by cell with `Shift+Enter`, pasting the key when asked. The launch cell picks the route automatically: the AMD Instinct cluster proxy when `ONECLICK_APP_URL` or `COMFY_PUBLIC_URL` is set, otherwise radeon-tunnel, which prompts for `TUNNEL_SERVER` and `RADEON_TUNNEL_AUTH` from your platform provider. Neither value is stored in this repository.
+3. Run section 0 cell by cell with `Shift+Enter`, pasting the key when asked.
 4. Open the printed `ComfyUI URL` in a new tab and close the Templates dialog if it appears.
 
    > Anyone with this URL can queue jobs on your H3 key. Do not share it.
