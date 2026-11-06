@@ -518,7 +518,7 @@ show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 在浏览器里（路线 B）：
 
 1. 运行下一格检查模型：都显示 `found` 就直接进行下一步；有 `missing` 时把 `DOWNLOAD` 改成 `True` 再运行，下载缺的模型，然后重启 ComfyUI 或刷新页面。
-2. 打开 `dream7_keyframes_edit`，点 Run：以 K1 为参考，把 K0、K2–K7 的车改成 K1 那辆。
+2. 先刷新一次浏览器页面（F5），否则刚复制进 `input/` 的关键帧所在的 Load Image 节点会显示红框。然后打开 `dream7_keyframes_edit`，点 Run：以 K1 为参考，把 K0、K2–K7 的车改成 K1 那辆。
 3. 逐张检查：车和 K1 是同一辆、机位一致，路面走向、红车、看台这些场景没被改掉。不行就补一句指令或换 KSampler 的 seed 再运行。
 4. 满意后运行再下一格，编辑结果会覆盖 `input/` 里的关键帧，然后刷新页面。
 
@@ -534,7 +534,7 @@ The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU).
 In the browser (route B):
 
 1. Run the next cell to check the models: if all show `found`, go straight to the next step; if any show `missing`, set `DOWNLOAD` to `True`, run it again to download them, then restart ComfyUI or reload the page.
-2. Open `dream7_keyframes_edit` and click Run: with K1 as the reference, the car in K0 and K2–K7 becomes K1's car.
+2. Reload the page (F5) first, otherwise the Load Image nodes for the keyframes just copied into `input/` show a red outline. Then open `dream7_keyframes_edit` and click Run: with K1 as the reference, the car in K0 and K2–K7 becomes K1's car.
 3. Check each one: the same car as K1 at the same camera height, with the road, the red car and the grandstands unchanged. If one is off, add a sentence to its instruction or change the KSampler seed and run again.
 4. When you are happy, run the cell after next: the edits overwrite the keyframes in `input/`. Then reload the page.
 
