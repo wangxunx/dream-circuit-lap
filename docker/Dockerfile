@@ -28,6 +28,13 @@ RUN git clone --depth 1 https://github.com/wangxunx/dream-circuit-lap.git /tmp/d
     && mkdir -p /opt/dream-circuit-lap \
     && mv /tmp/dream-circuit-lap/media /tmp/dream-circuit-lap/fonts /opt/dream-circuit-lap/ \
     && rm -rf /tmp/dream-circuit-lap
+
+# The API nodes' aiohttp sessions ignore HTTPS_PROXY, and the Radeon cloud reaches the H3 gateway only through its proxy.
+RUN cd /comfyui_workspace/ComfyUI/comfy_api_nodes/util \
+    && sed -i -E 's/aiohttp\.ClientSession\(timeout=(timeout|timeout_cfg)\)/aiohttp.ClientSession(timeout=\1, trust_env=True)/' \
+         client.py download_helpers.py _helpers.py upload_helpers.py \
+    && for f in client.py download_helpers.py _helpers.py upload_helpers.py; do grep -q 'trust_env=True' "$f" || exit 1; done
+
 ENV DREAM_CIRCUIT_MEDIA_CACHE=/opt/dream-circuit-lap/media \
     F1_FONT_REGULAR=/opt/dream-circuit-lap/fonts/NotoSansSC-Regular.otf \
     F1_FONT_BOLD=/opt/dream-circuit-lap/fonts/NotoSansSC-Bold.otf

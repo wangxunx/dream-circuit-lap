@@ -267,13 +267,13 @@ Running the next cell shows an input box below it: paste the key and press Enter
     md("""
 ### 启动 ComfyUI
 
-脚本在后台启动 ComfyUI，打印 `ComfyUI URL` 后返回，可以继续运行后面的单元格。重新运行这一格会重启 ComfyUI，URL 不变。
+脚本在后台启动 ComfyUI，打印 `ComfyUI URL` 后返回，可以继续运行后面的单元格。重新运行这一格会重启 ComfyUI，URL 可能会变，以最新打印的为准。
 
 > **注意：** 拿到这个 URL 的任何人都能用你的 H3 key 提交任务。不要把它发到群里或贴在公开的地方。
 """, """
 ### Start ComfyUI
 
-The script starts ComfyUI in the background, prints the `ComfyUI URL` and returns, so you can keep running the cells below. Rerunning this cell restarts ComfyUI and keeps the URL.
+The script starts ComfyUI in the background, prints the `ComfyUI URL` and returns, so you can keep running the cells below. Rerunning this cell restarts ComfyUI and may change the URL; use the latest one printed.
 
 > **Note:** anyone with this URL can queue jobs on your H3 key. Do not post it in group chats or anywhere public.
 """),

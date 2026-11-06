@@ -7,7 +7,8 @@
 # Exposure:
 #   - COMFY_PUBLIC_URL or ONECLICK_APP_URL set (AMD Instinct cluster): the cluster's reverse proxy already serves the port.
 #   - otherwise the Radeon cloud's rc-tunnel, installed from the platform on first use; ComfyUI then listens on
-#     127.0.0.1 only, and a restart keeps the tunnel and its URL (stopping a tunnel freezes its URL for 24 hours).
+#     127.0.0.1 only. The broker drops the tunnel once ComfyUI stops answering, so a restart usually needs a
+#     new tunnel, and a new tunnel gets a new URL (a stopped URL is quarantined for 24 hours).
 #     See https://amd-aim.github.io/radeon-cloud-docs/zh-cn/guides/tunnel/
 #   COMFY_HARDWARE=instinct|radeon forces one of the two.
 #
@@ -49,7 +50,10 @@ stop_comfy() {
 }
 
 stop_tunnel() {
-  if [[ -x "${RC_TUNNEL}" ]] && "${RC_TUNNEL}" status > /dev/null 2>&1; then
+  local status
+  [[ -x "${RC_TUNNEL}" ]] || return 0
+  # the broker drops a tunnel whose local port stops answering, leaving frpc running and status failing
+  if status="$("${RC_TUNNEL}" status 2>&1)" || grep -q "FRPC is running" <<< "${status}"; then
     echo "[stop] rc-tunnel"
     "${RC_TUNNEL}" stop > /dev/null
   fi
