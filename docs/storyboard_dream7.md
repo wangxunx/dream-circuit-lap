@@ -125,6 +125,16 @@ python scripts/stitch_lap.py --en   # 英文版
 The start lights go out and the car launches from the grid, accelerating hard down the long, slightly downhill straight. It tucks into the slipstream of the red car ahead and edges slightly left out of the tow as the speed builds to about 320 km/h. The grandstand on the right streaks past and the braking boards rush towards the camera at the end of the straight.
 ```
 
+本镜头用分镜文件里自己的 `video_rules`、`style`，不用下面的统一设定：
+
+```text
+Single continuous take from the same onboard camera, no cuts, no camera switch, the car always moves forward and never reverses, the car's bodywork never changes, no on-screen text, no watermark.
+```
+
+```text
+Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car. Always identical at the bottom of the frame: the black halo, a small flat black wing on a short stalk atop its centre pillar, dark-blue bodywork with no white parts, both front tyres. No driver or helmet visible; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.
+```
+
 ### 镜头 2：重刹弯 T1–T2（6 秒）
 
 - 首帧 / 尾帧：K1（直道尽头：刹车点前）→ K2（出 T2：前方开始爬坡）
