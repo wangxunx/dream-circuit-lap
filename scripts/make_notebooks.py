@@ -453,7 +453,7 @@ Each colour is the stretch one shot drives, and the circles mark the keyframes. 
 
 关键帧是镜头之间的“合同”：视频从首帧出发、必须到达尾帧，尾帧里画了什么，模型就往哪里开。所以每张图都要对照分镜检查，最重要的一条是：前方的路往哪边弯，要和地图一致。
 
-节点没有随机种子，提示词不变时重新生成也是同一张图。所以每张关键帧只生成 1 次；不对的时候，找出哪里和分镜不符，把它写进场景描述，再生成。下面是同一张 K0 的几次生成，每次只改一个问题：
+工作流里节点的 seed 固定为 42，提示词不变时重新生成也是同一张图。所以每张关键帧只生成 1 次；不对的时候，找出哪里和分镜不符，把它写进场景描述，再生成。下面是同一张 K0 的几次生成，每次只改一个问题：
 
 1. 直道远端先左弯、再右弯、再上坡；地图上从起终点线只能看到 T1 一个左弯。场景改为直道笔直、尽头只有一个左弯、四周平坦。
 2. 左弯离得太近，直道看起来只有两三百米；地图上约 1 km。场景改为直道一直延伸到消失点，左弯只在消失点处隐约可见。
@@ -466,7 +466,7 @@ Each colour is the stretch one shot drives, and the circles mark the keyframes. 
 
 Keyframes are the "contract" between shots: the video starts at the first frame and must arrive at the last one, so the model drives toward whatever the last frame shows. Check every image against the storyboard; the most important check is that the road ahead bends the same way as on the map.
 
-The nodes have no random seed: with an unchanged prompt, generating again gives the same image. So generate each keyframe once; when it is wrong, find where it disagrees with the storyboard, write that into the scene description and generate again. Below are several generations of the same K0, each fixing one problem:
+The workflows fix the node's seed at 42: with an unchanged prompt, generating again gives the same image. So generate each keyframe once; when it is wrong, find where it disagrees with the storyboard, write that into the scene description and generate again. Below are several generations of the same K0, each fixing one problem:
 
 1. The far end of the straight bends left, then right, then climbs; from the start/finish line the map shows only one left-hander, T1. The scene was changed to a dead-straight straight ending in a single left-hander, flat all around.
 2. The left-hander is too close, so the straight looks only two or three hundred metres long; on the map it is about 1 km. The scene was changed so the straight runs to the vanishing point, with the left-hander only faintly visible there.

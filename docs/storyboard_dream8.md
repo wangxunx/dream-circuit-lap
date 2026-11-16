@@ -45,7 +45,7 @@
 - 画面里该有的东西都在，比如起终点的灯架、看台、红车。
 - 镜头高度、构图和赛车外观与其他关键帧一致。
 
-不对就在工作流里改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行，ComfyUI 只会重新生成改过的那张（ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音）。节点没有随机种子，提示词不变时重新生成也是同一张图，所以要改的是描述，不是多生成几次。满意后把新的场景描述写回 `lap_8shots.json` 的 `keyframes[].scene`，否则下次重新运行 `make_workflows.py --install` 时会被覆盖。
+不对就在工作流里改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行，ComfyUI 只会重新生成改过的那张（ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音）。节点的 seed 固定为 42，提示词不变时重新生成也是同一张图，所以要改的是描述，不是多生成几次。满意后把新的场景描述写回 `lap_8shots.json` 的 `keyframes[].scene`，否则下次重新运行 `make_workflows.py --install` 时会被覆盖。
 
 ### 复制到 input
 

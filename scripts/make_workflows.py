@@ -46,7 +46,7 @@ def video_prompt(shot):
 
 
 def take_prompt(prompt, take):
-    # Neither gateway node has a seed and identical prompts come back identical; trailing whitespace
+    # The gateway does not pass a seed to MiniMax H3 and identical prompts come back identical; trailing whitespace
     # is not enough to change that, so every extra take ends with a short distinct sentence.
     return prompt if take == 1 else f"{prompt} Take {take}."
 
@@ -106,7 +106,7 @@ def keyframes_workflow(kids, path):
         "",
         "**生成后对照分镜检查**：前方的路往哪边弯、离弯道多远，画面里该有的东西在不在。"
         "不对就改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行："
-        "ComfyUI 只会重新生成提示词改过的那张。节点没有随机种子，提示词不变时重新生成也是同一张图。",
+        f"ComfyUI 只会重新生成提示词改过的那张。seed 固定为 {SB['keyframe']['seed']}，提示词不变时重新生成也是同一张图。",
         "",
         "ComfyUI 重启后缓存会清空，点运行会把每张都重新生成；只想重做一张时，先选中其他行的 Save Image 节点，按 Ctrl+M 静音。",
         "",
@@ -123,7 +123,7 @@ def keyframes_workflow(kids, path):
         y = r * 420
         g.group(f"{kid} · {k['label']}", -1640, y - 40, 920, 400)
         gen = g.node("AMDQwenImage21TextToImage", (-1620, y), (420, 330),
-                     [keyframe_prompt(k), SB["keyframe"]["aspect_ratio"], "Qwen-Image-2.1", SB["keyframe"]["steps"]],
+                     [keyframe_prompt(k), SB["keyframe"]["aspect_ratio"], "Qwen-Image-2.1", SB["keyframe"]["steps"], SB["keyframe"]["seed"], "fixed"],
                      outputs=[("IMAGE", "IMAGE")])
         save = g.node("SaveImage", (-1180, y), (420, 330), [f"{N}/{kid}"], inputs=[("images", "IMAGE", False)], color=False)
         g.link(gen, 0, save, 0)
@@ -303,7 +303,7 @@ def storyboard_md(path):
         "- 镜头高度、构图和赛车外观与其他关键帧一致。",
         "",
         "不对就在工作流里改这张图提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点运行，ComfyUI 只会重新生成改过的那张（ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音）。"
-        f"节点没有随机种子，提示词不变时重新生成也是同一张图，所以要改的是描述，不是多生成几次。满意后把新的场景描述写回 `{SHOTS_FILE}` 的 `keyframes[].scene`，"
+        f"节点的 seed 固定为 {SB['keyframe']['seed']}，提示词不变时重新生成也是同一张图，所以要改的是描述，不是多生成几次。满意后把新的场景描述写回 `{SHOTS_FILE}` 的 `keyframes[].scene`，"
         "否则下次重新运行 `make_workflows.py --install` 时会被覆盖。",
         "",
         "### 复制到 input",
