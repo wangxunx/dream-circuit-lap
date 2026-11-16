@@ -200,7 +200,17 @@ Accelerating down a long, steep downhill straight, the horizon low and the valle
 视频提示词（只描述“怎么动”，后面会自动接上统一规则和风格设定）：
 
 ```text
-A medium-speed RIGHT-hand bend, then a long flowing LEFT-hand curve that opens onto the main straight. The driver unwinds the steering and goes full throttle; the start/finish line, the light gantry and the grandstand on the right come into view, and the car flashes across the line.
+For the first two seconds the car takes a medium-speed RIGHT-hand bend: the red-and-white kerb slides past on the right and the scenery sweeps from right to left across the frame. Then for about three seconds the driver turns the steering far to the LEFT through a long flowing LEFT-hand curve: the view rotates steadily to the left and the trees, barriers and hills sweep from left to right across the frame. In the last three seconds the driver unwinds the steering and goes full throttle down the main straight; the start/finish line, the light gantry and the grandstand on the right come into view ahead, and the chequered line rushes towards the camera and disappears under the halo.
+```
+
+本镜头用分镜文件里自己的 `video_rules`、`style`，不用下面的统一设定：
+
+```text
+Single continuous take from the same onboard camera, no cuts, no camera switch, the car always moves forward and never reverses, the car's bodywork never changes, no on-screen text, no watermark.
+```
+
+```text
+Photorealistic onboard racing footage filmed by a T-cam mounted just above and behind the driver's helmet of a dark-blue open-wheel single-seater race car. Always identical at the bottom of the frame: the black halo, a small flat black wing on a short stalk atop its centre pillar, dark-blue bodywork with no white parts, both front tyres. No driver or helmet visible; the camera height and framing never change. Sunny afternoon, clear blue sky, warm consistent sunlight. Grey asphalt circuit with white edge lines, red-and-white striped kerbs on every corner, green grass run-off, blue barrier walls, rolling green hills and scattered trees in the distance. Cinematic, sharp, natural colours, 16:9. No on-screen text, no logos, no watermark.
 ```
 
 ## 关键帧画面

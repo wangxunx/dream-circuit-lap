@@ -7,6 +7,7 @@
 
 Keyframes with "file" reuse an existing input image, so only the remaining keyframes get a text-to-image workflow.
 Shots with "clip" reuse a video (path relative to the ComfyUI directory) and get no workflow.
+Shots with their own "style" or "video_rules" use them in place of the storyboard-wide ones.
 """
 import json
 import os
@@ -42,7 +43,7 @@ def keyframe_prompt(k):
 
 
 def video_prompt(shot):
-    return f"{shot['motion']} {SB['video_rules']} Visual style: {SB['style']}"
+    return f"{shot['motion']} {shot.get('video_rules', SB['video_rules'])} Visual style: {shot.get('style', SB['style'])}"
 
 
 def take_prompt(prompt, take):
@@ -404,6 +405,11 @@ def storyboard_md(path):
             "```",
             "",
         ]
+        own = [key for key in ("video_rules", "style") if key in s]
+        if own:
+            L += [f"本镜头用分镜文件里自己的 {'、'.join(f'`{key}`' for key in own)}，不用下面的统一设定：", ""]
+            for key in own:
+                L += ["```text", s[key], "```", ""]
     L += ["## 关键帧画面", ""]
     for k in kfs:
         L += [f"### {k['id']}：{k['label']}", "", "```text", k["scene"], "```", ""]
