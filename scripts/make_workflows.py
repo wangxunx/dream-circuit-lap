@@ -176,7 +176,7 @@ def edit_workflow(kids, path):
         enc = g.node("TextEncodeQwenImage21", (-1260, y), (420, 330), [MATCH["prompt"], "", 0],
                      inputs=[("clip", "CLIP", False), ("vae", "VAE", True), ("images.image_1", "IMAGE", True), ("images.image_2", "IMAGE", True)],
                      outputs=[("positive", "CONDITIONING"), ("negative", "CONDITIONING"), ("latent", "LATENT")])
-        ks = g.node("KSampler", (-800, y), (320, 330), [EDIT_SEED, "fixed", EDIT_STEPS, 1, "euler", "simple", 1],
+        ks = g.node("KSampler", (-800, y), (320, 330), [k.get("edit_seed", EDIT_SEED), "fixed", EDIT_STEPS, 1, "euler", "simple", 1],
                     inputs=[("model", "MODEL", False), ("positive", "CONDITIONING", False), ("negative", "CONDITIONING", False), ("latent_image", "LATENT", False)],
                     outputs=[("LATENT", "LATENT")])
         dec = g.node("VAEDecode", (-440, y), (200, 50), [], inputs=[("samples", "LATENT", False), ("vae", "VAE", False)], outputs=[("IMAGE", "IMAGE")], color=False)

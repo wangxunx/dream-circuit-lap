@@ -31,6 +31,7 @@
 - `style`：统一风格（T-cam 机位、深蓝车身白色车头、晴天、灰色沥青和红白路肩），附加在每条提示词后面，保证各镜头看起来是同一辆车、同一天。
 - `video_rules`：视频统一规则（一镜到底、不倒车、不出现文字和水印）。
 - `keyframes[].scene`：每张关键帧的画面描述，第 4 章用。
+- `keyframes[].edit_seed`：统一车身时这张图用的 KSampler seed，不写就用默认值。K4 用 42，默认 seed 会在远处减速弯多画出两辆车。
 - `shots[].motion`：每个镜头“怎么动”，第 5 章用。
 - `video.takes = 2`：每个镜头 2 个候选。关键帧每张只生成 1 张，不对就改 `scene` 再生成（第 4 章）。
 - `pilot`：试拍用的 K0、K1，以及统一车身用的参考车 K3（`keyframe.match.reference`）。

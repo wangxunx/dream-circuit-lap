@@ -54,7 +54,8 @@
     {
       "id": "K4",
       "label": "出 T6：短直道与减速弯",
-      "scene": "Exiting a long fast left-hand curve onto a short straight on high ground. Ahead a tight chicane: the track kinks sharply RIGHT then immediately LEFT, marked by tall red-and-white kerbs. Open sky, hills in the distance."
+      "scene": "Exiting a long fast left-hand curve onto a short straight on high ground. Ahead a tight chicane: the track kinks sharply RIGHT then immediately LEFT, marked by tall red-and-white kerbs. Open sky, hills in the distance.",
+      "edit_seed": 42
     },
     {
       "id": "K5",
