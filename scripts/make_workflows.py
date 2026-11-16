@@ -279,14 +279,14 @@ def storyboard_md(path):
         "",
     ]
     if "pilot" in SB:
-        a, b = SB["pilot"]
+        pilot = SB["pilot"]
         ref = MATCH["reference"]
-        edited = [kid for kid in SB["pilot"] if kid != ref]
+        edited = [kid for kid in pilot if kid != ref]
         L += [
             f"## 第 {next(step)} 步：试拍（强烈建议先做）",
             "",
-            f"1. 打开 `{N}_keyframes_pilot`，点运行，只生成 {a} 和 {b}。",
-            f"2. 对照分镜检查（见下一步），定稿后复制为 `input/{keyframe_file(a)}` 和 `input/{keyframe_file(b)}`（命令见下面“复制到 input”）。",
+            f"1. 打开 `{N}_keyframes_pilot`，点运行，只生成 {'、'.join(pilot)}（{ref} 是统一车身用的参考车）。",
+            "2. 对照分镜检查（见下一步），定稿后复制为 " + "、".join(f"`input/{keyframe_file(kid)}`" for kid in pilot) + "（命令见下面“复制到 input”）。",
             f"3. 打开 `{N}_keyframes_edit_pilot`，点运行，把 {'、'.join(edited)} 的车统一成 {ref} 那辆，检查后覆盖 "
             + "、".join(f"`input/{keyframe_file(kid)}`" for kid in edited) + "（见下面“统一车身”）。",
             f"4. 打开 `{N}_shot_01`，点运行。看三件事：画风是否满意；视频开头和结尾是否贴近两张关键帧；速度感和方向是否对。",

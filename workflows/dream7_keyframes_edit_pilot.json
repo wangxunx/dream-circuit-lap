@@ -1,6 +1,6 @@
 {
-  "last_node_id": 10,
-  "last_link_id": 11,
+  "last_node_id": 15,
+  "last_link_id": 22,
   "nodes": [
     {
       "id": 1,
@@ -11,7 +11,7 @@
       ],
       "size": [
         460,
-        1004
+        1028
       ],
       "flags": {},
       "order": 0,
@@ -22,7 +22,7 @@
         "Node name for S&R": "MarkdownNote"
       },
       "widgets_values": [
-        "## 统一车身（本地 Qwen Image 2.1 图像编辑）\n\n文生图的每张关键帧各画各的车。这里以 `input/dream7_K1.png` 为参考（image 2），把每张关键帧（image 1）里的车改成和它一致。\n同一个镜头的首尾帧如果是两辆车，视频中途就会换车，所以要在拍镜头之前统一。\n\n这一步在本机 GPU 上跑，需要下面 3 个模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载：\n\n- `models/diffusion_models/qwen_image_2.1_int8_convrot.safetensors`\n- `models/text_encoders/qwen3vl_8b_int8_convrot.safetensors`\n- `models/vae/qwen_image_2.1_vae_bf16.safetensors`\n\n**运行前** 关键帧已经定稿并复制进 `input/`。点一次 **运行** 编辑全部 1 张，结果保存在 `output/dream7/`，文件名形如 `K0_edit_00001_.png`。\n\n**检查**：车和参考图是同一辆（halo、中柱顶上的黑色部件、深蓝车身、前轮），机位高度一致；路面、弯道、红车、看台这些场景内容没被改掉。哪张不行就在它的提示词里补一句，或者换一个 KSampler 的 seed，再点运行，ComfyUI 只会重做改过的那张。\n\n**满意后覆盖 input 里的关键帧**（镜头工作流读取这些文件名；未编辑的原图仍在 `output/` 里）：\n\n```\ncp output/dream7/K0_edit_00001_.png input/dream7_K0.png\n```\n\n`00001` 换成你选定的那一版。覆盖之后再点运行，编辑的就是已经统一过的图。"
+        "## 统一车身（本地 Qwen Image 2.1 图像编辑）\n\n文生图的每张关键帧各画各的车。这里以 `input/dream7_K3.png` 为参考（image 2），把每张关键帧（image 1）里的车改成和它一致。\n同一个镜头的首尾帧如果是两辆车，视频中途就会换车，所以要在拍镜头之前统一。\n\n这一步在本机 GPU 上跑，需要下面 3 个模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载：\n\n- `models/diffusion_models/qwen_image_2.1_int8_convrot.safetensors`\n- `models/text_encoders/qwen3vl_8b_int8_convrot.safetensors`\n- `models/vae/qwen_image_2.1_vae_bf16.safetensors`\n\n**运行前** 关键帧已经定稿并复制进 `input/`。点一次 **运行** 编辑全部 2 张，结果保存在 `output/dream7/`，文件名形如 `K0_edit_00001_.png`。\n\n**检查**：车和参考图是同一辆（halo、中柱顶上的黑色部件、深蓝车身、前轮），机位高度一致；路面、弯道、红车、看台这些场景内容没被改掉。哪张不行就在它的提示词里补一句，或者换一个 KSampler 的 seed，再点运行，ComfyUI 只会重做改过的那张。\n\n**满意后覆盖 input 里的关键帧**（镜头工作流读取这些文件名；未编辑的原图仍在 `output/` 里）：\n\n```\ncp output/dream7/K0_edit_00001_.png input/dream7_K0.png\ncp output/dream7/K1_edit_00001_.png input/dream7_K1.png\n```\n\n`00001` 换成你选定的那一版。覆盖之后再点运行，编辑的就是已经统一过的图。"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -47,7 +47,8 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            5
+            5,
+            16
           ]
         }
       ],
@@ -86,7 +87,8 @@
           "name": "CLIP",
           "type": "CLIP",
           "links": [
-            1
+            1,
+            12
           ]
         }
       ],
@@ -127,7 +129,9 @@
           "type": "VAE",
           "links": [
             2,
-            10
+            10,
+            13,
+            21
           ]
         }
       ],
@@ -165,7 +169,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            4
+            4,
+            15
           ]
         },
         {
@@ -178,7 +183,7 @@
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
-        "dream7_K1.png",
+        "dream7_K3.png",
         "image"
       ]
     },
@@ -420,6 +425,245 @@
       "widgets_values": [
         "dream7/K0_edit"
       ]
+    },
+    {
+      "id": 11,
+      "type": "LoadImage",
+      "pos": [
+        -1640,
+        420
+      ],
+      "size": [
+        340,
+        330
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            14
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "dream7_K1.png",
+        "image"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "TextEncodeQwenImage21",
+      "pos": [
+        -1260,
+        420
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 12
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 13,
+          "shape": 7
+        },
+        {
+          "name": "images.image_1",
+          "type": "IMAGE",
+          "link": 14,
+          "shape": 7
+        },
+        {
+          "name": "images.image_2",
+          "type": "IMAGE",
+          "link": 15,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            17
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            18
+          ]
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            19
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TextEncodeQwenImage21"
+      },
+      "widgets_values": [
+        "Replace the race car at the bottom of image 1 with the race car from image 2, so that it looks exactly like the car in image 2: the same black halo safety bar with its centre pillar, the same small flat black wing-shaped part on a short stalk on top of the halo's centre pillar, the same dark-blue bodywork around the cockpit with no white, red, yellow or silver parts, the same black front tyres and front wing endplates. The driver and the helmet are not visible. Draw the car at the same position and size in the frame as in image 2, seen from the same camera height and angle as in image 2. Where the old car covered more of the picture, continue the road naturally. Keep everything else in image 1 exactly the same: the road, the painted lines, the kerbs, the grass, the barriers, the other race cars, the buildings, the trees, the hills, the sky and the lighting.",
+        "",
+        0
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 13,
+      "type": "KSampler",
+      "pos": [
+        -800,
+        420
+      ],
+      "size": [
+        320,
+        330
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 16
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 17
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 18
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        860643297917446,
+        "fixed",
+        25,
+        1,
+        "euler",
+        "simple",
+        1
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 14,
+      "type": "VAEDecode",
+      "pos": [
+        -440,
+        420
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 20
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            22
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 15,
+      "type": "SaveImage",
+      "pos": [
+        -200,
+        420
+      ],
+      "size": [
+        420,
+        330
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 22
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "dream7/K1_edit"
+      ]
     }
   ],
   "links": [
@@ -510,11 +754,99 @@
       10,
       0,
       "IMAGE"
+    ],
+    [
+      12,
+      3,
+      0,
+      12,
+      0,
+      "CLIP"
+    ],
+    [
+      13,
+      4,
+      0,
+      12,
+      1,
+      "VAE"
+    ],
+    [
+      14,
+      11,
+      0,
+      12,
+      2,
+      "IMAGE"
+    ],
+    [
+      15,
+      5,
+      0,
+      12,
+      3,
+      "IMAGE"
+    ],
+    [
+      16,
+      2,
+      0,
+      13,
+      0,
+      "MODEL"
+    ],
+    [
+      17,
+      12,
+      0,
+      13,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      18,
+      12,
+      1,
+      13,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      19,
+      12,
+      2,
+      13,
+      3,
+      "LATENT"
+    ],
+    [
+      20,
+      13,
+      0,
+      14,
+      0,
+      "LATENT"
+    ],
+    [
+      21,
+      4,
+      0,
+      14,
+      1,
+      "VAE"
+    ],
+    [
+      22,
+      14,
+      0,
+      15,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [
     {
-      "title": "参考：K1，以及模型",
+      "title": "参考：K3，以及模型",
       "bounding": [
         -1660,
         -500,
@@ -530,6 +862,18 @@
       "bounding": [
         -1660,
         -40,
+        1920,
+        400
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "title": "K1 · 直道尽头：刹车点前",
+      "bounding": [
+        -1660,
+        380,
         1920,
         400
       ],

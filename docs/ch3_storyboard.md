@@ -33,6 +33,6 @@
 - `keyframes[].scene`：每张关键帧的画面描述，第 4 章用。
 - `shots[].motion`：每个镜头“怎么动”，第 5 章用。
 - `video.takes = 2`：每个镜头 2 个候选。关键帧每张只生成 1 张，不对就改 `scene` 再生成（第 4 章）。
-- `pilot`：试拍用的 K0、K1。
+- `pilot`：试拍用的 K0、K1，以及统一车身用的参考车 K3（`keyframe.match.reference`）。
 
 下一章先生成关键帧，再下一章逐段拍镜头。

@@ -481,7 +481,7 @@ show(*[PROJECT / "examples" / "k0_versions" / f"K0_v{v}.jpg" for v in range(1, 5
     md("""
 在浏览器里：
 
-1. 打开 `dream7_keyframes_pilot`，点 Run，先只生成 K0、K1，看画风和机位是否满意。
+1. 打开 `dream7_keyframes_pilot`，点 Run，先只生成 K0、K1 和统一车身用的参考车 K3，看画风和机位是否满意。
 2. 打开 `dream7_keyframes`，点 Run 生成全部 8 张，每张一行。
 3. 逐张对照第 3 章的分镜表和小地图检查：路往哪边弯、离弯道多远、灯架和看台这类元素在不在、机位和赛车是否一致。
 4. 哪张不对，就改那个节点提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点 Run。ComfyUI 只会重新生成改过的那张；ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音。
@@ -491,7 +491,7 @@ show(*[PROJECT / "examples" / "k0_versions" / f"K0_v{v}.jpg" for v in range(1, 5
 """, """
 In the browser:
 
-1. Open `dream7_keyframes_pilot` and click Run to generate only K0 and K1 first; check the style and camera position.
+1. Open `dream7_keyframes_pilot` and click Run to generate only K0, K1 and K3 (the reference car for the car edit) first; check the style and camera position.
 2. Open `dream7_keyframes` and click Run to generate all 8, one row each.
 3. Check each one against the chapter 3 storyboard table and map: which way the road bends, how far away the turn is, whether elements such as the light gantry and grandstands are there, and whether the camera and car match.
 4. If one is wrong, edit the scene description at the start of that node's prompt (the part before `Photorealistic onboard`) and click Run again. ComfyUI only regenerates the edited image; after a ComfyUI restart everything regenerates, so first select the Save Image nodes you do not want redone and press Ctrl+M to mute them.
@@ -518,8 +518,8 @@ show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 在浏览器里（路线 B）：
 
 1. 运行下一格检查模型：都显示 `found` 就直接进行下一步；有 `missing` 时把 `DOWNLOAD` 改成 `True` 再运行，下载缺的模型，然后重启 ComfyUI 或刷新页面。
-2. 先刷新一次浏览器页面（F5），否则刚复制进 `input/` 的关键帧所在的 Load Image 节点会显示红框。然后打开 `dream7_keyframes_edit`，点 Run：以 K1 为参考，把 K0、K2–K7 的车改成 K1 那辆。
-3. 逐张检查：车和 K1 是同一辆、机位一致，路面走向、红车、看台这些场景没被改掉。不行就补一句指令或换 KSampler 的 seed 再运行。
+2. 先刷新一次浏览器页面（F5），否则刚复制进 `input/` 的关键帧所在的 Load Image 节点会显示红框。然后打开 `dream7_keyframes_edit`，点 Run：以 K3 为参考，把 K0–K2、K4–K7 的车改成 K3 那辆。
+3. 逐张检查：车和 K3 是同一辆、机位一致，路面走向、红车、看台这些场景没被改掉。不行就补一句指令或换 KSampler 的 seed 再运行。
 4. 满意后运行再下一格，编辑结果会覆盖 `input/` 里的关键帧，然后刷新页面。
 
 路线 A 直接运行下面几格：模型不会下载，挑选格什么都不做。自带的关键帧已经统一过车身，自带的视频就是用它们拍的；下面最后一格是编辑前后的对比。讲解提纲见 `docs/ch4_keyframes.md`。
@@ -534,18 +534,18 @@ The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU).
 In the browser (route B):
 
 1. Run the next cell to check the models: if all show `found`, go straight to the next step; if any show `missing`, set `DOWNLOAD` to `True`, run it again to download them, then restart ComfyUI or reload the page.
-2. Reload the page (F5) first, otherwise the Load Image nodes for the keyframes just copied into `input/` show a red outline. Then open `dream7_keyframes_edit` and click Run: with K1 as the reference, the car in K0 and K2–K7 becomes K1's car.
-3. Check each one: the same car as K1 at the same camera height, with the road, the red car and the grandstands unchanged. If one is off, add a sentence to its instruction or change the KSampler seed and run again.
+2. Reload the page (F5) first, otherwise the Load Image nodes for the keyframes just copied into `input/` show a red outline. Then open `dream7_keyframes_edit` and click Run: with K3 as the reference, the car in K0–K2 and K4–K7 becomes K3's car.
+3. Check each one: the same car as K3 at the same camera height, with the road, the red car and the grandstands unchanged. If one is off, add a sentence to its instruction or change the KSampler seed and run again.
 4. When you are happy, run the cell after next: the edits overwrite the keyframes in `input/`. Then reload the page.
 
 For route A just run the cells below: no models are downloaded and the picker does nothing. The bundled keyframes already have the consistent car and the bundled videos were shot from them; the last cell shows the edit before and after. Outline (in Chinese): `docs/ch4_keyframes.md`.
 """),
     code(EDIT_MODELS_CODE.replace("NOTE", "路线 B 改成 True"), EDIT_MODELS_CODE.replace("NOTE", "set to True for route B")),
     code("""
-pick({f"K{i}": f"K{i}_edit_*.png" for i in (0, 2, 3, 4, 5, 6, 7)}, COMFY / "output" / "dream7", COMFY / "input" / "dream7_{}.png")
+pick({f"K{i}": f"K{i}_edit_*.png" for i in (0, 1, 2, 4, 5, 6, 7)}, COMFY / "output" / "dream7", COMFY / "input" / "dream7_{}.png")
 """),
     code("""
-show(PROJECT / "examples" / "car_edit" / "K1_reference.jpg", width=440)
+show(PROJECT / "examples" / "car_edit" / "K3_reference.jpg", width=440)
 show(*[PROJECT / "examples" / "car_edit" / f"{k}_{v}.jpg" for k in ("K0", "K2", "K6") for v in ("before", "after")], width=440)
 """),
     md("""
@@ -731,14 +731,14 @@ play(MEDIA / "dream8_shot_05.mp4", MEDIA / "dream8_shot_06.mp4", width=480, labe
 
 8 镜头分镜表 `storyboards/lap_8shots.json` 只重做 K4、K5 两张关键帧和镜头 4–6，其余关键帧复用第 4 章、镜头复用第 5 章的结果。
 原来的镜头 5 拆成了镜头 5（T7）和镜头 6（T8），中间多了 K5，所以后面的编号都往后顺延一位：7 镜头版的 K5、K6、K7 在这里是 K6、K7、K8，原来的镜头 6、7 在这里是镜头 7、8。对照下面的示意图看。
-路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_keyframes_edit`，以 `dream7_K1.png` 为参考统一 K4、K5 的车，检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。然后打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
+路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_keyframes_edit`，以 `dream7_K3.png` 为参考统一 K4、K5 的车，检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。然后打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
 路线 A 直接运行下面几格。最后拼出 8 镜头成片，和第 6 章的版本对比。
 """, """
 ### Stitch the 8-shot version
 
 The 8-shot storyboard `storyboards/lap_8shots.json` redoes only keyframes K4 and K5 and shots 4–6; the other keyframes come from chapter 4 and the other shots from chapter 5.
 The old shot 5 is split into shot 5 (T7) and shot 6 (T8) with a new K5 between them, so everything after it shifts by one: the 7-shot K5, K6 and K7 are K6, K7 and K8 here, and the old shots 6 and 7 are shots 7 and 8. Compare with the map below.
-Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Next open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K1.png`, check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
+Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Next open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K3.png`, check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
 For route A just run the cells below. At the end you stitch the 8-shot film and compare it with the chapter 6 version.
 """),
     code("""

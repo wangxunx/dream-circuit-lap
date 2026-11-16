@@ -63,7 +63,7 @@ cp output/dream8/K5_00001_.png input/dream8_K5.png   # 00001 换成你定稿的�
 
 文生图的每张关键帧各画各的车：halo 顶上的部件、车身颜色、机位高低都可能不同。同一个镜头的首尾帧如果是两辆车，视频中途就会换车，相邻镜头又共用关键帧，所以要在拍镜头之前把所有关键帧统一成同一辆车。
 
-打开 `dream8_keyframes_edit`，点运行：以 `input/dream7_K1.png` 为参考图，把 K4、K5 里的车改成和 K1 一致。结果在 `output/dream8/K4_edit_00001_.png` 这样的文件里。
+打开 `dream8_keyframes_edit`，点运行：以 `input/dream7_K3.png` 为参考图，把 K4、K5 里的车改成和 K3 一致。结果在 `output/dream8/K4_edit_00001_.png` 这样的文件里。
 
 这一步用本地 Qwen Image 2.1 模型，需要以下模型（约 17 GB），缺的话打开工作流时 ComfyUI 会提示下载，也可以手动下载：
 

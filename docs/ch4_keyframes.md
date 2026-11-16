@@ -2,7 +2,7 @@
 
 ## 目标
 
-用 Qwen Image 2.1 为每个镜头交界处生成一张车手视角的关键帧，K0 到 K7 共 8 张；学会对照分镜检查，不对就改场景描述再生成；拍镜头之前，用图像编辑把所有关键帧的车身统一成 K1 的样子。
+用 Qwen Image 2.1 为每个镜头交界处生成一张车手视角的关键帧，K0 到 K7 共 8 张；学会对照分镜检查，不对就改场景描述再生成；拍镜头之前，用图像编辑把所有关键帧的车身统一成 K3 的样子。
 
 ## 讲解要点
 
@@ -14,16 +14,16 @@
 
 ## 演示（浏览器）
 
-1. `dream7_keyframes_pilot`：先只生成 K0、K1，看画风和机位是否满意。画风不满意就改 `storyboards/lap_7shots.json` 的 `style`，重新运行 `make_workflows.py --install` 再生成。
+1. `dream7_keyframes_pilot`：先只生成 K0、K1 和统一车身用的参考车 K3，看画风和机位是否满意。画风不满意就改 `storyboards/lap_7shots.json` 的 `style`，重新运行 `make_workflows.py --install` 再生成。
 2. `dream7_keyframes`：生成全部 8 张。
 3. 逐张对照分镜检查（见下面“检查什么”）。哪张不对，就在 ComfyUI 里改那个节点提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点 Run。ComfyUI 只会重新生成提示词改过的那张。ComfyUI 重启过的话，之前的结果不再缓存，点 Run 会把每张都重新生成；只想重做一张时，先选中其他行的 Save Image 节点，按 Ctrl+M 静音。
 4. 定稿后复制进 ComfyUI 的 `input/`，文件名为 `dream7_K0.png` 到 `dream7_K7.png`。下一章镜头工作流的 `LoadImage` 只认这些文件名，工作流左侧的说明里有现成命令。改好的场景描述最好写回分镜表，否则下次重新运行 `make_workflows.py --install` 时会被覆盖。
-5. `dream7_keyframes_edit`：以 `input/dream7_K1.png` 为参考图（image 2），把 K0、K2–K7（image 1）里的车改成 K1 那辆。缺模型时打开工作流会提示下载，说明节点里也列了文件名。
-6. 逐张检查：车和 K1 是同一辆、机位高度一致；路面走向、弯道、红车、看台这些场景内容没被改掉。哪张不行就在它的指令里补一句，或者换一个 KSampler 的 seed 再运行。满意后用 `K*_edit_00001_.png` 覆盖 `input/` 里对应的关键帧，命令在说明节点里。
+5. `dream7_keyframes_edit`：以 `input/dream7_K3.png` 为参考图（image 2），把 K0–K2、K4–K7（image 1）里的车改成 K3 那辆。缺模型时打开工作流会提示下载，说明节点里也列了文件名。
+6. 逐张检查：车和 K3 是同一辆、机位高度一致；路面走向、弯道、红车、看台这些场景内容没被改掉。哪张不行就在它的指令里补一句，或者换一个 KSampler 的 seed 再运行。满意后用 `K*_edit_00001_.png` 覆盖 `input/` 里对应的关键帧，命令在说明节点里。
 
-实际项目里，定好 K0、K1 后应该先拍镜头 1 试一下，确认没问题再生成其余关键帧，免得画风不对时整批重来；`dream7_keyframes_pilot` 之后先跑 `dream7_keyframes_edit_pilot` 把 K0 的车统一成 K1 的，再拍镜头 1。这里直接往下走，镜头 1 放在下一章开头拍。
+实际项目里，定好 K0、K1、K3 后应该先拍镜头 1 试一下，确认没问题再生成其余关键帧，免得画风不对时整批重来；`dream7_keyframes_pilot` 之后先跑 `dream7_keyframes_edit_pilot` 把 K0、K1 的车统一成 K3 的，再拍镜头 1。这里直接往下走，镜头 1 放在下一章开头拍。
 
-想跳过生成、直接往下做时，notebook 会把项目自带的关键帧（`examples/keyframes/dream7_K*.png`）复制进 `input/`。提示词和项目工作流完全一致；K1 是文生图的原图，其余是统一车身之后的版本，自带的视频就是用这些图拍的。
+想跳过生成、直接往下做时，notebook 会把项目自带的关键帧（`examples/keyframes/dream7_K*.png`）复制进 `input/`。提示词和项目工作流完全一致；K3 是文生图的原图，其余是统一车身之后的版本，自带的视频就是用这些图拍的。
 
 ## 检查什么
 
@@ -47,13 +47,13 @@
 
 ## 实例：统一车身
 
-左边是文生图的原图，右边是以 K1 为参考编辑后的结果。图在 `examples/car_edit/`。
+左边是文生图的原图，右边是以 K3 为参考编辑后的结果。图在 `examples/car_edit/`。
 
 | 关键帧 | 编辑前 | 编辑后 | 变化 |
 |---|---|---|---|
-| K1（参考） | ![K1](../examples/car_edit/K1_reference.jpg) | | |
-| K0 | ![K0 前](../examples/car_edit/K0_before.jpg) | ![K0 后](../examples/car_edit/K0_after.jpg) | 座舱两侧的白色部件去掉，换成 K1 的黑色 halo 和中柱顶上的扁平部件 |
-| K2 | ![K2 前](../examples/car_edit/K2_before.jpg) | ![K2 后](../examples/car_edit/K2_after.jpg) | 座舱里的红色部件去掉，halo 顶上的大方块换成 K1 的扁平部件 |
-| K6 | ![K6 前](../examples/car_edit/K6_before.jpg) | ![K6 后](../examples/car_edit/K6_after.jpg) | 近乎黑色的车身换成 K1 的深蓝色，halo 顶上的大部件换成 K1 的 |
+| K3（参考） | ![K3](../examples/car_edit/K3_reference.jpg) | | |
+| K0 | ![K0 前](../examples/car_edit/K0_before.jpg) | ![K0 后](../examples/car_edit/K0_after.jpg) | 窄车身和座舱两侧的银白色部件去掉，换成 K3 的宽车身、黑色 halo 和中柱顶上的扁平部件 |
+| K2 | ![K2 前](../examples/car_edit/K2_before.jpg) | ![K2 后](../examples/car_edit/K2_after.jpg) | 座舱里的红色部件去掉，halo 顶上的大方块换成 K3 的扁平部件 |
+| K6 | ![K6 前](../examples/car_edit/K6_before.jpg) | ![K6 后](../examples/car_edit/K6_after.jpg) | halo 顶上的大部件和长支杆换成 K3 的小扁平部件，halo 的形状也改成 K3 的 |
 
 场景几乎不变：路面、路肩、护墙、看台、灯架都还在原来的位置，整体亮度变化在 4% 以内。
