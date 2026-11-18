@@ -53,10 +53,10 @@ def intro(zh_where, en_where):
 
 ### 怎么用这个 notebook
 
-- 从上往下逐格运行：点中一格，按 `Shift+Enter`。左边显示 `[*]` 表示还在运行，变成数字才算完成，输出显示在这一格下面。
 - 两条路线，可以每章自由选：
-  - **路线 A，用自带素材**：所有单元格按顺序运行，自带素材会补上关键帧和视频。
-  - **路线 B，自己生成**：遇到“在浏览器里”的步骤，先去 ComfyUI 生成，再运行“挑选”单元格（视频要先填上你选中的候选编号）；没生成的部分仍由自带素材补上。
+  - **路线 A，用自带素材**：跳过所有“路线 B”的步骤，单元格按顺序运行，自带素材会补上关键帧和视频。
+  - **路线 B，自己生成**：按“路线 B”的步骤先去浏览器里的 ComfyUI 生成，再运行“挑选”单元格（视频要先填上你选中的候选编号）；没生成的部分仍由自带素材补上。
+  - 每个生成步骤开头都先写明两条路线各自怎么做。
 - 重启 kernel 或第二天继续时，从第 0 节重新运行即可，已经完成的步骤会自动跳过。
 """, f"""
 # Drive Your Dream Circuit: an AI-Storyboarded Onboard Lap ({en_where})
@@ -80,10 +80,10 @@ The chapter outlines in `docs/` and the notes inside the ComfyUI workflows are i
 
 ### How to use this notebook
 
-- Run the cells from top to bottom: click a cell and press `Shift+Enter`. `[*]` on the left means it is still running; a number means it is done, and its output appears below the cell.
 - Two routes, chosen per chapter:
-  - **Route A, bundled media**: run every cell in order; the bundled media fill in the keyframes and videos.
-  - **Route B, generate yourself**: at each "In the browser" step, generate in ComfyUI first, then run the picker cell (for videos, fill in the takes you chose first); anything you did not generate is still filled in from the bundled media.
+  - **Route A, bundled media**: skip every "Route B" step and run the cells in order; the bundled media fill in the keyframes and videos.
+  - **Route B, generate yourself**: follow the "Route B" steps to generate in ComfyUI in the browser first, then run the picker cell (for videos, fill in the takes you chose first); anything you did not generate is still filled in from the bundled media.
+  - Every generation step starts by saying what each route does.
 - After a kernel restart, or when you come back the next day, rerun section 0; finished steps are skipped.
 """)
 
@@ -398,7 +398,7 @@ show(PROJECT / "assets" / "fictional_track_v1_en.png", width=1000)
 ## 第 2 章：一个提示词跑一圈
 
 最直接的想法：把俯视图当首帧，用一个提示词描述 7 个赛道元素，让 MiniMax H3 生成。
-在浏览器里打开 `ch2_single_prompt` 工作流就能试（每次生成 1 段视频）。下面是当时的 9 次尝试：
+可以在浏览器里打开 `ch2_single_prompt` 工作流自己试（可选，每次生成 1 段视频，后面的章节不依赖它）。下面是当时的 9 次尝试：
 
 - 1–6 号一直在改提示词：强调逆时针、说明起点位置、要求中文配音。但视频都从地图飞进去，“第一视角”一直嵌在地图的图例和海拔剖面中间，15 秒只够跑一小段，弯道也和地图对不上。
 - 5 号和 6 号的提示词完全相同，结果的结构几乎一样，只有细节不同：重跑一次救不了，结果是被输入决定的。
@@ -409,7 +409,7 @@ show(PROJECT / "assets" / "fictional_track_v1_en.png", width=1000)
 ## Chapter 2: one prompt for the whole lap
 
 The most direct idea: use the top-down map as the first frame, describe the 7 track elements in one prompt, and let MiniMax H3 generate.
-Open the `ch2_single_prompt` workflow in the browser to try it (1 video per run). Below are the 9 attempts from the time:
+You can open the `ch2_single_prompt` workflow in the browser to try it yourself (optional, 1 video per run; later chapters do not depend on it). Below are the 9 attempts from the time:
 
 - Attempts 1–6 kept refining the prompt: stress anticlockwise, say where the start is, ask for Chinese narration. Every video still flies into the map, the "onboard view" stays framed between the map's legend and elevation profile, 15 seconds only covers a short stretch, and the turns do not match the map.
 - Attempts 5 and 6 used exactly the same prompt and came out with almost the same structure, differing only in details: rerunning does not help, because the input decides the result.
@@ -481,25 +481,35 @@ The gantry in the finishing K7 must be the same one as in K0, so K7's scene desc
 show(*[PROJECT / "examples" / "k0_versions" / f"K0_v{v}.jpg" for v in range(1, 5)], width=440)
 """),
     md("""
-在浏览器里：
+**两条路线：**
+
+- **路线 A，用自带素材**：跳过下面的浏览器步骤，直接运行下面两格。挑选格找不到你生成的图就什么都不做，再下一格用自带的关键帧补齐。
+- **路线 B，自己生成**：先在浏览器里完成下面 1–4 步，再按第 5 步运行下面两格。
+
+路线 B：
 
 1. 打开 `dream7_keyframes_pilot`，点 Run，先只生成 K0、K1 和统一车身用的参考车 K3，看画风和机位是否满意。
 2. 打开 `dream7_keyframes`，点 Run 生成全部 8 张，每张一行。
 3. 逐张对照第 3 章的分镜表和小地图检查：路往哪边弯、离弯道多远、灯架和看台这类元素在不在、机位和赛车是否一致。
 4. 哪张不对，就改那个节点提示词开头的场景描述（`Photorealistic onboard` 之前的部分），再点 Run。ComfyUI 只会重新生成改过的那张；ComfyUI 重启过的话会全部重新生成，可以先选中不用重做的 Save Image 节点按 Ctrl+M 静音。
-5. 都满意后运行下一格，每张关键帧最新的那一版会复制到 ComfyUI 的 `input/dream7_K0.png` 到 `dream7_K7.png`。
+5. 都满意后回到这里运行下面两格：挑选格把每张关键帧最新的那一版复制到 ComfyUI 的 `input/dream7_K0.png` 到 `dream7_K7.png`，再下一格只补你没生成的，不会覆盖你选好的文件。
 
-路线 A 直接运行下面两格即可：挑选格找不到自己生成的图就什么都不做，再下一格用自带的关键帧补上缺的，不会覆盖你选好的文件。讲解提纲见 `docs/ch4_keyframes.md`。
+讲解提纲见 `docs/ch4_keyframes.md`。
 """, """
-In the browser:
+**Two routes:**
+
+- **Route A, bundled media**: skip the browser steps below and just run the next two cells. The picker does nothing if it finds none of your images, and the cell after it fills in the keyframes from the bundled ones.
+- **Route B, generate yourself**: do steps 1–4 below in the browser first, then run the next two cells as in step 5.
+
+Route B:
 
 1. Open `dream7_keyframes_pilot` and click Run to generate only K0, K1 and K3 (the reference car for the car edit) first; check the style and camera position.
 2. Open `dream7_keyframes` and click Run to generate all 8, one row each.
 3. Check each one against the chapter 3 storyboard table and map: which way the road bends, how far away the turn is, whether elements such as the light gantry and grandstands are there, and whether the camera and car match.
 4. If one is wrong, edit the scene description at the start of that node's prompt (the part before `Photorealistic onboard`) and click Run again. ComfyUI only regenerates the edited image; after a ComfyUI restart everything regenerates, so first select the Save Image nodes you do not want redone and press Ctrl+M to mute them.
-5. When all are good, run the next cell: the newest version of each keyframe is copied to ComfyUI's `input/dream7_K0.png` to `dream7_K7.png`.
+5. When all are good, come back and run the next two cells: the picker copies the newest version of each keyframe to ComfyUI's `input/dream7_K0.png` to `dream7_K7.png`, and the cell after it fills in only what you did not generate, without overwriting files you picked.
 
-For route A just run the next two cells: the picker does nothing if it finds none of your images, and the cell after it fills in the missing keyframes from the bundled ones without overwriting files you picked. Outline (in Chinese): `docs/ch4_keyframes.md`.
+Outline (in Chinese): `docs/ch4_keyframes.md`.
 """),
     code("""
 pick({f"K{i}": f"K{i}_*.png" for i in range(8)}, COMFY / "output" / "dream7", COMFY / "input" / "dream7_{}.png")
@@ -517,14 +527,19 @@ show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 
 编辑用本地 Qwen Image 2.1 模型（约 17 GB，需要 GPU）。
 
-在浏览器里（路线 B）：
+**两条路线：**
+
+- **路线 A，用自带素材**：跳过下面的步骤，直接运行下面三格。模型检查格只检查、不下载，挑选格什么都不做；自带的关键帧已经统一过车身，自带的视频就是用它们拍的。最后一格是编辑前后的对比。
+- **路线 B，自己编辑**：按下面 1–4 步做，第 1、4 步在 notebook 里运行，第 2、3 步在浏览器里。
+
+路线 B：
 
 1. 运行下一格检查模型：都显示 `found` 就直接进行下一步；有 `missing` 时把 `DOWNLOAD` 改成 `True` 再运行，下载缺的模型，然后重启 ComfyUI 或刷新页面。
 2. 先刷新一次浏览器页面（F5），否则刚复制进 `input/` 的关键帧所在的 Load Image 节点会显示红框。然后打开 `dream7_keyframes_edit`，点 Run：以 K3 为参考，把 K0–K2、K4–K7 的车改成 K3 那辆。
 3. 逐张检查：车和 K3 是同一辆、机位一致，路面走向、红车、看台这些场景没被改掉。不行就补一句指令或换 KSampler 的 seed 再运行。
-4. 满意后运行再下一格，编辑结果会覆盖 `input/` 里的关键帧，然后刷新页面。
+4. 满意后回到这里运行再下一格（挑选格），编辑结果会覆盖 `input/` 里的关键帧，然后刷新页面。
 
-路线 A 直接运行下面几格：模型不会下载，挑选格什么都不做。自带的关键帧已经统一过车身，自带的视频就是用它们拍的；下面最后一格是编辑前后的对比。讲解提纲见 `docs/ch4_keyframes.md`。
+讲解提纲见 `docs/ch4_keyframes.md`。
 """, """
 ### Make the car consistent
 
@@ -533,14 +548,19 @@ When the first and last frame show two different cars, the video swaps cars midw
 
 The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU).
 
-In the browser (route B):
+**Two routes:**
+
+- **Route A, bundled media**: skip the steps below and just run the next three cells. The model cell only checks and downloads nothing, and the picker does nothing; the bundled keyframes already have the consistent car and the bundled videos were shot from them. The last cell shows the edit before and after.
+- **Route B, edit yourself**: follow steps 1–4 below; steps 1 and 4 run in this notebook, steps 2 and 3 in the browser.
+
+Route B:
 
 1. Run the next cell to check the models: if all show `found`, go straight to the next step; if any show `missing`, set `DOWNLOAD` to `True`, run it again to download them, then restart ComfyUI or reload the page.
 2. Reload the page (F5) first, otherwise the Load Image nodes for the keyframes just copied into `input/` show a red outline. Then open `dream7_keyframes_edit` and click Run: with K3 as the reference, the car in K0–K2 and K4–K7 becomes K3's car.
 3. Check each one: the same car as K3 at the same camera height, with the road, the red car and the grandstands unchanged. If one is off, add a sentence to its instruction or change the KSampler seed and run again.
-4. When you are happy, run the cell after next: the edits overwrite the keyframes in `input/`. Then reload the page.
+4. When you are happy, come back and run the cell after next (the picker): the edits overwrite the keyframes in `input/`. Then reload the page.
 
-For route A just run the cells below: no models are downloaded and the picker does nothing. The bundled keyframes already have the consistent car and the bundled videos were shot from them; the last cell shows the edit before and after. Outline (in Chinese): `docs/ch4_keyframes.md`.
+Outline (in Chinese): `docs/ch4_keyframes.md`.
 """),
     code(EDIT_MODELS_CODE.replace("NOTE", "路线 B 改成 True"), EDIT_MODELS_CODE.replace("NOTE", "set to True for route B")),
     code("""
@@ -555,29 +575,37 @@ show(*[PROJECT / "examples" / "car_edit" / f"{k}_{v}.jpg" for k in ("K0", "K2", 
 
 第 i 个镜头以 K(i-1) 为首帧、K(i) 为尾帧，交给 MiniMax H3 首尾帧节点生成，提示词只描述“怎么动”。
 
-在浏览器里：
+**两条路线：**
+
+- **路线 A，用自带素材**：跳过下面的浏览器步骤，直接运行下面两格，自带的视频会补齐 7 个镜头；下面播放的是自带素材里的镜头 1、2。
+- **路线 B，自己生成**：先在浏览器里完成下面 0–2 步，再按第 3 步填好候选编号，运行下面两格。
+
+路线 B：
 
 0. 先完成第 4 章（关键帧已经在 `input/` 里），再刷新一次浏览器页面，否则 Load Image 节点会报红。
 1. 打开 `dream7_shot_01` 拍镜头 1（试拍），每次 Run 生成 2 个候选：上面一条是 `_t1`，下面一条是 `_t2`。看画风是否满意、开头和结尾是否贴近 K0 和 K1、方向和速度感是否对。
 2. 满意后依次打开 `dream7_shot_02` 到 `dream7_shot_07` 并 Run。可以连续提交，任务会排队。
-3. 把每个镜头选中的候选编号填进下一格的 `SHOT_TAKES` 并运行，选中的视频会复制为 `output/video/dream7/selected/shot_0X.mp4`。
+3. 回到这里，把每个镜头选中的候选编号填进下一格的 `SHOT_TAKES` 并运行，选中的视频会复制为 `output/video/dream7/selected/shot_0X.mp4`；再下一格只补你没生成的镜头，不会覆盖你选好的文件。
 
-挑视频时看：转向方向对不对、有没有切镜或倒车、车和机位有没有中途变化、首尾是否贴近关键帧。
-路线 A 直接运行下面两格，自带的视频会补上缺的镜头，不会覆盖你选好的文件；下面播放的是自带素材里的镜头 1、2。讲解提纲见 `docs/ch5_shots.md`。
+挑视频时看：转向方向对不对、有没有切镜或倒车、车和机位有没有中途变化、首尾是否贴近关键帧。讲解提纲见 `docs/ch5_shots.md`。
 """, """
 ## Chapter 5: shooting the shots
 
 Shot i goes to the MiniMax H3 first-last-frame node with K(i-1) as the first frame and K(i) as the last frame; the prompt only describes the motion.
 
-In the browser:
+**Two routes:**
+
+- **Route A, bundled media**: skip the browser steps below and just run the next two cells; the bundled videos fill in all 7 shots. The players below show shots 1 and 2 from the bundled media.
+- **Route B, generate yourself**: do steps 0–2 below in the browser first, then fill in your takes as in step 3 and run the next two cells.
+
+Route B:
 
 0. Finish chapter 4 first (the keyframes are in `input/`), then reload the page once, otherwise the Load Image nodes turn red.
 1. Open `dream7_shot_01` for shot 1 (the pilot). Each Run makes 2 takes: the top one is `_t1`, the bottom one `_t2`. Check the style, whether the start and end are close to K0 and K1, and whether the direction and sense of speed are right.
 2. When you are happy, open `dream7_shot_02` to `dream7_shot_07` in turn and click Run. You can submit them back to back; the jobs queue.
-3. Fill in the take you chose for each shot in `SHOT_TAKES` in the next cell and run it; the chosen videos are copied to `output/video/dream7/selected/shot_0X.mp4`.
+3. Come back, fill in the take you chose for each shot in `SHOT_TAKES` in the next cell and run it; the chosen videos are copied to `output/video/dream7/selected/shot_0X.mp4`. The cell after it fills in only the shots you did not generate, without overwriting your picks.
 
-What to look for when picking: does it turn the right way, are there cuts or reversing, do the car or camera change midway, are the start and end close to the keyframes.
-For route A just run the next two cells; the bundled videos fill in missing shots without overwriting your picks. The players below show shots 1 and 2 from the bundled media. Outline (in Chinese): `docs/ch5_shots.md`.
+What to look for when picking: does it turn the right way, are there cuts or reversing, do the car or camera change midway, are the start and end close to the keyframes. Outline (in Chinese): `docs/ch5_shots.md`.
 """),
     code("""
 SHOT_TAKES = {"shot_01": 1, "shot_02": 1, "shot_03": 1, "shot_04": 1, "shot_05": 1, "shot_06": 1, "shot_07": 1}
@@ -739,15 +767,35 @@ play(MEDIA / "dream8_shot_05.mp4", MEDIA / "dream8_shot_06.mp4", width=480, labe
 
 8 镜头分镜表 `storyboards/lap_8shots.json` 只重做 K4、K5 两张关键帧和镜头 4–6，其余关键帧复用第 4 章、镜头复用第 5 章的结果。
 原来的镜头 5 拆成了镜头 5（T7）和镜头 6（T8），中间多了 K5，所以后面的编号都往后顺延一位：7 镜头版的 K5、K6、K7 在这里是 K6、K7、K8，原来的镜头 6、7 在这里是镜头 7、8。对照下面的示意图看。
-路线 B：在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成），运行下面的挑选格，刷新浏览器页面；再打开 `dream8_keyframes_edit`，以 `dream7_K3.png` 为参考统一 K4、K5 的车，检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。然后打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频，回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
-路线 A 直接运行下面几格。最后拼出 8 镜头成片，和第 6 章的版本对比。
+
+**两条路线：**
+
+- **路线 A，用自带素材**：跳过下面的浏览器步骤，直接运行下面几格，最后拼出 8 镜头成片，和第 6 章的版本对比。
+- **路线 B，自己生成**：按下面 1–4 步做，中间要回来运行挑选格。
+
+路线 B：
+
+1. 在浏览器里打开 `dream8_keyframes` 生成 K4、K5，对照分镜检查（不对就改场景描述再生成）；回来运行下面的挑选格，刷新浏览器页面。
+2. 打开 `dream8_keyframes_edit`，以 `dream7_K3.png` 为参考统一 K4、K5 的车；检查后再运行一次挑选格（它取每张关键帧最新的一版，也就是编辑后的），刷新页面。
+3. 打开 `dream8_shot_04` 到 `dream8_shot_06` 生成视频；回来把挑选格里视频的候选编号（`_t1_` 里的 1）改成你选的，再运行一次。
+4. 运行后面几格：补齐你没生成的素材，拼出 8 镜头成片，和第 6 章的版本对比。
 """, """
 ### Stitch the 8-shot version
 
 The 8-shot storyboard `storyboards/lap_8shots.json` redoes only keyframes K4 and K5 and shots 4–6; the other keyframes come from chapter 4 and the other shots from chapter 5.
 The old shot 5 is split into shot 5 (T7) and shot 6 (T8) with a new K5 between them, so everything after it shifts by one: the 7-shot K5, K6 and K7 are K6, K7 and K8 here, and the old shots 6 and 7 are shots 7 and 8. Compare with the map below.
-Route B: in the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again), run the picker cell below and reload the page. Next open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K3.png`, check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page. Then open `dream8_shot_04` to `dream8_shot_06` to generate the videos, come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
-For route A just run the cells below. At the end you stitch the 8-shot film and compare it with the chapter 6 version.
+
+**Two routes:**
+
+- **Route A, bundled media**: skip the browser steps below and just run the cells below; at the end you stitch the 8-shot film and compare it with the chapter 6 version.
+- **Route B, generate yourself**: follow steps 1–4 below, coming back to run the picker cell in between.
+
+Route B:
+
+1. In the browser, open `dream8_keyframes` to generate K4 and K5 and check them against the storyboard (if one is wrong, edit its scene description and generate again); come back, run the picker cell below and reload the page.
+2. Open `dream8_keyframes_edit` to make the car in K4 and K5 match `dream7_K3.png`; check them, run the picker cell again (it takes the newest version of each keyframe, which is the edit) and reload the page.
+3. Open `dream8_shot_04` to `dream8_shot_06` to generate the videos; come back, change the video take number in the picker cell (the 1 in `_t1_`) to the ones you chose, and run it again.
+4. Run the remaining cells: they fill in whatever you did not generate, stitch the 8-shot film and compare it with the chapter 6 version.
 """),
     code("""
 show(PROJECT / "assets" / "storyboard_map_8shots.png", width=1000)
