@@ -390,7 +390,9 @@ def pick(patterns, src_dir, dst):
 The task: from this map, generate an onboard video that drives one full lap. Outline (in Chinese): `docs/ch1_map.md`.
 """),
     code("""
-show(PROJECT / "assets" / "fictional_track_v1.png", width=900)
+show(PROJECT / "assets" / "fictional_track_v1.png", width=1000)
+""", """
+show(PROJECT / "assets" / "fictional_track_v1_en.png", width=1000)
 """),
     md("""
 ## 第 2 章：一个提示词跑一圈

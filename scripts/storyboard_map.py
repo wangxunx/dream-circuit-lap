@@ -78,8 +78,26 @@ def draw(storyboard, out, en, zoom=None):
     c = (sum(p[0] for p in allp) / len(allp), sum(p[1] for p in allp) / len(allp))
     kids = [sb["shots"][0]["first"]] + [s["last"] for s in sb["shots"]]
     zshots, zkeys = (zoom[0], zoom[1]) if zoom else ((), ())
+    legend = [
+        "○ 关键帧：镜头交界处的车手视角画面",
+        f"   第 i 个镜头从 K(i-1) 开到 K(i)；{kids[0]} 和 {kids[-1]} 都在起终点线上",
+        "▶ 行驶方向（逆时针）",
+        f"工作流：{sb['name']}_shot_0i 拍镜头 i",
+    ] if not en else [
+        "○ Keyframe: the onboard view at a shot boundary",
+        f"   shot i drives K(i-1) → K(i); {kids[0]} and {kids[-1]} are both on the start line",
+        "▶ Driving direction (anticlockwise)",
+        f"Workflow {sb['name']}_shot_0i shoots shot i",
+    ]
+    # each shot's detail line breaks before the turns when it does not fit beside the badge
+    PW, small = t(700, 860), common.font(27)
+    details = []
+    for s in sb["shots"]:
+        head, turns = f"{s['first']} → {s['last']} · {s['duration']:g} {t('秒', 's')}", t(s["turns"], s["turns_en"])
+        details.append([f"{head} · {turns}"] if small.getlength(f"{head} · {turns}") <= PW - 122 else [head, turns])
+    panel_bottom = 212 + sum(70 + 36 * len(lines) for lines in details) + 10 + 40 * len(legend)
 
-    img = Image.new("RGB", (W + t(700, 860), H + TOP), "white")
+    img = Image.new("RGB", (W + PW, max(H + TOP, panel_bottom + 30)), "white")
     img.paste(track_layer(base, segs, 1), (0, TOP))
     d = ImageDraw.Draw(img)
     nshots = len(sb["shots"])
@@ -124,28 +142,17 @@ def draw(storyboard, out, en, zoom=None):
     x0, y = W + 30, 150
     d.text((x0, y), t("镜头 · 赛段 · 首帧 → 尾帧 · 时长", "Shot · sector · first → last frame · length"), font=common.font(30, True), fill="#222")
     y += 62
-    for i, s in enumerate(sb["shots"]):
+    for i, (s, lines) in enumerate(zip(sb["shots"], details)):
         d.ellipse((x0, y, x0 + 44, y + 44), fill=COLORS[i])
         d.text((x0 + 22, y + 22), str(s["id"]), font=common.font(26, True), fill="white", anchor="mm")
-        d.text((x0 + 62, y - 2), t(s["title"], s["title_en"]), font=common.font(29, True), fill="#222")
-        d.text((x0 + 62, y + 36), f"{s['first']} → {s['last']} · {s['duration']:g} {t('秒', 's')} · {t(s['turns'], s['turns_en'])}",
-               font=common.font(22), fill="#555")
-        y += 96 if nshots > 7 else 104
+        d.text((x0 + 62, y - 4), t(s["title"], s["title_en"]), font=common.font(32, True), fill="#222")
+        for j, line in enumerate(lines):
+            d.text((x0 + 62, y + 42 + 36 * j), line, font=small, fill="#444")
+        y += 70 + 36 * len(lines)
     y += 10
-    legend = [
-        "○ 关键帧：镜头交界处的车手视角画面",
-        f"   第 i 个镜头从 K(i-1) 开到 K(i)；{kids[0]} 和 {kids[-1]} 都在起终点线上",
-        "▶ 行驶方向（逆时针）",
-        f"工作流：{sb['name']}_shot_0i 拍镜头 i",
-    ] if not en else [
-        "○ Keyframe: the onboard view at a shot boundary",
-        f"   shot i drives K(i-1) → K(i); {kids[0]} and {kids[-1]} are both on the start line",
-        "▶ Driving direction (anticlockwise)",
-        f"Workflow {sb['name']}_shot_0i shoots shot i",
-    ]
     for line in legend:
-        d.text((x0, y), line, font=common.font(23), fill="#444")
-        y += 36
+        d.text((x0, y), line, font=common.font(25), fill="#444")
+        y += 40
     img.save(out, optimize=True)
     print("wrote", out, img.size)
 
