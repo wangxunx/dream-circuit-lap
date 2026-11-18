@@ -1,6 +1,6 @@
 """Draw the storyboard maps used in chapters 3 and 7: which stretch of track each shot covers and where the keyframes sit.
 
-    python scripts/storyboard_map.py   # writes assets/storyboard_map_{7,8}shots.png and the English _en.png versions
+    python scripts/storyboard_map.py   # writes assets/storyboard_map_{7,8}shots.png, assets/chicane_split.png and the English _en.png versions
 
 Shots, keyframes, titles and durations come from storyboards/lap_7shots.json and lap_8shots.json; the track
 stretches come from each storyboard's "track_path" file, the same one stitch_lap.py uses for the minimap.
@@ -16,6 +16,7 @@ import common
 
 COLORS = ["#1f77b4", "#d62728", "#9467bd", "#ff7f0e", "#2ca02c", "#17becf", "#8c564b", "#e377c2"]
 TOP = 110
+CHICANE = (600, 60, 880, 220)  # T7-T8 in minimap pixels
 
 
 def outward(p, q, c):
@@ -65,18 +66,41 @@ def key_marker(d, x, y, label, lx, ly):
     d.text((lx, ly), label, font=common.font(34, True), fill="#111", anchor="mm", stroke_width=5, stroke_fill="white")
 
 
-def draw(storyboard, out, en, zoom=None):
-    """zoom: (shot ids, keyframe indices, (x0, y0, x1, y1) crop in minimap pixels, inset scale, inset top-left)."""
-    t = lambda zh, english: english if en else zh
+def load(storyboard):
     sb = json.load(open(os.path.join(common.STORYBOARDS, storyboard), encoding="utf-8"))
     track = json.load(open(os.path.join(common.ASSETS, sb["track_path"]), encoding="utf-8"))
     base = Image.open(os.path.join(common.ASSETS, sb["minimap"])).convert("RGB")
     base = Image.blend(ImageOps.grayscale(base).convert("RGB"), Image.new("RGB", base.size, "white"), 0.55)
-    W, H = base.size
     segs = [[tuple(p) for p in s["points"]] for s in track["sectors"]]
     allp = [p for s in segs for p in s]
     c = (sum(p[0] for p in allp) / len(allp), sum(p[1] for p in allp) / len(allp))
     kids = [sb["shots"][0]["first"]] + [s["last"] for s in sb["shots"]]
+    return sb, base, segs, c, kids
+
+
+def zoom_layer(base, segs, c, kids, shots, keys, box, s):
+    """The track inside box (minimap pixels) scaled by s, with badges for the given shots and markers for the given keyframes."""
+    x0, y0, x1, y1 = box
+    layer = track_layer(base, segs, s).crop((round(x0 * s), round(y0 * s), round(x1 * s), round(y1 * s)))
+    d = ImageDraw.Draw(layer)
+    to = lambda x, y: ((x - x0) * s, (y - y0) * s)
+    for n in shots:
+        p, q = at(segs[n - 1], 0.5)
+        nx, ny = outward(p, q, c)
+        x, y = to((p[0] + q[0]) / 2, (p[1] + q[1]) / 2)
+        shot_badge(d, x + nx * 70, y + ny * 70, n)
+    for i in keys:
+        nx, ny = outward(segs[i][0], segs[i][1], c)
+        x, y = to(*segs[i][0])
+        key_marker(d, x, y, kids[i], x - nx * 60, y - ny * 60)
+    return layer
+
+
+def draw(storyboard, out, en, zoom=None):
+    """zoom: (shot ids, keyframe indices, (x0, y0, x1, y1) crop in minimap pixels, inset scale, inset top-left)."""
+    t = lambda zh, english: english if en else zh
+    sb, base, segs, c, kids = load(storyboard)
+    W, H = base.size
     zshots, zkeys = (zoom[0], zoom[1]) if zoom else ((), ())
     legend = [
         "○ 关键帧：镜头交界处的车手视角画面",
@@ -122,22 +146,12 @@ def draw(storyboard, out, en, zoom=None):
 
     if zoom:
         (x0, y0, x1, y1), s, (ix, iy) = zoom[2], zoom[3], zoom[4]
-        layer = track_layer(base, segs, s).crop((round(x0 * s), round(y0 * s), round(x1 * s), round(y1 * s)))
+        layer = zoom_layer(base, segs, c, kids, zshots, zkeys, zoom[2], s)
         d.rectangle((x0, y0 + TOP, x1, y1 + TOP), outline="#333", width=3)
         d.line(((x0 + x1) / 2, y1 + TOP, ix + layer.width / 2, iy + TOP), fill="#333", width=3)
         img.paste(layer, (ix, iy + TOP))
         d.rectangle((ix, iy + TOP, ix + layer.width, iy + TOP + layer.height), outline="#333", width=3)
         d.text((ix + 14, iy + TOP + 10), t("T7–T8 放大", "T7–T8 zoomed"), font=common.font(26, True), fill="#333")
-        to = lambda x, y: (ix + (x - x0) * s, iy + TOP + (y - y0) * s)
-        for n in zshots:
-            p, q = at(segs[n - 1], 0.5)
-            nx, ny = outward(p, q, c)
-            x, y = to((p[0] + q[0]) / 2, (p[1] + q[1]) / 2)
-            shot_badge(d, x + nx * 70, y + ny * 70, n)
-        for i in zkeys:
-            nx, ny = outward(segs[i][0], segs[i][1], c)
-            x, y = to(*segs[i][0])
-            key_marker(d, x, y, kids[i], x - nx * 60, y - ny * 60)
 
     x0, y = W + 30, 150
     d.text((x0, y), t("镜头 · 赛段 · 首帧 → 尾帧 · 时长", "Shot · sector · first → last frame · length"), font=common.font(30, True), fill="#222")
@@ -157,9 +171,57 @@ def draw(storyboard, out, en, zoom=None):
     print("wrote", out, img.size)
 
 
+def turn_tag(d, x, y, text):
+    fnt = common.font(26, True)
+    w = fnt.getlength(text)
+    d.rounded_rectangle((x - w / 2 - 10, y - 20, x + w / 2 + 10, y + 20), radius=8, fill="white", outline="#333", width=3)
+    d.text((x, y), text, font=fnt, fill="#222", anchor="mm")
+
+
+def draw_split(out, en):
+    """Chapter 7 step 2: the short straight and T7-T8 as one shot (7-shot storyboard) above the 8-shot split."""
+    t = lambda zh, english: english if en else zh
+    panels = []
+    for storyboard, shots, keys, head, lines in (
+        ("lap_7shots.json", (5,), (4, 5), t("拆分前：7 镜头", "Before: 7 shots"),
+         [t("镜头 5 从 K4 开过短直道，一次跑完 T7 右弯和 T8 左弯，到 K5", "Shot 5 drives K4 → K5: the short straight, T7 right and T8 left in one go")]),
+        ("lap_8shots.json", (5, 6), (4, 5, 6), t("拆分后：最终的 8 镜头", "After: the final 8 shots"),
+         [t("镜头 5 只跑 T7，镜头 6 只跑 T8", "Shot 5 drives only T7, shot 6 only T8"),
+          t("新增 K5 卡在 T7 出口，原来的 K5 顺延为 K6", "The new K5 sits at the T7 exit; the old K5 becomes K6"),
+          t("最终版里 K4 移到了短直道尽头，短直道并入镜头 4（橙色）", "The final K4 sits at the end of the short straight, which joins shot 4 (orange)")]),
+    ):
+        sb, base, segs, c, kids = load(storyboard)
+        layer = zoom_layer(base, segs, c, kids, shots, keys, (600, 60, 1090, 220), 2.0)
+        ld = ImageDraw.Draw(layer)
+        for (x, y), text in (((752, 192), t("T7 右弯", "T7 right")), ((664, 84), t("T8 左弯", "T8 left"))):
+            turn_tag(ld, (x - 600) * 2.0, (y - 60) * 2.0, text)
+        panels.append((layer, head, lines))
+    pw, ph = panels[0][0].size
+    rows = [64 + ph + 16 + 40 * len(lines) for _, _, lines in panels]
+    img = Image.new("RGB", (pw + 60, 100 + sum(rows) + 70 + 20), "white")
+    d = ImageDraw.Draw(img)
+    d.text((30, 24), t("把 T7–T8 拆成两个镜头", "Split T7–T8 into two shots"), font=common.font(40, True), fill="#222")
+    y = 100
+    for k, (layer, head, lines) in enumerate(panels):
+        d.text((30, y), head, font=common.font(32, True), fill="#222")
+        img.paste(layer, (30, y + 54))
+        d.rectangle((30, y + 54, 30 + pw, y + 54 + ph), outline="#333", width=3)
+        for j, line in enumerate(lines):
+            d.text((30, y + 64 + ph + 6 + 40 * j), line, font=common.font(27), fill="#444")
+        y += rows[k]
+        if k == 0:
+            ax = 30 + pw / 2
+            d.line((ax, y + 6, ax, y + 40), fill="#333", width=8)
+            d.polygon([(ax, y + 60), (ax - 20, y + 34), (ax + 20, y + 34)], fill="#333")
+            y += 70
+    img.save(out, optimize=True)
+    print("wrote", out, img.size)
+
+
 if __name__ == "__main__":
     for en, suffix in ((False, ""), (True, "_en")):
         draw("lap_7shots.json", os.path.join(common.ASSETS, f"storyboard_map_7shots{suffix}.png"), en)
         # the T7-T8 chicane is too tight to label at full size: shots 5-6 and K4-K6 go into an inset inside the loop
         draw("lap_8shots.json", os.path.join(common.ASSETS, f"storyboard_map_8shots{suffix}.png"), en,
-             zoom=((5, 6), (4, 5, 6), (600, 60, 880, 220), 2.4, (430, 330)))
+             zoom=((5, 6), (4, 5, 6), CHICANE, 2.4, (430, 330)))
+        draw_split(os.path.join(common.ASSETS, f"chicane_split{suffix}.png"), en)

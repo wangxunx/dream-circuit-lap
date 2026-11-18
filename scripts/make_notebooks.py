@@ -660,14 +660,20 @@ play(MEDIA / "chicane_1_prompt_only.mp4", width=480, labels=["Prompt only: T7 is
     md("""
 ### 第 2 步：拆成两个镜头（分镜层，第 3 章）
 
-T7 一个镜头、T8 一个镜头，中间新增一张交界关键帧 K5，卡在 T7 出口。这样每个镜头只转一次弯。
-
-看视频：T7 这个镜头一开头先往左转。原因在左边这张旧 K4：短直道尽头画的是一个左弯，模型就往左开。
+T7 一个镜头、T8 一个镜头，中间新增一张交界关键帧 K5，卡在 T7 出口。这样每个镜头只转一次弯。下图对比拆分前和最终的分镜。
 """, """
 ### Step 2: split into two shots (storyboard layer, chapter 3)
 
-One shot for T7 and one for T8, with a new boundary keyframe K5 at the T7 exit, so each shot turns only once.
-
+One shot for T7 and one for T8, with a new boundary keyframe K5 at the T7 exit, so each shot turns only once. The figure compares the storyboard before the split with the final one.
+"""),
+    code("""
+show(PROJECT / "assets" / "chicane_split.png", width=800)
+""", """
+show(PROJECT / "assets" / "chicane_split_en.png", width=800)
+"""),
+    md("""
+看视频：T7 这个镜头一开头先往左转。原因在左边这张旧 K4：短直道尽头画的是一个左弯，模型就往左开。
+""", """
 Watch: the T7 shot starts by turning left. The cause is the old K4 on the left: the end of the short straight shows a left-hander, so the model drives left.
 """),
     code("""
