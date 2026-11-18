@@ -1,5 +1,5 @@
 # Image for notebooks/cloud.ipynb and cloud_en.ipynb on AMD OneClick.
-# The platform clones this project into /workspace at startup; the image provides ComfyUI, the Python packages,
+# The platform clones this project into /workspace at startup; the image provides ComfyUI, the two cloud nodes, the Python packages,
 # the car-edit models, and a copy of the media and fonts for platforms that cannot reach GitHub release downloads.
 #
 #   docker build -t dream-circuit-lap docker/
@@ -34,6 +34,11 @@ RUN cd /comfyui_workspace/ComfyUI/comfy_api_nodes/util \
     && sed -i -E 's/aiohttp\.ClientSession\(timeout=(timeout|timeout_cfg)\)/aiohttp.ClientSession(timeout=\1, trust_env=True)/' \
          client.py download_helpers.py _helpers.py upload_helpers.py \
     && for f in client.py download_helpers.py _helpers.py upload_helpers.py; do grep -q 'trust_env=True' "$f" || exit 1; done
+
+# The two cloud nodes, so the notebook's install cell finds them instead of cloning.
+RUN cd /comfyui_workspace/ComfyUI/custom_nodes \
+    && git clone --depth 1 https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1.git \
+    && git clone --depth 1 https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3.git
 
 ENV DREAM_CIRCUIT_MEDIA_CACHE=/opt/dream-circuit-lap/media \
     F1_FONT_REGULAR=/opt/dream-circuit-lap/fonts/NotoSansSC-Regular.otf \

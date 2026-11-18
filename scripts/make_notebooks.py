@@ -88,14 +88,28 @@ The chapter outlines in `docs/` and the notes inside the ComfyUI workflows are i
 """)
 
 
-NODES_CODE = code("""
+NODES_CODE = """
+failed = []
 for repo in ("ComfyUI-AMD-Qwen-Image-2.1", "ComfyUI-AMD-MiniMaxH3"):
-    if (COMFY / "custom_nodes" / repo).is_dir():
+    dst = COMFY / "custom_nodes" / repo
+    if (dst / "__init__.py").is_file():
         print("installed:", repo)
+        continue
+    for _ in range(3):
+        shutil.rmtree(dst, ignore_errors=True)
+        # abort a stalled download instead of hanging: under 1 KB/s for 30 s counts as a failure
+        r = subprocess.run(["git", "-c", "http.lowSpeedLimit=1000", "-c", "http.lowSpeedTime=30", "clone", "-q", "--depth", "1",
+                            f"https://github.com/wangxunx/{repo}.git", str(dst)])
+        if r.returncode == 0:
+            print("cloned:", repo)
+            break
     else:
-        subprocess.run(["git", "clone", "-q", "--depth", "1", f"https://github.com/wangxunx/{repo}.git", str(COMFY / "custom_nodes" / repo)], check=True)
-        print("cloned:", repo)
-""")
+        failed.append(repo)
+if failed:
+    raise RuntimeError(f"{', '.join(failed)}: HINT")
+"""
+NODES_CODE = code(NODES_CODE.replace("HINT", "clone 失败（已试 3 次），检查网络或代理后重新运行这一格"),
+                  NODES_CODE.replace("HINT", "clone failed after 3 tries, check the network or proxy and rerun this cell"))
 
 KEY_CODE = code("""
 key_file = COMFY / "user" / "h3_gateway_api_key.txt"
@@ -245,11 +259,11 @@ print("ComfyUI:", COMFY)
     md("""
 ### 安装两个云端节点
 
-[ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 生成关键帧，[ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) 生成视频。已经装过的会跳过。
+[ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 生成关键帧，[ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) 生成视频。已经装过的会跳过；本课程的云端镜像已经预装了这两个节点。
 """, """
 ### Install the two cloud nodes
 
-[ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) generates the keyframes and [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) the videos. Nodes that are already installed are skipped.
+[ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) generates the keyframes and [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) the videos. Nodes that are already installed are skipped; this course's cloud image ships with both.
 """),
     NODES_CODE,
     md("""
