@@ -33,7 +33,7 @@
 | [二：本地 notebook](#方式二本地-notebook) | 想边看讲解边做，本地已有 ComfyUI | 本地 ComfyUI + JupyterLab |
 | [三：云端 notebook](#方式三云端-notebook) | 不想在本地搭环境 | 平台提供的、预装 ComfyUI 的 JupyterLab |
 
-三种方式都要一个 H3 key：到 https://h3.oneclickamd.ai 注册获取。key 放在 ComfyUI 的 `user/h3_gateway_api_key.txt`（两个 notebook 会提示你输入并写入）或环境变量 `H3_GATEWAY_API_KEY`。节点没有 key 输入框，key 不会写进工作流或视频元数据。
+三种方式都要一个 H3 key：到 https://h3.oneclickamd.ai/?utm_source=comfyui 注册获取。key 放在 ComfyUI 的 `user/h3_gateway_api_key.txt`（两个 notebook 会提示你输入并写入）。节点没有 key 输入框，key 不会写进工作流或视频元数据。
 
 两个 notebook 内容相同，只是准备环境的部分不同。notebook 里每一步都可以直接用自带素材（路线 A），也可以在 ComfyUI 里自己生成后回到 notebook 挑选（路线 B）。
 
@@ -76,6 +76,7 @@ python scripts/make_workflows.py --shots lap_8shots.json --install  # 第 7 章�
 | 7 | 打开 `dream8_keyframes`，点 Run 生成 K4、K5；对照分镜检查，不对就改提示词开头的场景描述再 Run | 定稿的图从 `ComfyUI/output/dream8/` 复制到 `ComfyUI/input/`，改名为 `dream8_K4.png`、`dream8_K5.png`；再打开 `dream8_keyframes_edit` 点 Run，以 `input/dream7_K3.png` 为参考统一 K4、K5 的车身，检查后用 `K4_edit_*.png`、`K5_edit_*.png` 覆盖 `input/` 里的这两张。按 F5 刷新，依次打开 `dream8_shot_04` … `dream8_shot_06` 点 Run，选中的视频从 `ComfyUI/output/video/dream8/` 复制为 `ComfyUI/output/video/dream8/selected/shot_04.mp4` … `shot_06.mp4`；其余镜头直接复用第 5 章 `ComfyUI/output/video/dream7/selected/` 里的视频。最后运行 `python scripts/stitch_lap.py --shots lap_8shots.json`，成片在本项目目录的 `output/dream_circuit_8shots.mp4` | 把 `examples/keyframes/dream8_K4.png`、`dream8_K5.png` 复制到 `ComfyUI/input/`，把 `media/dream8_shot_04.mp4` … `dream8_shot_06.mp4` 复制为 `ComfyUI/output/video/dream8/selected/shot_04.mp4` … `shot_06.mp4`，再运行同样的拼接命令 |
 
 Load Image 节点被红框圈住、右上角提示 “Media input missing” 或 “errors found”，说明它要读的图片还不在 `ComfyUI/input/`：把图片放进去后按 F5 刷新页面。
+
 `stitch_lap.py` 还支持 `--en`（英文标题）、`--no-minimap`（去掉小地图）和 `--placeholder`（缺镜头时用占位画面预览）。
 
 ### 方式二：本地 notebook

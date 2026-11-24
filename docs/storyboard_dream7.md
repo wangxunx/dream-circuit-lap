@@ -1,6 +1,7 @@
 # 梦幻赛道 · 第一人称一圈（7 个镜头）：分镜与生成手册（lap_7shots.json）
 
 7 个镜头，一圈约 51 秒；加上片头、片尾和接缝处的交叉淡化，成片约 56 秒。
+
 本文件由 `scripts/make_workflows.py` 根据 `storyboards/lap_7shots.json` 生成。要改提示词或时长，请改 `lap_7shots.json` 后重新运行脚本，不要直接改本文件。
 
 下文的 `input/`、`output/`、`user/` 都指 ComfyUI 目录下的文件夹；`scripts/`、`workflows/`、`examples/` 指本项目目录下的文件夹。
@@ -14,7 +15,7 @@
 ## 准备
 
 - 在 ComfyUI 的 `custom_nodes/` 里安装 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 和 [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3)。
-- 启动 ComfyUI，并确认 `H3_GATEWAY_API_KEY` 已配置（或 `user/h3_gateway_api_key.txt` 存在）。
+- 启动 ComfyUI，并确认 `user/h3_gateway_api_key.txt` 存在。
 - 工作流在 `workflows/`，可以直接拖进 ComfyUI 打开。运行过 `make_workflows.py --install` 的话，ComfyUI 左侧 **工作流** 面板里能直接看到以 `dream7_` 开头的条目。
 - 全部生成一遍约为 8 张图（每改一次多 1 张）加 14 段视频。
 - 统一车身的编辑用本地 Qwen Image 2.1 模型，需要本机 GPU 和约 17 GB 的模型文件（见下面“统一车身”）。

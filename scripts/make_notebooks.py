@@ -49,6 +49,7 @@ def intro(zh_where, en_where):
 | 8 | 总结和练习 | 无 |
 
 这个 notebook 只负责准备环境、启动 ComfyUI、准备素材和拼接成片；生成图片和视频都在浏览器里的 ComfyUI 完成。
+
 每个生成步骤都附有已经生成好的关键帧和视频，可以直接用它们快速拼出成片，也可以自己重新生成。
 
 ### 怎么用这个 notebook
@@ -75,7 +76,9 @@ We have a top-down map of a race track we designed. The task: generate an onboar
 | 8 | Wrap-up and exercise | none |
 
 This notebook only sets up the environment, starts ComfyUI, prepares the media and stitches the films; images and videos are generated in ComfyUI in the browser.
+
 Every generation step ships with ready-made keyframes and videos, so you can stitch the film quickly from them or generate everything yourself.
+
 The chapter outlines in `docs/` and the notes inside the ComfyUI workflows are in Chinese; this notebook covers the same points.
 
 ### How to use this notebook
@@ -113,7 +116,7 @@ NODES_CODE = code(NODES_CODE.replace("HINT", "clone 失败（已试 3 次），�
 
 KEY_CODE = code("""
 key_file = COMFY / "user" / "h3_gateway_api_key.txt"
-if os.environ.get("H3_GATEWAY_API_KEY") or key_file.is_file():
+if key_file.is_file():
     print("H3 key already configured")
 else:
     key_file.parent.mkdir(parents=True, exist_ok=True)
@@ -144,11 +147,13 @@ LOCAL = [
 ## 0. 准备环境
 
 本地版使用本项目目录的上一级 ComfyUI（`dream-circuit-lap` 放在 ComfyUI 目录里），也可以用环境变量 `COMFYUI_DIR` 指定。
+
 请用 ComfyUI 所在的 Python 环境作为这个 notebook 的内核，下面启动 ComfyUI 时用的就是这个解释器。
 """, """
 ## 0. Setup
 
 The local notebook uses the ComfyUI one level above this project (`dream-circuit-lap` cloned inside the ComfyUI directory), or the one in `COMFYUI_DIR`.
+
 Use ComfyUI's Python environment as this notebook's kernel; ComfyUI is started below with the same interpreter.
 """),
     code("""
@@ -172,23 +177,27 @@ print("python :", PY)
 ### 安装两个云端节点
 
 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) 生成关键帧，[ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) 生成视频。
+
 两者都在云端推理；只有第 4、7 章统一车身的编辑用本地模型、需要 GPU，没有 GPU 时用自带素材跳过即可。已经装过的会跳过。
 """, """
 ### Install the two cloud nodes
 
 [ComfyUI-AMD-Qwen-Image-2.1](https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1) generates the keyframes and [ComfyUI-AMD-MiniMaxH3](https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3) the videos.
+
 Both run in the cloud; only the car edit in chapters 4 and 7 runs a local model and needs a GPU, and without one the bundled media let you skip it. Nodes that are already installed are skipped.
 """),
     NODES_CODE,
     md("""
 ### 配置 H3 key
 
-到 https://h3.oneclickamd.ai 注册拿到 key。key 写进 ComfyUI 的 `user/h3_gateway_api_key.txt`，两个节点都从这里读，不会写进工作流或视频元数据。
+到 https://h3.oneclickamd.ai/?utm_source=comfyui 注册拿到 key。key 写进 ComfyUI 的 `user/h3_gateway_api_key.txt`，两个节点都从这里读，不会写进工作流或视频元数据。
+
 运行下一格时，输出区会出现一个输入框：粘贴 key，按回车。
 """, """
 ### Configure the H3 key
 
-Register at https://h3.oneclickamd.ai to get a key. It is written to ComfyUI's `user/h3_gateway_api_key.txt`; both nodes read it from there, and it never ends up in workflows or video metadata.
+Register at https://h3.oneclickamd.ai/?utm_source=comfyui to get a key. It is written to ComfyUI's `user/h3_gateway_api_key.txt`; both nodes read it from there, and it never ends up in workflows or video metadata.
+
 Running the next cell shows an input box below it: paste the key and press Enter.
 """),
     KEY_CODE,
@@ -196,6 +205,7 @@ Running the next cell shows an input box below it: paste the key and press Enter
 ### 启动 ComfyUI
 
 ComfyUI 在后台启动，第一次大约要等十几秒，日志在 ComfyUI 的 `user/comfyui_dream_circuit.log`。有 GPU 时使用 GPU（统一车身要用），没有时以 `--cpu` 启动。
+
 8188 端口已经有 ComfyUI 在运行时直接使用它；如果它是在安装节点之前启动的，请先重启，否则看不到新节点。
 
 Jupyter 跑在远程机器上（例如通过 Cursor / VS Code 的 Remote SSH）时，浏览器打不开 http://127.0.0.1:8188 的话，在 **Ports（端口）** 面板里转发 8188 端口。
@@ -203,6 +213,7 @@ Jupyter 跑在远程机器上（例如通过 Cursor / VS Code 的 Remote SSH）�
 ### Start ComfyUI
 
 ComfyUI starts in the background; the first start takes 10–20 seconds. The log is ComfyUI's `user/comfyui_dream_circuit.log`. It uses the GPU when there is one (the car edit needs it) and starts with `--cpu` otherwise.
+
 A ComfyUI already running on port 8188 is reused; if it was started before the nodes were installed, restart it, otherwise the new nodes are missing.
 
 If Jupyter runs on a remote machine (for example through Cursor or VS Code Remote SSH) and http://127.0.0.1:8188 does not open in your browser, forward port 8188 in the **Ports** panel.
@@ -269,12 +280,14 @@ print("ComfyUI:", COMFY)
     md("""
 ### 配置 H3 key
 
-到 https://h3.oneclickamd.ai 注册拿到 key。key 写进 ComfyUI 的 `user/h3_gateway_api_key.txt`，不会写进工作流或视频元数据。
+到 https://h3.oneclickamd.ai/?utm_source=comfyui 注册拿到 key。key 写进 ComfyUI 的 `user/h3_gateway_api_key.txt`，不会写进工作流或视频元数据。
+
 运行下一格时，输出区会出现一个输入框：粘贴 key，按回车。
 """, """
 ### Configure the H3 key
 
-Register at https://h3.oneclickamd.ai to get a key. It is written to ComfyUI's `user/h3_gateway_api_key.txt` and never ends up in workflows or video metadata.
+Register at https://h3.oneclickamd.ai/?utm_source=comfyui to get a key. It is written to ComfyUI's `user/h3_gateway_api_key.txt` and never ends up in workflows or video metadata.
+
 Running the next cell shows an input box below it: paste the key and press Enter.
 """),
     KEY_CODE,
@@ -301,11 +314,13 @@ CHAPTERS = [
 ### 准备素材
 
 下载历史生成结果（约 72 MB，带 sha256 校验，可以重复运行）；系统里没有中文字体时顺带下载 Noto Sans SC，拼接时的中文标题要用。
+
 然后把各章工作流装进 ComfyUI：浏览器左侧 **工作流** 面板里会出现 `ch2_single_prompt`、`dream7_*`、`dream8_*`。
 """, """
 ### Prepare media
 
 Download the historical results (about 72 MB, sha256-checked, safe to rerun), plus Noto Sans SC if the system has no CJK font; the stitching script draws its labels with it.
+
 Then install the chapter workflows into ComfyUI: `ch2_single_prompt`, `dream7_*` and `dream8_*` appear in the **Workflows** panel on the left of the browser.
 """),
     code("""
@@ -412,6 +427,7 @@ show(PROJECT / "assets" / "fictional_track_v1_en.png", width=1000)
 ## 第 2 章：一个提示词跑一圈
 
 最直接的想法：把俯视图当首帧，用一个提示词描述 7 个赛道元素，让 MiniMax H3 生成。
+
 可以在浏览器里打开 `ch2_single_prompt` 工作流自己试（可选，每次生成 1 段视频，后面的章节不依赖它）。下面是当时的 9 次尝试：
 
 - 1–6 号一直在改提示词：强调逆时针、说明起点位置、要求中文配音。但视频都从地图飞进去，“第一视角”一直嵌在地图的图例和海拔剖面中间，15 秒只够跑一小段，弯道也和地图对不上。
@@ -423,6 +439,7 @@ show(PROJECT / "assets" / "fictional_track_v1_en.png", width=1000)
 ## Chapter 2: one prompt for the whole lap
 
 The most direct idea: use the top-down map as the first frame, describe the 7 track elements in one prompt, and let MiniMax H3 generate.
+
 You can open the `ch2_single_prompt` workflow in the browser to try it yourself (optional, 1 video per run; later chapters do not depend on it). Below are the 9 attempts from the time:
 
 - Attempts 1–6 kept refining the prompt: stress anticlockwise, say where the start is, ask for Chinese narration. Every video still flies into the map, the "onboard view" stays framed between the map's legend and elevation profile, 15 seconds only covers a short stretch, and the turns do not match the map.
@@ -439,11 +456,13 @@ play(MEDIA / "ch2_single_prompt_07.mp4", MEDIA / "ch2_single_prompt_09.mp4", wid
 ## 第 3 章：分镜
 
 把一圈拆成 7 个镜头，每个镜头 5–8 秒。相邻镜头共用一张交界处的关键帧 K0–K7：第 i 个镜头以 K(i-1) 为首帧、K(i) 为尾帧，所以能接上。
+
 分镜表在 `storyboards/lap_7shots.json`，生成的手册是 `docs/storyboard_dream7.md`。
 """, """
 ## Chapter 3: the storyboard
 
 Split the lap into 7 shots of 5–8 seconds each. Neighbouring shots share a keyframe at their boundary, K0–K7: shot i starts at K(i-1) and ends at K(i), so the shots join up.
+
 The storyboard is `storyboards/lap_7shots.json`; the generated guide is `docs/storyboard_dream7.md` (in Chinese).
 """),
     code("""
@@ -537,6 +556,7 @@ show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 ### 统一车身
 
 `style` 里写了赛车的样子，文生图还是每张各画各的车：halo 顶上的部件有大有小、车身有的带红色或白色、机位有高有低。
+
 首尾帧是两辆车时，视频会在中途换车，相邻镜头又共用关键帧，所以这一步放在拍镜头之前。
 
 编辑用本地 Qwen Image 2.1 模型（约 17 GB，需要 GPU）。
@@ -558,6 +578,7 @@ show(*[COMFY / "input" / f"dream7_K{i}.png" for i in range(8)], width=300)
 ### Make the car consistent
 
 `style` describes the car, but text-to-image still draws a different car in each keyframe: the part on top of the halo changes size, some bodies have red or white on them, the camera sits higher or lower.
+
 When the first and last frame show two different cars, the video swaps cars midway, and neighbouring shots share keyframes, so this step comes before the shots.
 
 The edit runs the local Qwen Image 2.1 model (about 17 GB, needs a GPU).
@@ -636,6 +657,7 @@ play(MEDIA / "dream7_shot_01.mp4", MEDIA / "dream7_shot_02.mp4", width=480)
 `stitch_lap.py` 把 7 段按顺序接起来，接缝处做交叉淡化，叠加赛段标题和右下角的小地图（红点按每段的车速移动），再加上片头和片尾。
 
 边看边记录：哪里转向和地图不一致？哪里画面跳变？小地图的红点和画面对得上吗？
+
 把问题按“分镜、关键帧、提示词、拼接”四层归类，正好对应第 3 到 6 章。讲解提纲见 `docs/ch6_problems.md`。
 """, """
 ## Chapter 6: stitch the film and find the problems
@@ -643,6 +665,7 @@ play(MEDIA / "dream7_shot_01.mp4", MEDIA / "dream7_shot_02.mp4", width=480)
 `stitch_lap.py` joins the 7 shots in order with crossfades at the seams, overlays sector titles and a minimap in the lower right (the red dot moves at each shot's speed), and adds an intro and an outro. `--en` gives English titles.
 
 While watching, note: where does the steering disagree with the map? Where does the picture jump? Does the minimap's red dot match the picture?
+
 Sort the problems into four layers, storyboard, keyframes, prompts and stitching, which correspond to chapters 3 to 6. Outline (in Chinese): `docs/ch6_problems.md`.
 """),
     code("""
@@ -656,11 +679,13 @@ play(PROJECT / "output" / "dream_circuit_7shots_en.mp4", width=900)
 ## 第 7 章：用分镜修好 T7–T8 减速弯
 
 地图上 T7 是右弯、T8 是左弯，但第 6 章成片的镜头 5 里只有一个左弯，T7 不见了。
+
 下面开始一步步进行修复：每一步先说改了什么、改的是哪一层，再看效果。用到的视频和图片都已经生成好了，直接看就行。
 """, """
 ## Chapter 7: fix the T7–T8 chicane with the storyboard
 
 On the map T7 is a right-hander and T8 a left-hander, but shot 5 of the chapter 6 film shows only one left-hander: T7 is gone.
+
 Now let's fix it step by step: each step says what is changed and in which layer, then shows the result. The videos and images are already generated, so you only need to watch.
 """),
     md("""
@@ -780,6 +805,7 @@ play(MEDIA / "dream8_shot_05.mp4", MEDIA / "dream8_shot_06.mp4", width=480, labe
 ### 拼出 8 镜头版本
 
 8 镜头分镜表 `storyboards/lap_8shots.json` 只重做 K4、K5 两张关键帧和镜头 4–6，其余关键帧复用第 4 章、镜头复用第 5 章的结果。
+
 原来的镜头 5 拆成了镜头 5（T7）和镜头 6（T8），中间多了 K5，所以后面的编号都往后顺延一位：7 镜头版的 K5、K6、K7 在这里是 K6、K7、K8，原来的镜头 6、7 在这里是镜头 7、8。对照下面的示意图看。
 
 **两条路线：**
@@ -797,6 +823,7 @@ play(MEDIA / "dream8_shot_05.mp4", MEDIA / "dream8_shot_06.mp4", width=480, labe
 ### Stitch the 8-shot version
 
 The 8-shot storyboard `storyboards/lap_8shots.json` redoes only keyframes K4 and K5 and shots 4–6; the other keyframes come from chapter 4 and the other shots from chapter 5.
+
 The old shot 5 is split into shot 5 (T7) and shot 6 (T8) with a new K5 between them, so everything after it shifts by one: the 7-shot K5, K6 and K7 are K6, K7 and K8 here, and the old shots 6 and 7 are shots 7 and 8. Compare with the map below.
 
 **Two routes:**

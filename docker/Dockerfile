@@ -35,10 +35,15 @@ RUN cd /comfyui_workspace/ComfyUI/comfy_api_nodes/util \
          client.py download_helpers.py _helpers.py upload_helpers.py \
     && for f in client.py download_helpers.py _helpers.py upload_helpers.py; do grep -q 'trust_env=True' "$f" || exit 1; done
 
-# The two cloud nodes, so the notebook's install cell finds them instead of cloning.
+# The two cloud nodes, so the notebook's install cell finds them instead of cloning. Bump the commits to update
+# them; the ARGs sit here because every RUN after an ARG misses the cache when its value changes.
+ARG QWEN_NODE_COMMIT=25043038b6f5bfd66ea39e11dc7e6cc9b600ee19
+ARG H3_NODE_COMMIT=37a6fa90a239f81717ef700e875d8fc92a502c85
 RUN cd /comfyui_workspace/ComfyUI/custom_nodes \
-    && git clone --depth 1 https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1.git \
-    && git clone --depth 1 https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3.git
+    && git clone -q https://github.com/wangxunx/ComfyUI-AMD-Qwen-Image-2.1.git \
+    && git -C ComfyUI-AMD-Qwen-Image-2.1 checkout -q ${QWEN_NODE_COMMIT} \
+    && git clone -q https://github.com/wangxunx/ComfyUI-AMD-MiniMaxH3.git \
+    && git -C ComfyUI-AMD-MiniMaxH3 checkout -q ${H3_NODE_COMMIT}
 
 ENV DREAM_CIRCUIT_MEDIA_CACHE=/opt/dream-circuit-lap/media \
     F1_FONT_REGULAR=/opt/dream-circuit-lap/fonts/NotoSansSC-Regular.otf \

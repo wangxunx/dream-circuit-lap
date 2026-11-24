@@ -35,7 +35,7 @@ Pick one of three ways:
 | [2. Local notebook](#2-local-notebook) | You want the lecture notes next to the steps | A local ComfyUI plus JupyterLab |
 | [3. Cloud notebook](#3-cloud-notebook) | You do not want to set up anything locally | A JupyterLab instance with ComfyUI preinstalled |
 
-All three need an H3 key: register at https://h3.oneclickamd.ai. Put it in ComfyUI's `user/h3_gateway_api_key.txt` (both notebooks prompt for it and write the file) or in `H3_GATEWAY_API_KEY`. The nodes have no key input, so the key never ends up in workflows or video metadata.
+All three need an H3 key: register at https://h3.oneclickamd.ai/?utm_source=comfyui. Put it in ComfyUI's `user/h3_gateway_api_key.txt` (both notebooks prompt for it and write the file). The nodes have no key input, so the key never ends up in workflows or video metadata.
 
 The two notebooks share the same chapter cells. Every generation step can use the bundled media instead (route A), or you generate in ComfyUI and pick your takes back in the notebook (route B).
 
